@@ -29,11 +29,9 @@ public class RandomFileHandler {
 
             return randomAccessFile.readByte();
         } catch (IOException e) {
-            System.out.printf("Failed to read byte at %d in %s", pos, file);
-            e.printStackTrace();
+            System.err.printf("Failed to read byte at %d in %s", pos, file);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to read byte from file");
     }
 
     /**
@@ -57,10 +55,8 @@ public class RandomFileHandler {
             return bytes;
         } catch (IOException e) {
             System.err.printf("Failed to read %d bytes at %d in %s", numBytes, pos, file);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to read bytes from file");
     }
 
     /**
@@ -80,11 +76,9 @@ public class RandomFileHandler {
 
             return randomAccessFile.readLine();
         } catch (IOException e) {
-            System.out.printf("Failed to read line at %d in %s", pos, file);
-            e.printStackTrace();
+            System.err.printf("Failed to read line at %d in %s", pos, file);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to read line from file");
     }
 
     /**
@@ -103,11 +97,9 @@ public class RandomFileHandler {
 
             randomAccessFile.writeByte(b);
         } catch (IOException e) {
-            System.out.printf("Failed to write byte %s at %d in %s", b, pos, file);
-            e.printStackTrace();
+            System.err.printf("Failed to write byte %s at %d in %s", b, pos, file);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to write to the file");
     }
 
     /**
@@ -126,11 +118,9 @@ public class RandomFileHandler {
 
             randomAccessFile.write(bytes);
         } catch (IOException e) {
-            System.out.printf("Failed to write bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
-            e.printStackTrace();
+            System.err.printf("Failed to write bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to write to the file");
     }
 
     /**
@@ -149,11 +139,9 @@ public class RandomFileHandler {
 
             randomAccessFile.writeUTF(line);
         } catch (IOException e) {
-            System.out.printf("Failed to write line %s at %d in %s", line, pos, file);
-            e.printStackTrace();
+            System.err.printf("Failed to write line %s at %d in %s", line, pos, file);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to write to the file");
     }
 
     /**
@@ -183,11 +171,9 @@ public class RandomFileHandler {
             // Trim the file
             randomAccessFile.setLength(length);
         } catch (IOException e) {
-            System.out.printf("Failed to delete line at %d in %s", index, file);
-            e.printStackTrace();
+            System.err.printf("Failed to delete line at %d in %s", index, file);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to delete line from file");
     }
 
     /**
@@ -235,11 +221,9 @@ public class RandomFileHandler {
             randomAccessFile.seek(index + lineLength);
             randomAccessFile.write(bytes);
         } catch (IOException e) {
-            System.out.printf("Failed to insert bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
-            e.printStackTrace();
+            System.err.printf("Failed to insert bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
+            throw new RuntimeException(e);
         }
-
-        throw new RuntimeException("Failed to insert bytes into file");
     }
 
     /**
@@ -264,10 +248,9 @@ public class RandomFileHandler {
                 try {
                     return randomAccessFile.length() > pos;
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println("Failed to check if there is a next line");
+                    throw new RuntimeException(e);
                 }
-
-                throw new RuntimeException("Unable to access file");
             }
 
             @Override
@@ -279,7 +262,7 @@ public class RandomFileHandler {
                     randomAccessFile.seek(pos);
                     randomAccessFile.read(bytes, 0, lineLength);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
 
                 pos += lineLength;

@@ -1,4 +1,4 @@
-package com.github.quaoz.database;
+package com.github.quaoz.structures;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

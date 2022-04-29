@@ -1,5 +1,6 @@
 package com.github.quaoz.database;
 
+import com.github.quaoz.structures.BinarySearchTree;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

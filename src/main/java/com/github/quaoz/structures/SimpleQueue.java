@@ -1,4 +1,4 @@
-package com.github.quaoz.database;
+package com.github.quaoz.structures;
 
 /**
  * A simple generic queue

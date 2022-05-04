@@ -1,0 +1,9 @@
+{
+  "recordCount" : 0,
+  "ordered" : false,
+  "cache" : false,
+  "fields" : {
+    "name": 10,
+    "age": 3
+  }
+}

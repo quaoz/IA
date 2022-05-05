@@ -1,26 +1,35 @@
 package com.github.quaoz.database;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 public class DataBase<T extends Comparable<T>> {
-    private final RecordHandler<T> recordHandler;
     private final Cache<T> cache;
     private final File location;
+    private final DataBaseConfig config;
     private long recordCount;
+
+    /*
+     * Directory
+     *    |---Database file
+     *    `---Config file
+     */
 
     /**
      * Creates a new database or loads an existing one
      *
      * @param location      The location of the database
-     * @param recordHandler The record handler to use
      *
      * @throws IllegalArgumentException If the location is {@code null}
      * @throws IllegalArgumentException If the location is a directory
@@ -28,35 +37,23 @@ public class DataBase<T extends Comparable<T>> {
      * @throws IllegalArgumentException If the location is not writable
      * @throws IllegalArgumentException If the database cannot be created
      */
-    public DataBase(File location, RecordHandler<T> recordHandler) throws IllegalArgumentException {
-        if (recordHandler == null) {
-            throw new IllegalArgumentException("Record length cannot be 0");
-        } else {
-            this.recordHandler = recordHandler;
-        }
+    public DataBase(Path location, Path config) throws IllegalArgumentException {
+        try {
+            Files.createDirectories(location.getParent());
+            Files.createDirectories(config.getParent());
 
-        if (location == null) {
-            throw new IllegalArgumentException("location cannot be null");
-        } else if (location.isDirectory()) {
-            throw new IllegalArgumentException("location is a directory");
-        } else if (!location.canRead()) {
-            throw new IllegalArgumentException("location cannot be read from");
-        } else if (!location.canWrite()) {
-            throw new IllegalArgumentException("location cannot be written to");
-        } else if (!location.exists()) {
-            // try to create a new file at location and throw an exception if it fails
-            try {
-                location.createNewFile();
-            } catch (IOException e) {
-                throw new IllegalArgumentException("location cannot be created");
+            if (!location.toFile().exists()) {
+                Files.createFile(location);
             }
 
-            this.location = location;
-            updateRecordCount();
-        } else {
-            this.location = location;
-            recordCount = 0;
+            if (!config.toFile().exists()) {
+                Files.createFile(config);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+
 
         this.cache = new Cache<>();
     }

@@ -1,4 +1,4 @@
-package com.github.quaoz.tests;
+package com.github.quaoz.database;
 
 import java.util.Map;
 

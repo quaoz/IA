@@ -1,6 +1,7 @@
 package com.github.quaoz.tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.quaoz.database.DataBaseConfig;
 
 import java.io.File;
 import java.io.IOException;

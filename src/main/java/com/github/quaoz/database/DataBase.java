@@ -28,14 +28,6 @@ public class DataBase<T extends Comparable<T>> {
 
     /**
      * Creates a new database or loads an existing one
-     *
-     * @param location      The location of the database
-     *
-     * @throws IllegalArgumentException If the location is {@code null}
-     * @throws IllegalArgumentException If the location is a directory
-     * @throws IllegalArgumentException If the location is not readable
-     * @throws IllegalArgumentException If the location is not writable
-     * @throws IllegalArgumentException If the database cannot be created
      */
     public DataBase(Path location, Path config) throws IllegalArgumentException {
         try {
@@ -48,12 +40,12 @@ public class DataBase<T extends Comparable<T>> {
 
             if (!config.toFile().exists()) {
                 Files.createFile(config);
+                Files.copy(Objects.requireNonNull(getClass().getResourceAsStream("/config.json")), config);
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
 
         this.cache = new Cache<>();
     }

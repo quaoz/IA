@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,9 +13,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class DataBase<T extends Comparable<T>> {
+public class DataBase<T extends Comparable<T>> implements Closeable {
     private final Cache<T> cache;
     private final File location;
+    private final File configFile;
     private final DataBaseConfig config;
 
     /**
@@ -35,7 +37,8 @@ public class DataBase<T extends Comparable<T>> {
             }
 
             this.location = location.toFile();
-            this.config = new ObjectMapper().readValue(config.toFile(), DataBaseConfig.class);
+            this.configFile = config.toFile();
+            this.config = new ObjectMapper().readValue(configFile, DataBaseConfig.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -160,7 +163,7 @@ public class DataBase<T extends Comparable<T>> {
     public void remove(T record) {
         cache.remove(record);
         remove(record, 0, config.recordCount);
-        config. recordCount--;
+        config.recordCount--;
     }
 
     /**
@@ -183,6 +186,11 @@ public class DataBase<T extends Comparable<T>> {
         } else {
             RandomFileHandler.deleteLine(location, mid * config.recordLength, config.recordLength);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        new ObjectMapper().writeValue(configFile, config);
     }
 
     /**

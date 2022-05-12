@@ -6,10 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -18,18 +16,11 @@ public class DataBase<T extends Comparable<T>> {
     private final Cache<T> cache;
     private final File location;
     private final DataBaseConfig config;
-    private long recordCount;
-
-    /*
-     * Directory
-     *    |---Database file
-     *    `---Config file
-     */
 
     /**
      * Creates a new database or loads an existing one
      */
-    public DataBase(Path location, Path config) throws IllegalArgumentException {
+    public DataBase(@NotNull Path location, @NotNull Path config) throws IllegalArgumentException {
         try {
             Files.createDirectories(location.getParent());
             Files.createDirectories(config.getParent());
@@ -43,6 +34,8 @@ public class DataBase<T extends Comparable<T>> {
                 Files.copy(Objects.requireNonNull(getClass().getResourceAsStream("/config.json")), config);
             }
 
+            this.location = location.toFile();
+            this.config = new ObjectMapper().readValue(config.toFile(), DataBaseConfig.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -56,12 +49,12 @@ public class DataBase<T extends Comparable<T>> {
     public void add(@NotNull T record) {
         cache.add(record);
 
-        if (recordCount == 0) {
+        if (config.recordCount == 0) {
             RandomFileHandler.writeBytes(location, 0, record.toString().getBytes());
-            recordCount++;
         } else {
-            add(record, 0, recordCount);
+            add(record, 0, config.recordCount);
         }
+        config.recordCount++;
     }
 
     /**
@@ -70,7 +63,7 @@ public class DataBase<T extends Comparable<T>> {
      * @return The number of records in the database
      */
     public long getRecordCount() {
-        return recordCount;
+        return config.recordCount;
     }
 
     /**
@@ -78,7 +71,7 @@ public class DataBase<T extends Comparable<T>> {
      */
     private void updateRecordCount() {
         try (Stream<String> stream = Files.lines(location.toPath())) {
-            recordCount = stream.count();
+            config.recordCount = stream.count();
         } catch (IOException e) {
             System.err.printf("Unable to access the file at %s", location);
             throw new RuntimeException(e);
@@ -89,16 +82,16 @@ public class DataBase<T extends Comparable<T>> {
      * Adds a record to the database using RandomAccessFile to write to the file
      */
     @SuppressWarnings("unchecked")
-    private void add(@NotNull T record, long start, long end) {
+    private void add(@NotNull T compField, long start, long end) {
         long mid = (start + end) / 2;
-        int comparison = record.compareTo((T) (get(mid, recordHandler.recordLength())));
+        int comparison = compField.compareTo((T) (get(mid, config.recordLength).substring(0, config.fields[0])));
 
         if (comparison > 0) {
-            add(record, start, mid);
+            add(compField, start, mid);
         } else if (comparison < 0) {
-            add(record, mid, end);
+            add(compField, mid, end);
         } else {
-            RandomFileHandler.insertBytes(location, record.toString().getBytes(), mid * recordHandler.recordLength(), recordHandler.recordLength());
+            RandomFileHandler.insertBytes(location, compField.toString().getBytes(), mid * config.recordLength, config.recordLength);
         }
     }
 
@@ -111,7 +104,7 @@ public class DataBase<T extends Comparable<T>> {
      * @return The string representation of the record at the given index
      */
     public String get(long index, int length) {
-        if (index < 0 || index >= recordCount) {
+        if (index < 0 || index >= config.recordCount) {
             return null;
         }
 
@@ -132,27 +125,28 @@ public class DataBase<T extends Comparable<T>> {
 
         T cached = cache.get(record);
 
-        return Objects.requireNonNullElseGet(cached, () -> get(record, 0, recordCount));
+        return Objects.requireNonNullElseGet(cached, () -> get(record, 0, config.recordCount));
     }
 
     /**
      * Gets a record from the database
      *
-     * @param record The record to get
+     * @param compField The record to get
      * @param start  The start index of the search
      * @param end    The end index of the search
      *
      * @return The record from the database
      */
-    private @NotNull T get(@NotNull T record, long start, long end) {
+    @SuppressWarnings("unchecked")
+    private @NotNull T get(@NotNull T compField, long start, long end) {
         long mid = (start + end) / 2;
-        T midRecord = recordHandler.getRecord(get(mid, recordHandler.recordLength()));
-        int comparison = midRecord.compareTo(record);
+        T midRecord = (T) get(mid, config.recordLength).substring(0, config.fields[0]);
+        int comparison = midRecord.compareTo(compField);
 
         if (comparison > 0) {
-            return get(record, start, mid);
+            return get(compField, start, mid);
         } else if (comparison < 0) {
-            return get(record, mid, end);
+            return get(compField, mid, end);
         } else {
             return midRecord;
         }
@@ -165,8 +159,8 @@ public class DataBase<T extends Comparable<T>> {
      */
     public void remove(T record) {
         cache.remove(record);
-        remove(record, 0, recordCount);
-        recordCount--;
+        remove(record, 0, config.recordCount);
+        config. recordCount--;
     }
 
     /**
@@ -176,9 +170,10 @@ public class DataBase<T extends Comparable<T>> {
      * @param start  The start index of the search
      * @param end    The end index of the search
      */
+    @SuppressWarnings("unchecked")
     private void remove(@NotNull T record, long start, long end) {
         long mid = (start + end) / 2;
-        T midRecord = recordHandler.getRecord(get(mid, recordHandler.recordLength()));
+        T midRecord = (T) get(mid, config.recordLength).substring(0, config.fields[0]);
         int comparison = midRecord.compareTo(record);
 
         if (comparison > 0) {
@@ -186,7 +181,7 @@ public class DataBase<T extends Comparable<T>> {
         } else if (comparison < 0) {
             remove(record, mid, end);
         } else {
-            RandomFileHandler.deleteLine(location, mid * recordHandler.recordLength(), recordHandler.recordLength());
+            RandomFileHandler.deleteLine(location, mid * config.recordLength, config.recordLength);
         }
     }
 

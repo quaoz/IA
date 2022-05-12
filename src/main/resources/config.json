@@ -1,6 +1,7 @@
 {
   "recordCount" : 0,
-  "ordered" : false,
-  "cache" : false,
-  "fields" : {}
+  "recordLength" : 10,
+  "ordered" : true,
+  "cache" : true,
+  "fields" : []
 }

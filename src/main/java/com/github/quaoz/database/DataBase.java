@@ -13,32 +13,59 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class DataBase<T extends Comparable<T>> implements Closeable {
+public class DataBase<T extends Comparable<Object>> implements Closeable {
     private final Cache<T> cache;
     private final File location;
-    private final File configFile;
+    private final File configLocation;
     private final DataBaseConfig config;
 
     /**
      * Creates a new database or loads an existing one
+     *
+     * @param location The location of the database
+     * @param configLocation   The location of the config file
      */
-    public DataBase(@NotNull Path location, @NotNull Path config) throws IllegalArgumentException {
+    public DataBase(@NotNull Path location, @NotNull Path configLocation) throws IllegalArgumentException {
         try {
             Files.createDirectories(location.getParent());
-            Files.createDirectories(config.getParent());
+            Files.createDirectories(configLocation.getParent());
 
             if (!location.toFile().exists()) {
                 Files.createFile(location);
             }
 
-            if (!config.toFile().exists()) {
-                Files.createFile(config);
-                Files.copy(Objects.requireNonNull(getClass().getResourceAsStream("/config.json")), config);
+            if (!configLocation.toFile().exists()) {
+                Files.createFile(configLocation);
+                Files.copy(Objects.requireNonNull(getClass().getResourceAsStream("/config.json")), configLocation);
             }
 
             this.location = location.toFile();
-            this.configFile = config.toFile();
-            this.config = new ObjectMapper().readValue(configFile, DataBaseConfig.class);
+            this.configLocation = configLocation.toFile();
+            this.config = new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        this.cache = new Cache<>();
+    }
+
+    public DataBase(@NotNull Path location, @NotNull Path configLocation, DataBaseConfig config) throws IllegalArgumentException {
+        try {
+            Files.createDirectories(location.getParent());
+            Files.createDirectories(configLocation.getParent());
+
+            if (!location.toFile().exists()) {
+                Files.createFile(location);
+            }
+
+            if (!configLocation.toFile().exists()) {
+                Files.createFile(configLocation);
+                new ObjectMapper().writeValue(configLocation.toFile(), config);
+            }
+
+            this.location = location.toFile();
+            this.configLocation = configLocation.toFile();
+            this.config = new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -48,6 +75,8 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
 
     /**
      * Adds a record to the database using RandomAccessFile to write to the file
+     *
+     * @param record The record to add
      */
     public void add(@NotNull T record) {
         cache.add(record);
@@ -83,18 +112,21 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
 
     /**
      * Adds a record to the database using RandomAccessFile to write to the file
+     *
+     * @param record The record to add
+     * @param start  The start index
+     * @param end    The end index
      */
-    @SuppressWarnings("unchecked")
-    private void add(@NotNull T compField, long start, long end) {
+    private void add(@NotNull T record, long start, long end) {
         long mid = (start + end) / 2;
-        int comparison = compField.compareTo((T) (get(mid, config.recordLength).substring(0, config.fields[0])));
+        int comparison = record.compareTo(get(mid, config.recordLength).substring(0, config.fields[0]));
 
         if (comparison > 0) {
-            add(compField, start, mid);
+            add(record, start, mid);
         } else if (comparison < 0) {
-            add(compField, mid, end);
+            add(record, mid, end);
         } else {
-            RandomFileHandler.insertBytes(location, compField.toString().getBytes(), mid * config.recordLength, config.recordLength);
+            RandomFileHandler.insertBytes(location, record.toString().getBytes(), mid * config.recordLength, config.recordLength);
         }
     }
 
@@ -117,18 +149,18 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
     /**
      * Gets a record from the database
      *
-     * @param record The record to get
+     * @param compField The record to get
      *
      * @return The record from the database
      */
-    public T get(T record) {
-        if (record == null) {
+    public T get(String compField) {
+        if (compField == null) {
             return null;
         }
 
-        T cached = cache.get(record);
+        T cached = cache.get(compField);
 
-        return Objects.requireNonNullElseGet(cached, () -> get(record, 0, config.recordCount));
+        return Objects.requireNonNullElseGet(cached, () -> get(compField, 0, config.recordCount));
     }
 
     /**
@@ -141,9 +173,9 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
      * @return The record from the database
      */
     @SuppressWarnings("unchecked")
-    private @NotNull T get(@NotNull T compField, long start, long end) {
+    private @NotNull T get(@NotNull String compField, long start, long end) {
         long mid = (start + end) / 2;
-        T midRecord = (T) get(mid, config.recordLength).substring(0, config.fields[0]);
+        T midRecord = (T) get(mid, config.recordLength);
         int comparison = midRecord.compareTo(compField);
 
         if (comparison > 0) {
@@ -190,7 +222,7 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
 
     @Override
     public void close() throws IOException {
-        new ObjectMapper().writeValue(configFile, config);
+        new ObjectMapper().writeValue(configLocation, config);
     }
 
     /**
@@ -198,7 +230,7 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
      *
      * @param <T> The type of the records
      */
-    private static class Cache<T extends Comparable<T>> {
+    private static class Cache<T extends Comparable<Object>> {
         /**
          * Stores the records in order
          */
@@ -213,7 +245,7 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
          * Creates a new cache
          */
         public Cache() {
-            tree = new BinarySearchTree<>();
+            tree = new BinarySearchTree<T>();
             list = new ArrayList<>();
         }
 
@@ -241,7 +273,7 @@ public class DataBase<T extends Comparable<T>> implements Closeable {
          *
          * @return The record
          */
-        public T get(T record) {
+        public T get(String record) {
             // TODO: Rework the list so that it stores the records in order of when they were last accessed
             return tree.get(record);
         }

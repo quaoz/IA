@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class DataBase<T extends Comparable<Object>> implements Closeable {
-    private final Cache<T> cache;
+public class DataBase implements Closeable {
+    private final Cache cache;
     private final File location;
     private final File configLocation;
     private final DataBaseConfig config;
@@ -46,7 +46,7 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
             throw new RuntimeException(e);
         }
 
-        this.cache = new Cache<>();
+        this.cache = new Cache();
     }
 
     public DataBase(@NotNull Path location, @NotNull Path configLocation, DataBaseConfig config) throws IllegalArgumentException {
@@ -70,7 +70,7 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
             throw new RuntimeException(e);
         }
 
-        this.cache = new Cache<>();
+        this.cache = new Cache();
     }
 
     /**
@@ -78,11 +78,11 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
      *
      * @param record The record to add
      */
-    public void add(@NotNull T record) {
-        cache.add(record);
+    public void add(@NotNull String record) {
+        // cache.add(record);
 
         if (config.recordCount == 0) {
-            RandomFileHandler.writeBytes(location, 0, record.toString().getBytes());
+            RandomFileHandler.writeBytes(location, 0, record.getBytes());
         } else {
             add(record, 0, config.recordCount);
         }
@@ -117,16 +117,22 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
      * @param start  The start index
      * @param end    The end index
      */
-    private void add(@NotNull T record, long start, long end) {
+    private void add(@NotNull String record, long start, long end) {
         long mid = (start + end) / 2;
-        int comparison = record.compareTo(get(mid, config.recordLength).substring(0, config.fields[0]));
+        System.out.println(get(mid, config.recordLength));
+        System.out.println(get(mid, config.recordLength).substring(0, config.fields[1]));
+        int comparison = record.substring(0, config.fields[1]).compareTo(
+                get(mid, config.recordLength).substring(0, config.fields[1]));
+
+        System.out.println(record.substring(0, config.fields[1]));
+
 
         if (comparison > 0) {
             add(record, start, mid);
         } else if (comparison < 0) {
             add(record, mid, end);
         } else {
-            RandomFileHandler.insertBytes(location, record.toString().getBytes(), mid * config.recordLength, config.recordLength);
+            RandomFileHandler.insertBytes(location, record.getBytes(), mid * config.recordLength, config.recordLength);
         }
     }
 
@@ -149,18 +155,18 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
     /**
      * Gets a record from the database
      *
-     * @param compField The record to get
+     * @param field The record to get
      *
      * @return The record from the database
      */
-    public T get(String compField) {
-        if (compField == null) {
+    public String get(String field, int compField) {
+        if (field == null) {
             return null;
         }
 
-        T cached = cache.get(compField);
+        String cached = null; // cache.get(field);
 
-        return Objects.requireNonNullElseGet(cached, () -> get(compField, 0, config.recordCount));
+        return Objects.requireNonNullElseGet(cached, () -> get(field, 0, config.recordCount, compField));
     }
 
     /**
@@ -172,16 +178,15 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
      *
      * @return The record from the database
      */
-    @SuppressWarnings("unchecked")
-    private @NotNull T get(@NotNull String compField, long start, long end) {
+    private @NotNull String get(@NotNull String field, long start, long end, int compField) {
         long mid = (start + end) / 2;
-        T midRecord = (T) get(mid, config.recordLength);
-        int comparison = midRecord.compareTo(compField);
+        String midRecord = get(mid, config.recordLength);
+        int comparison = midRecord.substring(compField, config.fields[compField + 1]).compareTo(field);
 
         if (comparison > 0) {
-            return get(compField, start, mid);
+            return get(field, start, mid, compField);
         } else if (comparison < 0) {
-            return get(compField, mid, end);
+            return get(field, mid, end, compField);
         } else {
             return midRecord;
         }
@@ -190,31 +195,30 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
     /**
      * Removes a record from the database
      *
-     * @param record The record to remove
+     * @param field The record to remove
      */
-    public void remove(T record) {
-        cache.remove(record);
-        remove(record, 0, config.recordCount);
+    public void remove(String field) {
+        // cache.remove(field);
+        remove(field, 0, config.recordCount);
         config.recordCount--;
     }
 
     /**
-     * Removes a record from the database
+     * Removes a field from the database
      *
-     * @param record The record to remove
+     * @param field The field to remove
      * @param start  The start index of the search
      * @param end    The end index of the search
      */
-    @SuppressWarnings("unchecked")
-    private void remove(@NotNull T record, long start, long end) {
+    private void remove(@NotNull String field, long start, long end) {
         long mid = (start + end) / 2;
-        T midRecord = (T) get(mid, config.recordLength).substring(0, config.fields[0]);
-        int comparison = midRecord.compareTo(record);
+        String midRecord = get(mid, config.recordLength).substring(0, config.fields[0]);
+        int comparison = midRecord.compareTo(field);
 
         if (comparison > 0) {
-            remove(record, start, mid);
+            remove(field, start, mid);
         } else if (comparison < 0) {
-            remove(record, mid, end);
+            remove(field, mid, end);
         } else {
             RandomFileHandler.deleteLine(location, mid * config.recordLength, config.recordLength);
         }
@@ -227,25 +231,26 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
 
     /**
      * The database cache
-     *
-     * @param <T> The type of the records
      */
-    private static class Cache<T extends Comparable<Object>> {
+
+    // TODO: Extend bst and override get to work with compField parameter
+    //       solution: Pass it two bounds and get the substring?
+    private static class Cache {
         /**
          * Stores the records in order
          */
-        BinarySearchTree<T> tree;
+        BinarySearchTree<String> tree;
 
         /**
          * Stores the records in order of when they were added
          */
-        ArrayList<T> list;
+        ArrayList<String> list;
 
         /**
          * Creates a new cache
          */
         public Cache() {
-            tree = new BinarySearchTree<T>();
+            tree = new BinarySearchTree<>();
             list = new ArrayList<>();
         }
 
@@ -254,7 +259,7 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
          *
          * @param record The record to add
          */
-        public void add(@NotNull T record) {
+        public void add(@NotNull String record) {
             list.add(record);
 
             // If there are more than 100 records, remove the oldest one
@@ -273,7 +278,7 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
          *
          * @return The record
          */
-        public T get(String record) {
+        public String get(String record) {
             // TODO: Rework the list so that it stores the records in order of when they were last accessed
             return tree.get(record);
         }
@@ -283,7 +288,7 @@ public class DataBase<T extends Comparable<Object>> implements Closeable {
          *
          * @param record The record to remove
          */
-        public void remove(T record) {
+        public void remove(String record) {
             tree.remove(record);
         }
     }

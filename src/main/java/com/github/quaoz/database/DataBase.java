@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,8 +23,8 @@ public class DataBase implements Closeable {
     /**
      * Creates a new database or loads an existing one
      *
-     * @param location The location of the database
-     * @param configLocation   The location of the config file
+     * @param location       The location of the database
+     * @param configLocation The location of the config file
      */
     public DataBase(@NotNull Path location, @NotNull Path configLocation) throws IllegalArgumentException {
         try {
@@ -82,7 +83,7 @@ public class DataBase implements Closeable {
         // cache.add(record);
 
         if (config.recordCount == 0) {
-            RandomFileHandler.writeBytes(location, 0, record.getBytes());
+            RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
         } else {
             add(record, 0, config.recordCount);
         }
@@ -119,20 +120,21 @@ public class DataBase implements Closeable {
      */
     private void add(@NotNull String record, long start, long end) {
         long mid = (start + end) / 2;
-        System.out.println(get(mid, config.recordLength));
-        System.out.println(get(mid, config.recordLength).substring(0, config.fields[1]));
-        int comparison = record.substring(0, config.fields[1]).compareTo(
-                get(mid, config.recordLength).substring(0, config.fields[1]));
+        int comparison = record.substring(0, config.fields[0]).compareTo(
+                get(mid, config.recordLength).substring(0, config.fields[0]));
 
-        System.out.println(record.substring(0, config.fields[1]));
-
-
-        if (comparison > 0) {
+        if (mid == 0) {
+            if (comparison > 0) {
+                RandomFileHandler.writeBytes(location, config.recordCount * config.recordLength, record.getBytes(StandardCharsets.UTF_8));
+            } else {
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), 0, config.recordLength);
+            }
+        } else if (comparison > 0) {
             add(record, start, mid);
         } else if (comparison < 0) {
             add(record, mid, end);
         } else {
-            RandomFileHandler.insertBytes(location, record.getBytes(), mid * config.recordLength, config.recordLength);
+            RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
         }
     }
 
@@ -141,7 +143,6 @@ public class DataBase implements Closeable {
      *
      * @param index  The index of the record to get
      * @param length The length of the record to get
-     *
      * @return The string representation of the record at the given index
      */
     public String get(long index, int length) {
@@ -156,7 +157,6 @@ public class DataBase implements Closeable {
      * Gets a record from the database
      *
      * @param field The record to get
-     *
      * @return The record from the database
      */
     public String get(String field, int compField) {
@@ -173,9 +173,8 @@ public class DataBase implements Closeable {
      * Gets a record from the database
      *
      * @param compField The record to get
-     * @param start  The start index of the search
-     * @param end    The end index of the search
-     *
+     * @param start     The start index of the search
+     * @param end       The end index of the search
      * @return The record from the database
      */
     private @NotNull String get(@NotNull String field, long start, long end, int compField) {
@@ -207,8 +206,8 @@ public class DataBase implements Closeable {
      * Removes a field from the database
      *
      * @param field The field to remove
-     * @param start  The start index of the search
-     * @param end    The end index of the search
+     * @param start The start index of the search
+     * @param end   The end index of the search
      */
     private void remove(@NotNull String field, long start, long end) {
         long mid = (start + end) / 2;
@@ -275,7 +274,6 @@ public class DataBase implements Closeable {
          * Gets a record from the cache
          *
          * @param record The record to get
-         *
          * @return The record
          */
         public String get(String record) {

@@ -22,8 +22,8 @@ public class DataBase implements Closeable {
     /**
      * Creates a new database or loads an existing one
      *
-     * @param location The location of the database
-     * @param configLocation   The location of the config file
+     * @param location       The location of the database
+     * @param configLocation The location of the config file
      */
     public DataBase(@NotNull Path location, @NotNull Path configLocation) throws IllegalArgumentException {
         try {
@@ -141,7 +141,6 @@ public class DataBase implements Closeable {
      *
      * @param index  The index of the record to get
      * @param length The length of the record to get
-     *
      * @return The string representation of the record at the given index
      */
     public String get(long index, int length) {
@@ -156,7 +155,6 @@ public class DataBase implements Closeable {
      * Gets a record from the database
      *
      * @param field The record to get
-     *
      * @return The record from the database
      */
     public String get(String field, int compField) {
@@ -173,9 +171,8 @@ public class DataBase implements Closeable {
      * Gets a record from the database
      *
      * @param compField The record to get
-     * @param start  The start index of the search
-     * @param end    The end index of the search
-     *
+     * @param start     The start index of the search
+     * @param end       The end index of the search
      * @return The record from the database
      */
     private @NotNull String get(@NotNull String field, long start, long end, int compField) {
@@ -207,8 +204,8 @@ public class DataBase implements Closeable {
      * Removes a field from the database
      *
      * @param field The field to remove
-     * @param start  The start index of the search
-     * @param end    The end index of the search
+     * @param start The start index of the search
+     * @param end   The end index of the search
      */
     private void remove(@NotNull String field, long start, long end) {
         long mid = (start + end) / 2;
@@ -275,7 +272,6 @@ public class DataBase implements Closeable {
          * Gets a record from the cache
          *
          * @param record The record to get
-         *
          * @return The record
          */
         public String get(String record) {

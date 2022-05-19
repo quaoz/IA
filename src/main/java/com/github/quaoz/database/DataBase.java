@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class DataBase implements Closeable {
         // cache.add(record);
 
         if (config.recordCount == 0) {
-            RandomFileHandler.writeBytes(location, 0, record.getBytes());
+            RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
         } else {
             add(record, 0, config.recordCount);
         }
@@ -119,20 +120,21 @@ public class DataBase implements Closeable {
      */
     private void add(@NotNull String record, long start, long end) {
         long mid = (start + end) / 2;
-        System.out.println(get(mid, config.recordLength));
-        System.out.println(get(mid, config.recordLength).substring(0, config.fields[1]));
-        int comparison = record.substring(0, config.fields[1]).compareTo(
-                get(mid, config.recordLength).substring(0, config.fields[1]));
+        int comparison = record.substring(0, config.fields[0]).compareTo(
+                get(mid, config.recordLength).substring(0, config.fields[0]));
 
-        System.out.println(record.substring(0, config.fields[1]));
-
-
-        if (comparison > 0) {
+        if (mid == 0) {
+            if (comparison > 0) {
+                RandomFileHandler.writeBytes(location, config.recordCount * config.recordLength, record.getBytes(StandardCharsets.UTF_8));
+            } else {
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), 0, config.recordLength);
+            }
+        } else if (comparison > 0) {
             add(record, start, mid);
         } else if (comparison < 0) {
             add(record, mid, end);
         } else {
-            RandomFileHandler.insertBytes(location, record.getBytes(), mid * config.recordLength, config.recordLength);
+            RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
         }
     }
 

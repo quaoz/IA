@@ -9,22 +9,30 @@ import java.io.IOException;
 public class DataBaseTester {
     public static void main(String[] args) {
         DataBaseConfig config = new DataBaseConfig();
-        config.recordLength = 20;
-        config.fields = new Integer[]{10, 20};
+        config.recordLength = 22;
+        config.fields = new Integer[]{10, 22};
+
+        File databaseFile = new File("src/main/java/com/github/quaoz/tests/test.db");
+        File configFile = new File("src/main/java/com/github/quaoz/tests/config.json");
 
         try (DataBase dataBase = new DataBase(
-                new File("src/main/java/com/github/quaoz/tests/test.db").toPath(),
-                new File("src/main/java/com/github/quaoz/tests/config.json").toPath(),
+                databaseFile.toPath(),
+                configFile.toPath(),
                 config
         )) {
-            dataBase.add("test      value     ");
-            dataBase.add("test2     value2    ");
-            dataBase.add("test3     value3    ");
-            dataBase.add("test4     value4    ");
+            dataBase.add("test      value      \n");
+            dataBase.add("test2     value2     \n");
+            dataBase.add("test3     value3     \n");
+            dataBase.add("test4     value4     \n");
 
-            dataBase.get("test3", 0);
+            System.out.println(dataBase.get("test3", 0));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (true) {
+            databaseFile.delete();
+            configFile.delete();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 ## UML Diagram for the Database:
 
-![](https://github.com/quaoz/IA/blob/dev/docs/criterion/images/image1.png)
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image9.png)
 
 ## UI Design:
 
@@ -10,45 +10,45 @@ For all screens, except “profile” and “submit record” (which will not be
 
 ### Homepage (signed out):
 
-![alt_text](images/image2.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image4.png)
 
 #### Homepage (signed in):
 
-![alt_text](images/image3.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image5.png)
 
 #### Sign in:
 
-![alt_text](images/image4.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image1.png)
 
 #### Sign up:
 
-![alt_text](images/image5.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image6.png)
 
 #### Advanced Search:
 
-![alt_text](images/image6.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image10.png)
 
 #### Moth Entry:
 
-![alt_text](images/image7.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image11.png)
 
 #### Records:
 
 * When a record is clicked a box will appear showing extra information about that record
 
-![alt_text](images/image8.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image8.png)
 
 #### Submit Record:
 
 * Some of this information (sex, size and time) will be optional
 
-![alt_text](images/image9.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image7.png)
 
 #### Profile:
 
 * When a record is clicked a box will appear showing extra information about that record
 
-![alt_text](images/image10.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image12.png)
 
 ## Test Plan:
 
@@ -123,11 +123,11 @@ For all screens, except “profile” and “submit record” (which will not be
 
 #### Submit Record:
 
-![alt_text](images/image11.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image2.png)
 
 #### Login:
 
-![alt_text](images/image12.png "image_tooltip")
+![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image3.png)
 
 ## Record of Tasks:
 

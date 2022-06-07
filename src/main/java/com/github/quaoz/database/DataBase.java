@@ -2,6 +2,7 @@ package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+// TODO: fuzzy search?
 public class DataBase implements Closeable {
     private final Cache cache;
     private final File location;
@@ -211,8 +213,8 @@ public class DataBase implements Closeable {
      */
     private void remove(@NotNull String field, long start, long end) {
         long mid = (start + end) / 2;
-        String midRecord = get(mid, config.recordLength).substring(0, config.fields[0]);
-        int comparison = midRecord.compareTo(field);
+        String midRecord = get(mid, config.recordLength);
+        int comparison = midRecord.substring(0, config.fields[0]).strip().compareTo(field);
 
         if (comparison > 0) {
             remove(field, start, mid);

@@ -180,7 +180,7 @@ public class DataBase implements Closeable {
     private @NotNull String get(@NotNull String field, long start, long end, int compField) {
         long mid = (start + end) / 2;
         String midRecord = get(mid, config.recordLength);
-        int comparison = midRecord.substring(compField, config.fields[compField + 1]).compareTo(field);
+        int comparison = midRecord.substring(compField, config.fields[compField]).strip().compareTo(field);
 
         if (comparison > 0) {
             return get(field, start, mid, compField);

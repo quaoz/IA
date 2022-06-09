@@ -8,9 +8,7 @@ import java.io.IOException;
 
 public class DataBaseTester {
     public static void main(String[] args) {
-        DataBaseConfig config = new DataBaseConfig();
-        config.recordLength = 22;
-        config.fields = new Integer[]{10, 22};
+        DataBaseConfig config = new DataBaseConfig(22, new Integer[]{10, 22});
 
         File databaseFile = new File("src/main/java/com/github/quaoz/tests/test.db");
         File configFile = new File("src/main/java/com/github/quaoz/tests/config.json");

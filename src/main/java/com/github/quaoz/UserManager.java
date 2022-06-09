@@ -4,10 +4,10 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UserManager {
     private static final int MEMORY = 20 * 1024;
@@ -15,21 +15,38 @@ public class UserManager {
     private static final int HASH_LENGTH = 32;
     private static final int PARALLELISM = 1;
     private static final int ITERATIONS = 20;
+    private static final Argon2PasswordEncoder passwordEncoder = new Argon2PasswordEncoder(SALT_LENGTH, HASH_LENGTH, PARALLELISM, MEMORY, ITERATIONS);
 
-    private static Argon2PasswordEncoder passwordEncoder = new Argon2PasswordEncoder(SALT_LENGTH, HASH_LENGTH, PARALLELISM, MEMORY, ITERATIONS);
+    // usernames: 64 characters, email address 254, password 100
+    // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
+    private static final DataBaseConfig dataBaseConfig = new DataBaseConfig(420, new Integer[]{64, 319, 420});
 
-    // usernames up to 64 characters, email 254 https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698https://stackoverflow.com/questions/3797098/what-are-the-standard-minimum-and-maximum-lengths-of-username-password-and-emai#:~:text=According%20to%20RFC%205321%20(SMTP,That's%20bytes%2C%20not%20characters%3B%20in
-    private static final DataBaseConfig dataBaseConfig = new DataBaseConfig(128, new Integer[]{64, 318 });
     private static final Path dataBaseFile = Path.of("src/main/java/com/github/quaoz/tests/users.db");
     private static final Path dataBaseConfigFile = Path.of("src/main/java/com/github/quaoz/tests/users.json");
-    private static DataBase userDataBase = new DataBase(dataBaseFile, dataBaseConfigFile);
+    //private static DataBase userDataBase = new DataBase(dataBaseFile, dataBaseConfigFile);
 
     private static String encode(String password) {
         return passwordEncoder.encode(password);
     }
 
-    public static void addUser(String username, String email, String password) {
+    public static boolean addUser(String username, String email, String password) {
+        String record = String.format("%-64s %-254s %-32s", username, email, encode(password));
 
+        if (record.length() != 420) {
+            return false;
+        }
+
+       // userDataBase.add(record);
+        return true;
+    }
+
+    public static void main(String[] args) {
+        // https://netcorecloud.com/tutorials/send-email-in-java-using-gmail-smtp/
+        // https://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
+
+        Pattern emailPattern = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
+        Matcher matcher = emailPattern.matcher("email@email.com");
+        System.out.println(matcher.matches());
     }
 
     private static void argon2spring() {

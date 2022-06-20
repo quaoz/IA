@@ -168,7 +168,7 @@ public class DataBase implements Closeable {
 
         String cached = null; // cache.get(field);
 
-        return Objects.requireNonNullElseGet(cached, () -> get(field, 0, config.recordCount, compField));
+        return cached == null ? get(field, 0, config.recordCount, compField) : cached;
     }
 
     /**
@@ -179,17 +179,19 @@ public class DataBase implements Closeable {
      * @param end       The end index of the search
      * @return The record from the database
      */
-    private @NotNull String get(@NotNull String field, long start, long end, int compField) {
+    private String get(@NotNull String field, long start, long end, int compField) {
         long mid = (start + end) / 2;
         String midRecord = get(mid, config.recordLength);
         int comparison = midRecord.substring(compField, config.fields[compField]).strip().compareTo(field);
 
-        if (comparison > 0) {
-            return get(field, start, mid, compField);
-        } else if (comparison < 0) {
-            return get(field, mid, end, compField);
-        } else {
+        if (comparison == 0) {
             return midRecord;
+        } else if (end - start <= 1) {
+            return null;
+        } else if (comparison > 0) {
+            return get(field, start, mid, compField);
+        } else {
+            return get(field, mid, end, compField);
         }
     }
 

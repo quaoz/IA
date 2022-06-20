@@ -19,7 +19,7 @@ public class UserManager {
 
     // usernames: 64 characters, email address 254, password 100
     // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
-    private static final DataBaseConfig dataBaseConfig = new DataBaseConfig(420, new Integer[]{64, 319, 420});
+    //private static final DataBaseConfig dataBaseConfig = new DataBaseConfig(420, new Integer[]{64, 319, 420});
 
     private static final Path dataBaseFile = Path.of("src/main/java/com/github/quaoz/tests/users.db");
     private static final Path dataBaseConfigFile = Path.of("src/main/java/com/github/quaoz/tests/users.json");

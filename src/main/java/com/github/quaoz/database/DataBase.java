@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.File;
@@ -23,12 +24,12 @@ public class DataBase implements Closeable {
     private final DataBaseConfig config;
 
     /**
-     * Creates a new database or loads an existing one
+     * Creates a new blank database or binds to an existing one
      *
      * @param location       The location of the database
      * @param configLocation The location of the config file
      */
-    public DataBase(@NotNull Path location, @NotNull Path configLocation) throws IllegalArgumentException {
+    public DataBase(@NotNull Path location, @NotNull Path configLocation) {
         try {
             Files.createDirectories(location.getParent());
             Files.createDirectories(configLocation.getParent());
@@ -45,6 +46,7 @@ public class DataBase implements Closeable {
             this.location = location.toFile();
             this.configLocation = configLocation.toFile();
             this.config = new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
+            updateRecordCount();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -52,7 +54,14 @@ public class DataBase implements Closeable {
         this.cache = new Cache();
     }
 
-    public DataBase(@NotNull Path location, @NotNull Path configLocation, DataBaseConfig config) throws IllegalArgumentException {
+    /**
+     * Creates a new blank database and config file
+     *
+     * @param location       The location of the database
+     * @param configLocation The location of the config file
+     * @param config         The config object
+     */
+    public DataBase(@NotNull Path location, @NotNull Path configLocation, DataBaseConfig config) {
         try {
             Files.createDirectories(location.getParent());
             Files.createDirectories(configLocation.getParent());
@@ -84,11 +93,13 @@ public class DataBase implements Closeable {
     public void add(@NotNull String record) {
         // cache.add(record);
 
+        // If the database is empty directly write the record
         if (config.recordCount == 0) {
             RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
         } else {
             add(record, 0, config.recordCount);
         }
+
         config.recordCount++;
     }
 
@@ -127,8 +138,9 @@ public class DataBase implements Closeable {
 
         if (mid == 0) {
             if (comparison > 0) {
-                RandomFileHandler.writeBytes(location, config.recordCount * config.recordLength, record.getBytes(StandardCharsets.UTF_8));
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), 1, config.recordLength);
             } else {
+                // TODO ?????
                 RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), 0, config.recordLength);
             }
         } else if (comparison > 0) {
@@ -179,10 +191,13 @@ public class DataBase implements Closeable {
      * @param end       The end index of the search
      * @return The record from the database
      */
-    private String get(@NotNull String field, long start, long end, int compField) {
+    private @Nullable String get(@NotNull String field, long start, long end, int compField) {
         long mid = (start + end) / 2;
         String midRecord = get(mid, config.recordLength);
-        int comparison = midRecord.substring(compField, config.fields[compField]).strip().compareTo(field);
+
+        int comparison = compField == 0
+                ? midRecord.substring(0, config.fields[0]).strip().compareTo(field)
+                : midRecord.substring(config.fields[compField - 1], config.fields[compField]).strip().compareTo(field);
 
         if (comparison == 0) {
             return midRecord;
@@ -218,12 +233,14 @@ public class DataBase implements Closeable {
         String midRecord = get(mid, config.recordLength);
         int comparison = midRecord.substring(0, config.fields[0]).strip().compareTo(field);
 
-        if (comparison > 0) {
-            remove(field, start, mid);
-        } else if (comparison < 0) {
-            remove(field, mid, end);
-        } else {
+        if (comparison == 0) {
             RandomFileHandler.deleteLine(location, mid * config.recordLength, config.recordLength);
+        } else if (end - start > 1) {
+            if (comparison > 0) {
+                remove(field, start, mid);
+            } else {
+                remove(field, mid, end);
+            }
         }
     }
 

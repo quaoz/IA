@@ -198,20 +198,24 @@ public class RandomFileHandler {
             // Seek to the last line in the file
             randomAccessFile.seek(index);
 
-            while (index >= pos) {
-                // Copy the current line one place forwards
-                randomAccessFile.read(line, 0, lineLength);
+           // if (pos == 0) {
+                while (index >= pos) {
+                    // Copy the current line one place forwards
+                    randomAccessFile.read(line, 0, lineLength);
+                    randomAccessFile.seek(index + lineLength);
+                    randomAccessFile.write(line);
+
+                    // Seek back
+                    index -= lineLength;
+                    randomAccessFile.seek(index);
+                }
+
+                // Insert the line
                 randomAccessFile.seek(index + lineLength);
-                randomAccessFile.write(line);
+                randomAccessFile.write(bytes);
+         //   } else {
 
-                // Seek back
-                index -= lineLength;
-                randomAccessFile.seek(index);
-            }
-
-            // Insert the line
-            randomAccessFile.seek(index + lineLength);
-            randomAccessFile.write(bytes);
+         //   }
         } catch (IOException e) {
             System.err.printf("Failed to insert bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
             throw new RuntimeException(e);

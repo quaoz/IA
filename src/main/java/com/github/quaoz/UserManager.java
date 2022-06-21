@@ -19,11 +19,19 @@ public class UserManager {
 
     // usernames: 64 characters, email address 254, password 100
     // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
-    //private static final DataBaseConfig dataBaseConfig = new DataBaseConfig(420, new Integer[]{64, 319, 420});
+    private static final int USERNAME_END = 64;
+    private static final int EMAIL_END = 319;
+    private static final int PASSWORD_END = 420;
+
+    static {
+        final DataBaseConfig dataBaseConfig = new DataBaseConfig();
+        dataBaseConfig.recordLength = 420;
+        dataBaseConfig.fields = new Integer[]{USERNAME_END, EMAIL_END, PASSWORD_END};
+    }
 
     private static final Path dataBaseFile = Path.of("src/main/java/com/github/quaoz/tests/users.db");
     private static final Path dataBaseConfigFile = Path.of("src/main/java/com/github/quaoz/tests/users.json");
-    //private static DataBase userDataBase = new DataBase(dataBaseFile, dataBaseConfigFile);
+    private static final DataBase userDataBase = new DataBase(dataBaseFile, dataBaseConfigFile);
 
     private static String encode(String password) {
         return passwordEncoder.encode(password);
@@ -36,17 +44,28 @@ public class UserManager {
             return false;
         }
 
-       // userDataBase.add(record);
+        userDataBase.add(record);
         return true;
+    }
+
+    public static String getEmail(String username) {
+        String user = userDataBase.get(username, 0);
+        return user.substring(USERNAME_END, EMAIL_END).strip();
+    }
+
+    public static boolean userExists(String username) {
+        return userDataBase.get(username, 0) != null;
     }
 
     public static void main(String[] args) {
         // https://netcorecloud.com/tutorials/send-email-in-java-using-gmail-smtp/
         // https://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
 
-        Pattern emailPattern = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
-        Matcher matcher = emailPattern.matcher("email@email.com");
-        System.out.println(matcher.matches());
+        // Pattern emailPattern = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
+        // Matcher matcher = emailPattern.matcher("email@email.com");
+        // System.out.println(matcher.matches());
+
+
     }
 
     private static void argon2spring() {

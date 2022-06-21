@@ -6,14 +6,14 @@ import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Stream;
 
 // TODO: fuzzy search?
@@ -136,12 +136,46 @@ public class DataBase implements Closeable {
         int comparison = record.substring(0, config.fields[0]).compareTo(
                 get(mid, config.recordLength).substring(0, config.fields[0]));
 
-        if (mid == 0) {
-            if (comparison > 0) {
-                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), 1, config.recordLength);
+        if (mid == 0 || mid == 1) {
+            if (comparison >= 0) {
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid + 1, config.recordLength);
             } else {
-                // TODO ?????
-                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), 0, config.recordLength);
+                String prefix = new Random().ints(48, 123)
+                        .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                        .limit(16)
+                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                        .toString();
+
+                File tmp;
+                try {
+                    tmp = Files.createTempFile(prefix, ".copying").toFile();
+                    tmp.deleteOnExit();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                try (
+                        RandomAccessFile randomAccessFile = new RandomAccessFile(tmp, "rws");
+                        BufferedReader bufferedReader = new BufferedReader(new FileReader(location))
+                ) {
+                    randomAccessFile.seek(0);
+                    randomAccessFile.write(record.getBytes(StandardCharsets.UTF_8));
+
+                    long index = 1;
+                    String line = bufferedReader.readLine();
+                    
+                    while (line != null) {
+                        randomAccessFile.seek(index * config.recordLength);
+                        randomAccessFile.write(line.getBytes(StandardCharsets.UTF_8));
+
+                        line = bufferedReader.readLine();
+                        index++;
+                    }
+
+                    Files.copy(tmp.toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else if (comparison > 0) {
             add(record, start, mid);

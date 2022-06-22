@@ -2,16 +2,13 @@ package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
-import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -96,6 +93,10 @@ public class DataBase implements Closeable {
         // If the database is empty directly write the record
         if (config.recordCount == 0) {
             RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
+        } else if (config.recordCount == 1) {
+            String base = RandomFileHandler.readBytes(location, 0, config.recordLength);
+            // TODO this heere remember
+
         } else {
             add(record, 0, config.recordCount);
         }
@@ -138,7 +139,7 @@ public class DataBase implements Closeable {
 
         if (mid == 0 || mid == 1) {
             if (comparison >= 0) {
-                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid + 1, config.recordLength);
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid + 2, config.recordLength);
             } else {
                 String prefix = new Random().ints(48, 123)
                         .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
@@ -155,27 +156,40 @@ public class DataBase implements Closeable {
                 }
 
                 try (
-                        RandomAccessFile randomAccessFile = new RandomAccessFile(tmp, "rws");
-                        BufferedReader bufferedReader = new BufferedReader(new FileReader(location))
+                        RandomAccessFile temporaryFile = new RandomAccessFile(tmp, "rws");
+                        RandomAccessFile sourceFile = new RandomAccessFile(location, "rws");
                 ) {
-                    randomAccessFile.seek(0);
-                    randomAccessFile.write(record.getBytes(StandardCharsets.UTF_8));
+                    temporaryFile.seek(0);
+                    temporaryFile.write(record.getBytes(StandardCharsets.UTF_8));
 
-                    long index = 1;
-                    String line = bufferedReader.readLine();
-                    
-                    while (line != null) {
-                        randomAccessFile.seek(index * config.recordLength);
-                        randomAccessFile.write(line.getBytes(StandardCharsets.UTF_8));
+                    byte[] line = new byte[config.recordLength];
+                    sourceFile.seek(0);
+                    sourceFile.read(line);
 
-                        line = bufferedReader.readLine();
-                        index++;
+                    long lines = sourceFile.length() / config.recordLength + 1;
+                    for (int i = 1; i < lines; i++) {
+                        temporaryFile.seek((long) i * config.recordLength);
+                        temporaryFile.write(line);
+
+                        sourceFile.seek((long) i * config.recordLength);
+                        sourceFile.read(line);
                     }
-
-                    Files.copy(tmp.toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+                } finally {
+                    try {
+                        Files.copy(tmp.toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        tmp.delete();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+            }
+        } else if (end - start == 1) {
+            if (comparison > 0) {
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
+            } else {
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), (mid - 1) * config.recordLength, config.recordLength);
             }
         } else if (comparison > 0) {
             add(record, start, mid);

@@ -23,8 +23,8 @@ public class DataBaseTester {
                 config
         )) {
             dataBase.add("test4     value4     \n");
-            dataBase.add("test5     value      \n");
             dataBase.add("test1     value      \n");
+            dataBase.add("test5     value      \n");
             dataBase.add("test      value      \n");
             dataBase.add("test2     value2     \n");
             dataBase.add("test3     value3     \n");
@@ -55,7 +55,7 @@ public class DataBaseTester {
             e.printStackTrace();
         }
 
-        if (true) {
+        if (false) {
             databaseFile.delete();
             configFile.delete();
         }

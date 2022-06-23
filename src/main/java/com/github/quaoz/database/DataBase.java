@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -94,9 +95,15 @@ public class DataBase implements Closeable {
         if (config.recordCount == 0) {
             RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
         } else if (config.recordCount == 1) {
-            String base = RandomFileHandler.readBytes(location, 0, config.recordLength);
-            // TODO this heere remember
+            String base = new String(RandomFileHandler.readBytes(location, 0, config.recordLength));
+            int comparison = record.substring(0, config.fields[0]).compareTo(base.substring(0, config.fields[0]));
 
+            if (comparison > 0) {
+                RandomFileHandler.writeBytes(location, config.recordLength, record.getBytes(StandardCharsets.UTF_8));
+            } else {
+                RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
+                RandomFileHandler.writeBytes(location, config.recordLength, base.getBytes(StandardCharsets.UTF_8));
+            }
         } else {
             add(record, 0, config.recordCount);
         }
@@ -137,63 +144,45 @@ public class DataBase implements Closeable {
         int comparison = record.substring(0, config.fields[0]).compareTo(
                 get(mid, config.recordLength).substring(0, config.fields[0]));
 
-        if (mid == 0 || mid == 1) {
-            if (comparison >= 0) {
-                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid + 2, config.recordLength);
-            } else {
-                String prefix = new Random().ints(48, 123)
-                        .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                        .limit(16)
-                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                        .toString();
+        if (end - start == 1) {
+            if (comparison < 0) {
+                if (mid == 0) {
+                    try (RandomAccessFile randomAccessFile = new RandomAccessFile(location, "rws")) {
+                        long index = randomAccessFile.length() - config.recordLength;
+                        byte[] line = new byte[config.recordLength];
 
-                File tmp;
-                try {
-                    tmp = Files.createTempFile(prefix, ".copying").toFile();
-                    tmp.deleteOnExit();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                        // Seek to the last line in the file
+                        randomAccessFile.seek(index);
 
-                try (
-                        RandomAccessFile temporaryFile = new RandomAccessFile(tmp, "rws");
-                        RandomAccessFile sourceFile = new RandomAccessFile(location, "rws");
-                ) {
-                    temporaryFile.seek(0);
-                    temporaryFile.write(record.getBytes(StandardCharsets.UTF_8));
+                        long pos = 0;
 
-                    byte[] line = new byte[config.recordLength];
-                    sourceFile.seek(0);
-                    sourceFile.read(line);
+                        while (index >= pos) {
+                            // Copy the current line one place forwards
+                            randomAccessFile.read(line, 0, config.recordLength);
+                            randomAccessFile.seek(index + config.recordLength);
+                            randomAccessFile.write(line);
 
-                    long lines = sourceFile.length() / config.recordLength + 1;
-                    for (int i = 1; i < lines; i++) {
-                        temporaryFile.seek((long) i * config.recordLength);
-                        temporaryFile.write(line);
+                            // Seek back
+                            index -= config.recordLength;
+                            randomAccessFile.seek(index > 0 ? index : 0);
+                        }
 
-                        sourceFile.seek((long) i * config.recordLength);
-                        sourceFile.read(line);
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    try {
-                        Files.copy(tmp.toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        tmp.delete();
+                        // Insert the line
+                        randomAccessFile.seek(index + config.recordLength);
+                        randomAccessFile.write(record.getBytes(StandardCharsets.UTF_8));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.err.println("L get good");
+                        throw new RuntimeException(e);
                     }
+                } else {
+                    RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
                 }
-            }
-        } else if (end - start == 1) {
-            if (comparison > 0) {
-                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
             } else {
-                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), (mid - 1) * config.recordLength, config.recordLength);
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
             }
-        } else if (comparison > 0) {
-            add(record, start, mid);
         } else if (comparison < 0) {
+            add(record, start, mid);
+        } else if (comparison > 0) {
             add(record, mid, end);
         } else {
             RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);

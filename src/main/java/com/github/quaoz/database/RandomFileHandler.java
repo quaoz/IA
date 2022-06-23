@@ -198,7 +198,7 @@ public class RandomFileHandler {
             // Seek to the last line in the file
             randomAccessFile.seek(index);
 
-            while (index >= pos) {
+            while (index > pos) { // =?
                 // Copy the current line one place forwards
                 randomAccessFile.read(line, 0, lineLength);
                 randomAccessFile.seek(index + lineLength);
@@ -206,7 +206,7 @@ public class RandomFileHandler {
 
                 // Seek back
                 index -= lineLength;
-                randomAccessFile.seek(index);
+                randomAccessFile.seek(index > 0 ? index : 0);
             }
 
             // Insert the line

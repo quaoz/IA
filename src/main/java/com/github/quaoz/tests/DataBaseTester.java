@@ -5,6 +5,7 @@ import com.github.quaoz.database.DataBaseConfig;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class DataBaseTester {
 
@@ -55,7 +56,12 @@ public class DataBaseTester {
             e.printStackTrace();
         }
 
-        if (false) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Do you want to delete the files? [y/n]");
+        char c = (char) scanner.nextByte();
+
+        if (c == 'y') {
             databaseFile.delete();
             configFile.delete();
         }

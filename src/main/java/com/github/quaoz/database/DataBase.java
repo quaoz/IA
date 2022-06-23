@@ -146,37 +146,7 @@ public class DataBase implements Closeable {
 
         if (end - start == 1) {
             if (comparison < 0) {
-                if (mid == 0) {
-                    try (RandomAccessFile randomAccessFile = new RandomAccessFile(location, "rws")) {
-                        long index = randomAccessFile.length() - config.recordLength;
-                        byte[] line = new byte[config.recordLength];
-
-                        // Seek to the last line in the file
-                        randomAccessFile.seek(index);
-
-                        long pos = 0;
-
-                        while (index >= pos) {
-                            // Copy the current line one place forwards
-                            randomAccessFile.read(line, 0, config.recordLength);
-                            randomAccessFile.seek(index + config.recordLength);
-                            randomAccessFile.write(line);
-
-                            // Seek back
-                            index -= config.recordLength;
-                            randomAccessFile.seek(index > 0 ? index : 0);
-                        }
-
-                        // Insert the line
-                        randomAccessFile.seek(index + config.recordLength);
-                        randomAccessFile.write(record.getBytes(StandardCharsets.UTF_8));
-                    } catch (IOException e) {
-                        System.err.println("L get good");
-                        throw new RuntimeException(e);
-                    }
-                } else {
-                    RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
-                }
+                RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), (mid - 1) * config.recordLength, config.recordLength);
             } else {
                 RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
             }

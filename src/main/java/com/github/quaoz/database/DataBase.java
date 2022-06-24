@@ -9,9 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Random;
 import java.util.stream.Stream;
 
 // TODO: fuzzy search?
@@ -314,6 +312,75 @@ public class DataBase implements Closeable {
          */
         public void remove(String record) {
             tree.remove(record);
+        }
+    }
+
+    private class CacheV2 {
+        private static final int TOP_CACHE_SIZE = 100;
+        private static final int RECENT_CACHE_SIZE = 100;
+        private int listSize;
+        private Item[] list;
+
+        public CacheV2() {
+            list = new Item[TOP_CACHE_SIZE + RECENT_CACHE_SIZE];
+            listSize = 0;
+        }
+
+        // 2 arrays ????
+
+        public void add(String record) {
+            String recordComp = record.substring(0, config.recordLength);
+
+            // Iterate over the list to search for the record
+            for (int i = 0; i < listSize; i++) {
+                // If the record is found increase its hits
+                if (recordComp.equals(list[i].value.substring(0, config.recordLength))) {
+                    list[i].hit();
+                    // If the record is in the recent part of the list move it into top if it has enough hits
+                    if (i > TOP_CACHE_SIZE) {
+
+                        // implement
+                    } else {
+                        // Check to see if the records position should change given its new hit
+                        if (i > 0 && list[i].hits > list[i - 1].hits) {
+                            int index = i - 1;
+                            // Iterate back from the record until a large one is found
+                            for (int j = index; j >= 0 ; j--) {
+                                if (list[i].hits < list[j].hits) {
+                                    index = j;
+                                    break;
+                                }
+                            }
+
+                            // Copy the elements back one space and insert the new element
+                            if (TOP_CACHE_SIZE - index >= 0) {
+                                System.arraycopy(list, index, list, index + 1, TOP_CACHE_SIZE - index);
+                            }
+                            list[index] = list[i];
+
+                            // Remove the element from the recent part
+                            System.arraycopy(list, i + 1, list, i, listSize - i);
+                        }
+                    }
+                    return;
+                }
+            }
+
+            if (list.length >= TOP_CACHE_SIZE)
+        }
+
+        private class Item {
+            public int hits;
+            public String value;
+
+            public Item(int hits, String value) {
+                this.hits = hits;
+                this.value = value;
+            }
+
+            public void hit() {
+                hits++;
+            }
         }
     }
 }

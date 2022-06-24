@@ -56,12 +56,11 @@ public class DataBaseTester {
             e.printStackTrace();
         }
 
-        Scanner scanner = new Scanner(System.in);
-
         System.out.println("Do you want to delete the files? [y/n]");
-        char c = (char) scanner.nextByte();
+        Scanner s = new Scanner(System.in);
+        String str = s.nextLine();
 
-        if (c == 'y') {
+        if (str.startsWith("y")) {
             databaseFile.delete();
             configFile.delete();
         }

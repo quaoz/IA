@@ -152,10 +152,8 @@ public class DataBase implements Closeable {
             }
         } else if (comparison < 0) {
             add(record, start, mid);
-        } else if (comparison > 0) {
-            add(record, mid, end);
         } else {
-            RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
+            add(record, mid, end);
         }
     }
 

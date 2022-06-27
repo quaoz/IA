@@ -318,59 +318,60 @@ public class DataBase implements Closeable {
     private class CacheV2 {
         private static final int TOP_CACHE_SIZE = 100;
         private static final int RECENT_CACHE_SIZE = 100;
-        private int listSize;
-        private Item[] list;
+        private int recentListSize;
+        private int topListSize;
+        private Item[] recentList;
+        private Item[] topList;
+
 
         public CacheV2() {
-            list = new Item[TOP_CACHE_SIZE + RECENT_CACHE_SIZE];
-            listSize = 0;
+            recentList = new Item[RECENT_CACHE_SIZE];
+            topList = new Item[TOP_CACHE_SIZE];
+            recentListSize = 0;
+            topListSize = 0;
         }
 
         // 2 arrays ????
 
         public void add(String record) {
-            String recordComp = record.substring(0, config.recordLength);
+            String recordComp = record.substring(0, config.recordLength).strip();
 
-            // Iterate over the list to search for the record
-            for (int i = 0; i < listSize; i++) {
-                // If the record is found increase its hits
-                if (recordComp.equals(list[i].value.substring(0, config.recordLength))) {
-                    list[i].hit();
-                    // If the record is in the recent part of the list move it into top if it has enough hits
-                    if (i > TOP_CACHE_SIZE) {
+            for (int i = 0; i < TOP_CACHE_SIZE; i++) {
+                if (recordComp.equals(topList[i].value.substring(0, config.fields[0]).strip())) {
+                    topList[i].hit();
 
-                        // implement
-                    } else {
-                        // Check to see if the records position should change given its new hit
-                        if (i > 0 && list[i].hits > list[i - 1].hits) {
-                            int index = i - 1;
-                            // Iterate back from the record until a large one is found
-                            for (int j = index; j >= 0 ; j--) {
-                                if (list[i].hits < list[j].hits) {
-                                    index = j;
-                                    break;
-                                }
+                    // move to right place
+                    if (i == 0) {
+                        return;
+                    } else if (i == 1 && topList[1].getHits() > topList[0].hits) {
+                        Item tmp = topList[0];
+                        topList[0] = topList[1];
+                        topList[1] = tmp;
+                        return;
+                    } else if (topList[i].getHits() > topList[i - 1].getHits()) {
+                        Item tmp = topList[i];
+                        int endIndex = i - 1;
+                        int length = 0;
+
+                        while (endIndex >= 0) {
+                            if (topList[endIndex - 1].getHits() > tmp.getHits()) {
+                                endIndex--;
+                                length++;
+                            } else {
+                                break;
                             }
-
-                            // Copy the elements back one space and insert the new element
-                            if (TOP_CACHE_SIZE - index >= 0) {
-                                System.arraycopy(list, index, list, index + 1, TOP_CACHE_SIZE - index);
-                            }
-                            list[index] = list[i];
-
-                            // Remove the element from the recent part
-                            System.arraycopy(list, i + 1, list, i, listSize - i);
                         }
+
+                        System.arraycopy(topList, endIndex, topList, endIndex - 1, length);
+                        topList[endIndex] = tmp;
+                        return;
                     }
-                    return;
                 }
             }
-
-            if (list.length >= TOP_CACHE_SIZE)
         }
 
         private class Item {
-            public int hits;
+            private int hits;
             public String value;
 
             public Item(int hits, String value) {
@@ -380,6 +381,10 @@ public class DataBase implements Closeable {
 
             public void hit() {
                 hits++;
+            }
+
+            public int getHits() {
+                return hits;
             }
         }
     }

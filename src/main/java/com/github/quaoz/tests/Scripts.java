@@ -41,7 +41,6 @@ public class Scripts {
                 break;
             }
         }
-        System.out.println("length = " + length);
 
         if (length == 0) {
             topList[i] = topList[endIndex];

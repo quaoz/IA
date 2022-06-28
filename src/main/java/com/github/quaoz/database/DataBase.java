@@ -2,6 +2,7 @@ package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
+import com.github.quaoz.tests.Scripts;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -320,8 +321,8 @@ public class DataBase implements Closeable {
         private static final int RECENT_CACHE_SIZE = 100;
         private int recentListSize;
         private int topListSize;
-        private Item[] recentList;
-        private Item[] topList;
+        private final Item[] recentList;
+        private final Item[] topList;
 
 
         public CacheV2() {
@@ -331,30 +332,98 @@ public class DataBase implements Closeable {
             topListSize = 0;
         }
 
-        // 2 arrays ????
+        public @Nullable String get(String field, int compField) {
+            field = field.strip();
 
-        public void add(String record) {
+            if (compField == 0) {
+                for (Item item : topList) {
+                    if (field.equals(item.value.substring(0, config.fields[0]).strip())) {
+                        return item.value;
+                    }
+                }
+            } else {
+                for (Item item : recentList) {
+                    if (field.equals(item.value.substring(config.fields[compField], config.fields[compField + 1]))) {
+                        return item.value;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void remove(String field, int compField) {
+            field = field.strip();
+
+            if (compField == 0) {
+                for (int i = 0; i < topListSize; i++) {
+                    if (field.equals(topList[i].value.substring(0, config.fields[0]))) {
+                        System.arraycopy(topList, i + 1, topList, i, topListSize - i);
+                        topListSize--;
+                    }
+                }
+
+                for (int i = 0; i < recentListSize; i++) {
+                    if (field.equals(recentList[i].value.substring(0, config.fields[0]))) {
+                        System.arraycopy(recentList, i + 1, recentList, i, recentListSize - i);
+                        recentListSize--;
+                    }
+                }
+            } else {
+                for (int i = 0; i < topListSize; i++) {
+                    if (field.equals(topList[i].value.substring(config.fields[compField - 1], config.fields[compField]))) {
+                        System.arraycopy(topList, i + 1, topList, i, topListSize - i);
+                        topListSize--;
+                    }
+                }
+
+                for (int i = 0; i < recentListSize; i++) {
+                    if (field.equals(recentList[i].value.substring(config.fields[compField - 1], config.fields[compField]))) {
+                        System.arraycopy(recentList, i + 1, recentList, i, recentListSize - i);
+                        recentListSize--;
+                    }
+                }
+            }
+        }
+
+        public void add(@NotNull String record) {
             String recordComp = record.substring(0, config.recordLength).strip();
 
+            if (topListSize < TOP_CACHE_SIZE) {
+                topList[topListSize] = new Item(1, record);
+                topListSize++;
+                return;
+            } else if (recentListSize < RECENT_CACHE_SIZE) {
+                System.arraycopy(recentList, 0, recentList, 1, recentListSize);
+                recentList[0] = new Item(1, record);
+                recentListSize++;
+                return;
+            }
+
+            // Search the top cache for a matching record
             for (int i = 0; i < TOP_CACHE_SIZE; i++) {
                 if (recordComp.equals(topList[i].value.substring(0, config.fields[0]).strip())) {
+                    // If a record is found increase its hits
                     topList[i].hit();
 
-                    // move to right place
+                    // Adjust the records position in the cache based on its hits
                     if (i == 0) {
+                        // If it's the first record do nothing
                         return;
                     } else if (i == 1 && topList[1].getHits() > topList[0].hits) {
+                        // If it's the second record swap it with the first one
                         Item tmp = topList[0];
                         topList[0] = topList[1];
                         topList[1] = tmp;
                         return;
                     } else if (topList[i].getHits() > topList[i - 1].getHits()) {
                         Item tmp = topList[i];
-                        int endIndex = i - 1;
+                        int endIndex = i;
                         int length = 0;
 
-                        while (endIndex >= 0) {
-                            if (topList[endIndex - 1].getHits() > tmp.getHits()) {
+                        // Iterate back through the array until an element with more hits is found
+                        while (endIndex > 0) {
+                            if (topList[endIndex - 1].getHits() <= tmp.getHits()) {
                                 endIndex--;
                                 length++;
                             } else {
@@ -362,12 +431,57 @@ public class DataBase implements Closeable {
                             }
                         }
 
-                        System.arraycopy(topList, endIndex, topList, endIndex - 1, length);
+                        if (length == 0) {
+                            topList[i] = topList[endIndex];
+                        } else {
+                            // Shift the elements down one
+                            System.arraycopy(topList, endIndex, topList, endIndex + 1, length);
+                        }
+                        // Add the record in the right place
                         topList[endIndex] = tmp;
                         return;
                     }
                 }
             }
+
+            for (int i = 0; i < RECENT_CACHE_SIZE; i++) {
+                if (recordComp.equals(recentList[i].value.substring(0, config.fields[0]).strip())) {
+                    recentList[i].hit();
+
+                    // Move the record into the top cache if it has enough hits
+                    Item tmp = recentList[i];
+                    if (recentList[i].getHits() >= topList[TOP_CACHE_SIZE].getHits()) {
+                        int endIndex = TOP_CACHE_SIZE;
+                        int length = 0;
+
+                        // Iterate back through the array until an element with more hits is found
+                        while (endIndex > 0) {
+                            if (topList[endIndex - 1].getHits() <= tmp.getHits()) {
+                                endIndex--;
+                                length++;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (length == 0) {
+                            topList[TOP_CACHE_SIZE] = tmp;
+                            System.arraycopy(recentList, i + 1, recentList, i, recentList.length - i);
+                        } else {
+                            System.arraycopy(topList, endIndex, topList, endIndex + 1, length);
+                            topList[endIndex] = tmp;
+                        }
+
+                    } else {
+                        System.arraycopy(recentList, 0, recentList, 1, i - 1);
+                        recentList[0] = tmp;
+                    }
+                    return;
+                }
+            }
+
+            System.arraycopy(recentList, 0, recentList, 1, recentList.length - 1);
+            recentList[0] = new Item(1, record);
         }
 
         private class Item {

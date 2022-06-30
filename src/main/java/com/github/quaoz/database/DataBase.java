@@ -11,11 +11,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 // TODO: fuzzy search?
 public class DataBase implements Closeable {
-    private final Cache cache;
+    private final CacheV2 cache;
     private final File location;
     private final File configLocation;
     private final DataBaseConfig config;
@@ -48,7 +50,7 @@ public class DataBase implements Closeable {
             throw new RuntimeException(e);
         }
 
-        this.cache = new Cache();
+        this.cache = new CacheV2();
     }
 
     /**
@@ -79,7 +81,7 @@ public class DataBase implements Closeable {
             throw new RuntimeException(e);
         }
 
-        this.cache = new Cache();
+        this.cache = new CacheV2();
     }
 
     /**
@@ -88,7 +90,7 @@ public class DataBase implements Closeable {
      * @param record The record to add
      */
     public void add(@NotNull String record) {
-        // cache.add(record);
+        cache.add(record);
 
         // If the database is empty directly write the record
         if (config.recordCount == 0) {
@@ -182,8 +184,7 @@ public class DataBase implements Closeable {
             return null;
         }
 
-        String cached = null; // cache.get(field);
-
+        String cached = cache.get(field, compField);
         return cached == null ? get(field, 0, config.recordCount, compField) : cached;
     }
 
@@ -198,6 +199,18 @@ public class DataBase implements Closeable {
     private @Nullable String get(@NotNull String field, long start, long end, int compField) {
         long mid = (start + end) / 2;
         String midRecord = get(mid, config.recordLength);
+
+        /*
+        AtomicBoolean input = new AtomicBoolean(false);
+
+        while (!input.get()) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        */
 
         int comparison = compField == 0
                 ? midRecord.substring(0, config.fields[0]).strip().compareTo(field)
@@ -220,7 +233,7 @@ public class DataBase implements Closeable {
      * @param field The record to remove
      */
     public void remove(String field) {
-        // cache.remove(field);
+        cache.remove(field);
         remove(field, 0, config.recordCount);
         config.recordCount--;
     }
@@ -338,12 +351,14 @@ public class DataBase implements Closeable {
             if (compField == 0) {
                 for (Item item : topList) {
                     if (field.equals(item.value.substring(0, config.fields[0]).strip())) {
+                        add(item.value);
                         return item.value;
                     }
                 }
             } else {
                 for (Item item : recentList) {
                     if (field.equals(item.value.substring(config.fields[compField], config.fields[compField + 1]))) {
+                        add(item.value);
                         return item.value;
                     }
                 }
@@ -352,36 +367,22 @@ public class DataBase implements Closeable {
             return null;
         }
 
-        public void remove(String field, int compField) {
+        public void remove(String field) {
             field = field.strip();
 
-            if (compField == 0) {
-                for (int i = 0; i < topListSize; i++) {
-                    if (field.equals(topList[i].value.substring(0, config.fields[0]))) {
-                        System.arraycopy(topList, i + 1, topList, i, topListSize - i);
-                        topListSize--;
-                    }
+            for (int i = 0; i < topListSize; i++) {
+                if (field.equals(topList[i].value.substring(0, config.fields[0]))) {
+                    System.arraycopy(topList, i + 1, topList, i, topListSize - i);
+                    topListSize--;
+                    return;
                 }
+            }
 
-                for (int i = 0; i < recentListSize; i++) {
-                    if (field.equals(recentList[i].value.substring(0, config.fields[0]))) {
-                        System.arraycopy(recentList, i + 1, recentList, i, recentListSize - i);
-                        recentListSize--;
-                    }
-                }
-            } else {
-                for (int i = 0; i < topListSize; i++) {
-                    if (field.equals(topList[i].value.substring(config.fields[compField - 1], config.fields[compField]))) {
-                        System.arraycopy(topList, i + 1, topList, i, topListSize - i);
-                        topListSize--;
-                    }
-                }
-
-                for (int i = 0; i < recentListSize; i++) {
-                    if (field.equals(recentList[i].value.substring(config.fields[compField - 1], config.fields[compField]))) {
-                        System.arraycopy(recentList, i + 1, recentList, i, recentListSize - i);
-                        recentListSize--;
-                    }
+            for (int i = 0; i < recentListSize; i++) {
+                if (field.equals(recentList[i].value.substring(0, config.fields[0]))) {
+                    System.arraycopy(recentList, i + 1, recentList, i, recentListSize - i);
+                    recentListSize--;
+                    return;
                 }
             }
         }

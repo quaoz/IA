@@ -143,7 +143,7 @@ public class DataBase implements Closeable {
     private void add(@NotNull String record, long start, long end) {
         long mid = (start + end) / 2;
         int comparison = record.substring(0, config.fields[0]).compareTo(
-                get(mid, config.recordLength).substring(0, config.fields[0]));
+                get(mid).substring(0, config.fields[0]));
 
         if (end - start == 1) {
             if (comparison < 0) {
@@ -162,15 +162,14 @@ public class DataBase implements Closeable {
      * Gets a record from the database
      *
      * @param index  The index of the record to get
-     * @param length The length of the record to get
      * @return The string representation of the record at the given index
      */
-    public String get(long index, int length) {
+    public String get(long index) {
         if (index < 0 || index >= config.recordCount) {
             return null;
         }
 
-        return new String(RandomFileHandler.readBytes(location, index * length, length));
+        return new String(RandomFileHandler.readBytes(location, index * config.recordLength, config.recordLength));
     }
 
     /**
@@ -198,19 +197,7 @@ public class DataBase implements Closeable {
      */
     private @Nullable String get(@NotNull String field, long start, long end, int compField) {
         long mid = (start + end) / 2;
-        String midRecord = get(mid, config.recordLength);
-
-        /*
-        AtomicBoolean input = new AtomicBoolean(false);
-
-        while (!input.get()) {
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        */
+        String midRecord = get(mid);
 
         int comparison = compField == 0
                 ? midRecord.substring(0, config.fields[0]).strip().compareTo(field)
@@ -225,6 +212,34 @@ public class DataBase implements Closeable {
         } else {
             return get(field, mid, end, compField);
         }
+    }
+
+    /**
+     * @param field The field to search for
+     * @param compField The index of the field
+     * @return A list of all records matching the field
+     */
+    public ArrayList<String> collect(String field, int compField) {
+        ArrayList<String> list = new ArrayList<>();
+        field = field.strip();
+
+        if (compField == 0) {
+            for (long i = 0; i < config.recordCount; i++) {
+                String line = get(i);
+                if (line.substring(0, config.fields[0]).strip().equals(field)) {
+                    list.add(line);
+                }
+            }
+        } else {
+            for (long i = 0; i < config.recordCount; i++) {
+                String line = get(i);
+                if (line.substring(config.fields[compField - 1], config.fields[compField]).strip().equals(field)) {
+                    list.add(line);
+                }
+            }
+        }
+
+        return list;
     }
 
     /**
@@ -247,7 +262,7 @@ public class DataBase implements Closeable {
      */
     private void remove(@NotNull String field, long start, long end) {
         long mid = (start + end) / 2;
-        String midRecord = get(mid, config.recordLength);
+        String midRecord = get(mid);
         int comparison = midRecord.substring(0, config.fields[0]).strip().compareTo(field);
 
         if (comparison == 0) {

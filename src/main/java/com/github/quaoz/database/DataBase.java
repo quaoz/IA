@@ -185,8 +185,22 @@ public class DataBase implements Closeable {
 			return null;
 		}
 
+		//TODO: if we are searching with a compField != 0 we have to do a linear search as the records will not be sorted
+		if (compField != 0) {
+			/* A bad workaround for now is to just collect all the records which match this one and return the first one
+			 *
+			 * This isn't a big issue as it doesn't make sense for get search by any non-unique identifier anyway, the
+			 * first field is always the unique one and (so far) I don't think that get is called with any other field.
+			 * It may make sense to remove the compField parameter from get entirely as I cannot think of a scenario
+			 * where it is preferable to use get over collect for any non-unique field.
+			 */
+			return collect(field, compField).get(0);
+		}
+
 		String cached = cache.get(field, compField);
-		return cached == null ? get(field, 0, config.recordCount, compField) : cached;
+		return config.recordCount > 0
+				? cached == null ? get(field, 0, config.recordCount, compField) : cached
+				: null;
 	}
 
 	/**
@@ -357,7 +371,6 @@ public class DataBase implements Closeable {
 		private int recentListSize;
 		private int topListSize;
 
-
 		public CacheV2() {
 			recentList = new Item[RECENT_CACHE_SIZE];
 			topList = new Item[TOP_CACHE_SIZE];
@@ -370,14 +383,14 @@ public class DataBase implements Closeable {
 
 			if (compField == 0) {
 				for (Item item : topList) {
-					if (field.equals(item.value.substring(0, config.fields[0]).strip())) {
+					if (item != null && field.equals(item.value.substring(0, config.fields[0]).strip())) {
 						add(item.value);
 						return item.value;
 					}
 				}
 			} else {
 				for (Item item : recentList) {
-					if (field.equals(item.value.substring(config.fields[compField], config.fields[compField + 1]))) {
+					if (item != null && field.equals(item.value.substring(config.fields[compField], config.fields[compField + 1]))) {
 						add(item.value);
 						return item.value;
 					}

@@ -121,7 +121,7 @@ public class RandomFileHandler {
 
 			randomAccessFile.write(bytes);
 		} catch (IOException e) {
-			System.err.printf("Failed to write bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
+			System.err.printf("Failed to write bytes %s at %d in %s", Arrays.toString(bytes), pos, file.getAbsolutePath());
 			throw new RuntimeException(e);
 		}
 	}

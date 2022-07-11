@@ -6,7 +6,9 @@
 
 ## UI Design:
 
-For all screens, except “profile” and “submit record” (which will not be available), if the user is not signed in the “submit record” and “profile” buttons will be replaced with “sign in” and “sign up” as seen in the “signed out homepage” screen.
+For all screens, except “profile” and “submit record” (which will not be available), if the user is not signed in the
+“submit record” and “profile” buttons will be replaced with “sign in” and “sign up” as seen in the “signed out homepage”
+screen.
 
 ### Homepage (signed out):
 

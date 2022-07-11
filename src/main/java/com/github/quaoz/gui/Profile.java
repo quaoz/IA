@@ -16,10 +16,6 @@ public class Profile {
 	private JList<String> recordList;
 	private JScrollPane recordScrollPane;
 
-	public JPanel resolve() {
-		return panel;
-	}
-
 	public Profile(GUI gui) {
 		$$$setupUI$$$();
 		submitRecordButton.addActionListener(e -> {
@@ -38,6 +34,10 @@ public class Profile {
 			//TODO: Do search
 			gui.render(GUI.Content.SEARCH_RESULTS);
 		});
+	}
+
+	public JPanel resolve() {
+		return panel;
 	}
 
 	/**

@@ -21,6 +21,7 @@ public class UserManager {
 	private static final File userDatabaseFile = new File("src/main/java/com/github/quaoz/tests/db/users.db");
 	private static final File userConfigFile = new File("src/main/java/com/github/quaoz/tests/db/users.json");
 	private static final DataBaseConfig userConfig = new DataBaseConfig();
+	private static final DataBase userDatabase = new DataBase(userDatabaseFile.toPath(), userConfigFile.toPath(), userConfig);
 
 	static {
 		userConfig.recordLength = 418;
@@ -28,8 +29,6 @@ public class UserManager {
 		// https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
 		userConfig.fields = new Integer[]{64, 319, 418};
 	}
-
-	private static final DataBase userDatabase = new DataBase(userDatabaseFile.toPath(), userConfigFile.toPath(), userConfig);
 
 	private static String encode(String password) {
 		return passwordEncoder.encode(password);

@@ -77,6 +77,7 @@ public class DataBase implements Closeable {
 			this.location = location.toFile();
 			this.configLocation = configLocation.toFile();
 			this.config = new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
+			updateRecordCount();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

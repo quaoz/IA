@@ -9,14 +9,9 @@ import java.util.ArrayList;
 public class MothManager {
 	private static final File mothsDatabaseFile = new File("src/main/java/com/github/quaoz/tests/db/moths.db");
 	private static final File mothsConfigFile = new File("src/main/java/com/github/quaoz/tests/db/moths.json");
-	private static final DataBaseConfig mothsConfig = new DataBaseConfig();
+	// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
+	private static final DataBaseConfig mothsConfig = new DataBaseConfig().init(368, new Integer[]{64, 128, 144, 176, 240, 368});
 	private static final DataBase mothsDatabase = new DataBase(mothsDatabaseFile.toPath(), mothsConfigFile.toPath(), mothsConfig);
-
-	static {
-		mothsConfig.recordLength = 368;
-		// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
-		mothsConfig.fields = new Integer[]{64, 128, 144, 176, 240, 368};
-	}
 
 	public static Moth basicSearch(String name) {
 		String record = mothsDatabase.get(name, 0);

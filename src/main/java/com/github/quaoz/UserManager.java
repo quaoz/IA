@@ -20,22 +20,17 @@ public class UserManager {
 	// Database
 	private static final File userDatabaseFile = new File("src/main/java/com/github/quaoz/tests/db/users.db");
 	private static final File userConfigFile = new File("src/main/java/com/github/quaoz/tests/db/users.json");
-	private static final DataBaseConfig userConfig = new DataBaseConfig();
+	// usernames 64, email address 254, password 100
+	// https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
+	private static final DataBaseConfig userConfig = new DataBaseConfig().init(418, new Integer[]{64, 319, 418});
 	private static final DataBase userDatabase = new DataBase(userDatabaseFile.toPath(), userConfigFile.toPath(), userConfig);
-
-	static {
-		userConfig.recordLength = 418;
-		// usernames 64, email address 254, password 100
-		// https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
-		userConfig.fields = new Integer[]{64, 319, 418};
-	}
 
 	private static String encode(String password) {
 		return passwordEncoder.encode(password);
 	}
 
 	public static boolean addUser(String username, String email, String password) {
-		String record = String.format("%-64s %-254s %-32s", username, email, encode(password));
+		String record = String.format("%-64s %-254s %-100s", username, email, encode(password));
 
 		if (record.length() != userConfig.recordLength) {
 			return false;
@@ -45,12 +40,21 @@ public class UserManager {
 		return true;
 	}
 
-	public static boolean validateUser(String username, String password) {
+	public static boolean validateUser(String username, char[] password) {
 		String userRecord = userDatabase.get(username, 0);
-		password = encode(password);
+
+		String hashed = passwordEncoder.encode("1234567812345678123456781234567812345678");
+		System.out.println(hashed);
+		boolean matches = passwordEncoder.matches("1234567812345678123456781234567812345678", hashed);
+		System.out.println(matches);
+
+		System.out.println(String.valueOf(password));
+		String hash = userRecord.substring(userConfig.fields[1], userConfig.fields[2]).strip();
+		System.out.println(hash);
+		System.out.println(passwordEncoder.matches(String.valueOf(password), hash));
 
 		if (userRecord != null) {
-			return passwordEncoder.matches(password, userRecord.substring(userConfig.fields[1], userConfig.fields[2]).strip());
+			return passwordEncoder.matches(String.valueOf(password), userRecord.substring(userConfig.fields[1], userConfig.fields[2]).strip());
 		} else {
 			return false;
 		}

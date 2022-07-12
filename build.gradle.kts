@@ -31,7 +31,7 @@ dependencies {
 
     // GUI
     implementation("com.jgoodies:jgoodies-forms:1.9.0")
-    compileOnly("com.jetbrains.intellij.java:java-gui-forms-rt:221.5921.27")
+    implementation("com.jetbrains.intellij.java:java-gui-forms-rt:221.5921.27")
 
     // Other
     implementation("me.xdrop:fuzzywuzzy:1.4.0")

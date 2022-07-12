@@ -17,7 +17,6 @@ public class GUI {
 	private SearchResultsForm searchResults;
 	private RecordForm record;
 	private SimpleStack<Content> callStack;
-	//private Content pastContent;
 	private Content currentContent;
 
 	/*

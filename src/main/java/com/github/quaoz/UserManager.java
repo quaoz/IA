@@ -25,14 +25,27 @@ public class UserManager {
 	private static final DataBaseConfig userConfig = new DataBaseConfig().init(418, new Integer[]{64, 319, 418});
 	private static final DataBase userDatabase = new DataBase(userDatabaseFile.toPath(), userConfigFile.toPath(), userConfig);
 
-	private static String encode(String password) {
-		return passwordEncoder.encode(password);
+	private static String encode(char[] password) {
+		return passwordEncoder.encode(String.valueOf(password));
 	}
 
-	public static boolean addUser(String username, String email, String password) {
-		String record = String.format("%-64s %-254s %-100s", username, email, encode(password));
+	public static boolean addUser(String username, String email, char[] password) {
+		String encode = encode(password);
+		String record = String.format("%-64s%-254s%-100s", username, email, encode);
 
-		if (record.length() != userConfig.recordLength) {
+		System.out.println(String.valueOf(password));
+		System.out.println(record);
+		System.out.println(record.length());
+
+		// spaces dickhead!!!!!
+
+		System.out.println(record.substring(userConfig.fields[1], userConfig.fields[2]));
+		assert record.substring(userConfig.fields[1], userConfig.fields[2]).equals(encode);
+		System.out.println(passwordEncoder.matches(String.valueOf(password), encode));
+		System.out.println(passwordEncoder.matches(String.valueOf(password), record.substring(userConfig.fields[1], userConfig.fields[2])));
+		System.out.println("\"" + encode + "\"");
+
+		if (record.length() != userConfig.recordLength + 1) {
 			return false;
 		}
 

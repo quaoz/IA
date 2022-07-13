@@ -32,7 +32,7 @@ public class SignUpForm {
 		registeredButton.addActionListener(e -> {
 			//TODO: register
 			if (!UserManager.userExists(usernameField.getText().strip())) {
-				UserManager.addUser(usernameField.getText().strip(), emailField.getText().strip(), Arrays.toString(passwordField.getPassword()).strip());
+				UserManager.addUser(usernameField.getText().strip(), emailField.getText().strip(), passwordField.getPassword());
 				gui.render(GUI.Content.HOME_LOGGED_IN);
 			}
 		});

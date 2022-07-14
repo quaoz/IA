@@ -28,6 +28,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-crypto:5.7.1")
     implementation("org.bouncycastle:bcpkix-jdk15on:1.70")
     implementation("commons-logging:commons-logging:1.2")
+    implementation("de.mkammerer:argon2-jvm:2.11")
 
     // GUI
     implementation("com.jgoodies:jgoodies-forms:1.9.0")

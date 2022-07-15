@@ -14,25 +14,20 @@ public class UserManager {
 	private static final File userConfigFile = new File("src/main/java/com/github/quaoz/tests/db/users.json");
 	// usernames 64, email address 254, password 100
 	// https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
-	private static final DataBaseConfig userConfig = new DataBaseConfig().init(418, new Integer[]{64, 319, 418});
+	private static final DataBaseConfig userConfig = new DataBaseConfig().init(418, new Integer[]{64, 318, 418});
 	private static final DataBase userDatabase = new DataBase(userDatabaseFile.toPath(), userConfigFile.toPath(), userConfig);
 
-	public static boolean addUser(String username, String email, char[] password) {
-		String hash = Argon2id.hash(password);
-		String record = String.format("%-64s%-254s%-100s", username, email, hash);
-
-		System.out.println("hash = " + hash);
-		System.out.println("record = " + record);
+	public static void addUser(String username, String email, char[] password) {
+		String record = String.format("%-64s%-254s%-100s", username, email, Argon2id.hash(password));
 		userDatabase.add(record);
-		return true;
 	}
 
 	public static boolean validateUser(String username, char[] password) {
 		String userRecord = userDatabase.get(username, 0);
 
 		if (userRecord != null) {
-			System.out.println("userRecord = " + userRecord);
-			return Argon2id.verify(userRecord.substring(userConfig.fields[1], userConfig.fields[2]).strip(), password);
+			String hash = userRecord.substring(userConfig.fields[1], userConfig.fields[2]).strip();
+			return Argon2id.verify(hash, password);
 		} else {
 			return false;
 		}

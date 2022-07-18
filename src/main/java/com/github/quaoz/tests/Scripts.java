@@ -1,8 +1,29 @@
 package com.github.quaoz.tests;
 
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
+import de.mkammerer.argon2.Argon2Helper;
+
 public class Scripts {
+	private static final int ITERATIONS = 3;
+	private static final int MEMORY = 262144;
+	private static final int PARALLELISM = 1;
+	private static final int SALT_LENGTH = 16;
+	private static final int HASH_LENGTH = 32;
+	private static final Argon2Factory.Argon2Types TYPE = Argon2Factory.Argon2Types.ARGON2id;
+
 	public static void main(String[] args) {
-		m();
+		d();
+	}
+
+	public static void d() {
+		Argon2 argon2 = Argon2Factory.create(TYPE, SALT_LENGTH, HASH_LENGTH);
+		// 1000 = The hash call must take at most 1000 ms
+		// 65536 = Memory cost
+		// 1 = parallelism
+		int iterations = Argon2Helper.findIterations(argon2, 1000, 262144, 1);
+
+		System.out.println("Optimal number of iterations: " + iterations);
 	}
 
 	private static void m() {

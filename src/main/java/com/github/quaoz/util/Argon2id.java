@@ -2,12 +2,10 @@ package com.github.quaoz.util;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public class Argon2id {
-	private static final int ITERATIONS = 3;
-	private static final int MEMORY = 262144;
+	private static final int ITERATIONS = 4;
+	private static final int MEMORY = 256 * 1024; // 256 kibikytes
 	private static final int PARALLELISM = 1;
 	private static final int SALT_LENGTH = 16;
 	private static final int HASH_LENGTH = 32;
@@ -18,31 +16,37 @@ public class Argon2id {
 	// https://www.twelve21.io/how-to-choose-the-right-parameters-for-argon2/
 	// https://cryptobook.nakov.com/mac-and-key-derivation/password-encryption#secure-kdf-based-password-hashing-recommended
 
-	@Contract(" -> new")
-	private static @NotNull Argon2 getArgon() {
-		return Argon2Factory.create(TYPE, SALT_LENGTH, HASH_LENGTH);
-	}
-
+	/**
+	 * Returns the hashed password
+	 *
+	 * @param password The password
+	 *
+	 * @return The hashed password
+	 */
 	public static String hash(char[] password) {
-		String passwordHash;
-
 		// Generate the hash from the user's password.
-		try {
-			passwordHash = argon2id.hash(ITERATIONS, MEMORY, PARALLELISM, password);
-		} finally {
-			// Wipe confidential data
-			argon2id.wipeArray(password);
-		}
+		String passwordHash = argon2id.hash(ITERATIONS, MEMORY, PARALLELISM, password);
+
+		// Wipe confidential data
+		argon2id.wipeArray(password);
 
 		return passwordHash;
 	}
 
-	public static boolean verify(String keyStoreHash, char[] password) {
-		try {
-			return getArgon().verify(keyStoreHash, password);
-		} finally {
-			// Wipe confidential data
-			// argon2id.wipeArray(password);
-		}
+	/**
+	 * Verifies whether the password matches the hash
+	 *
+	 * @param passwordHash The hashed password
+	 * @param password	   The password
+	 *
+	 * @return {@code true} if the password matches the hash
+	 */
+	public static boolean verify(String passwordHash, char[] password) {
+		boolean valid = argon2id.verify(passwordHash, password);
+
+		// Wipe confidential data
+		argon2id.wipeArray(password);
+
+		return valid;
 	}
 }

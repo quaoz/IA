@@ -6,7 +6,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
-import java.util.Arrays;
 
 public class SignUpForm {
 	private JPanel panel;
@@ -99,4 +98,5 @@ public class SignUpForm {
 	public JComponent $$$getRootComponent$$$() {
 		return panel;
 	}
+
 }

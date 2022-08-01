@@ -6,7 +6,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
-import java.util.Arrays;
 
 public class SignInForm {
 	private JPanel panel;
@@ -27,7 +26,7 @@ public class SignInForm {
 	public SignInForm(GUI gui) {
 		signInButton.addActionListener(e -> {
 			//TODO: Sign in
-			if (UserManager.validateUser(usernameField.getText().strip(),passwordField.getPassword())) {
+			if (UserManager.validateUser(usernameField.getText().strip(), passwordField.getPassword())) {
 				gui.render(GUI.Content.HOME_LOGGED_IN);
 			} else {
 				gui.render(GUI.Content.HOME_LOGGED_OUT);

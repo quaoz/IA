@@ -114,4 +114,5 @@ public class RecordForm {
 	public JComponent $$$getRootComponent$$$() {
 		return panel;
 	}
+
 }

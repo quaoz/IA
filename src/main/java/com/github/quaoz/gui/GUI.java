@@ -2,6 +2,7 @@ package com.github.quaoz.gui;
 
 import com.github.quaoz.structures.SimpleStack;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 import javax.swing.*;
 
@@ -37,6 +38,8 @@ public class GUI {
 	}
 
 	public GUI init() {
+		SignUpForm.init();
+
 		// Initialise base frame
 		frame = new JFrame("IA");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,6 +60,7 @@ public class GUI {
 		render(Content.HOME_LOGGED_OUT);
 		frame.setVisible(true);
 
+		Logger.info("GUI created");
 		return this;
 	}
 

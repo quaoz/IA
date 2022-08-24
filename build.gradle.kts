@@ -25,14 +25,15 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
 
     // Hashing
-    implementation("org.springframework.security:spring-security-crypto:5.7.1")
-    implementation("org.bouncycastle:bcpkix-jdk15on:1.70")
-    implementation("commons-logging:commons-logging:1.2")
     implementation("de.mkammerer:argon2-jvm:2.11")
 
     // GUI
     implementation("com.jgoodies:jgoodies-forms:1.9.0")
     implementation("com.jetbrains.intellij.java:java-gui-forms-rt:221.5921.27")
+
+    // Logging
+    implementation("org.tinylog:tinylog-api:2.5.0")
+    implementation("org.tinylog:tinylog-impl:2.5.0")
 
     // Other
     implementation("me.xdrop:fuzzywuzzy:1.4.0")

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 import java.io.Closeable;
 import java.io.File;
@@ -129,7 +130,7 @@ public class DataBase implements Closeable {
 		try (Stream<String> stream = Files.lines(location.toPath())) {
 			config.recordCount = stream.count();
 		} catch (IOException e) {
-			System.err.printf("Unable to access the file at %s", location);
+			Logger.error(e, "Unable to access the file at {}", location);
 			throw new RuntimeException(e);
 		}
 	}
@@ -148,9 +149,11 @@ public class DataBase implements Closeable {
 
 		if (end - start == 1) {
 			if (comparison < 0) {
-				RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), (mid - 1) * config.recordLength, config.recordLength);
+				RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), (mid - 1) *
+						config.recordLength, config.recordLength);
 			} else {
-				RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid * config.recordLength, config.recordLength);
+				RandomFileHandler.insertBytes(location, record.getBytes(StandardCharsets.UTF_8), mid *
+						config.recordLength, config.recordLength);
 			}
 		} else if (comparison < 0) {
 			add(record, start, mid);

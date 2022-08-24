@@ -2,16 +2,18 @@ package com.github.quaoz;
 
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
+import org.tinylog.Logger;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MothManager {
-	private static final File mothsDatabaseFile = new File("src/main/java/com/github/quaoz/tests/db/moths.db");
-	private static final File mothsConfigFile = new File("src/main/java/com/github/quaoz/tests/db/moths.json");
+	private static final File MOTHS_DB_FILE = new File("src/main/java/com/github/quaoz/tests/db/moths.db");
+	private static final File MOTHS_CONF_FILE = new File("src/main/java/com/github/quaoz/tests/db/moths.json");
 	// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
 	private static final DataBaseConfig mothsConfig = new DataBaseConfig().init(368, new Integer[]{64, 128, 144, 176, 240, 368});
-	private static final DataBase mothsDatabase = new DataBase(mothsDatabaseFile.toPath(), mothsConfigFile.toPath(), mothsConfig);
+	private static final DataBase mothsDatabase = new DataBase(MOTHS_DB_FILE.toPath(), MOTHS_CONF_FILE.toPath(), mothsConfig);
 
 	public static Moth basicSearch(String name) {
 		String record = mothsDatabase.get(name, 0);
@@ -69,5 +71,14 @@ public class MothManager {
 		}
 
 		return moths;
+	}
+
+	public static void close() {
+		try {
+			mothsDatabase.close();
+		} catch (IOException e) {
+			Logger.error(e, "Unable to close database");
+			throw new RuntimeException(e);
+		}
 	}
 }

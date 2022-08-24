@@ -7,7 +7,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import javax.swing.*;
 import java.awt.*;
 
-@Deprecated
 public class SearchForm {
 	private JButton searchButton;
 	private JLabel titleLabel;

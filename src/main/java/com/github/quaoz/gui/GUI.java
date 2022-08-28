@@ -38,8 +38,6 @@ public class GUI {
 	}
 
 	public GUI init() {
-		SignUpForm.init();
-
 		// Initialise base frame
 		frame = new JFrame("IA");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

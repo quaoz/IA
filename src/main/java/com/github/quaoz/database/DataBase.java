@@ -1,7 +1,6 @@
 package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.quaoz.structures.BinarySearchTree;
 import com.github.quaoz.util.Pair;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +13,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 // TODO: fuzzy search?
 public class DataBase implements Closeable {
-	private final CacheV2 cache;
+	private final Cache cache;
 	private final File location;
 	private final File configLocation;
 	private final DataBaseConfig config;
@@ -54,7 +52,7 @@ public class DataBase implements Closeable {
 			throw new RuntimeException(e);
 		}
 
-		this.cache = new CacheV2();
+		this.cache = new Cache();
 	}
 
 	/**
@@ -86,7 +84,7 @@ public class DataBase implements Closeable {
 			throw new RuntimeException(e);
 		}
 
-		this.cache = new CacheV2();
+		this.cache = new Cache();
 	}
 
 	/**
@@ -203,8 +201,8 @@ public class DataBase implements Closeable {
 	/**
 	 * Gets a record from the database
 	 *
-	 * @param start     The start index of the search
-	 * @param end       The end index of the search
+	 * @param start The start index of the search
+	 * @param end   The end index of the search
 	 *
 	 * @return The record from the database
 	 */
@@ -330,71 +328,7 @@ public class DataBase implements Closeable {
 		new ObjectMapper().writeValue(configLocation, config);
 	}
 
-	/**
-	 * The database cache
-	 */
-
-	// TODO: Extend bst and override get to work with compField parameter
-	//       solution: Pass it two bounds and get the substring?
-	private static class Cache {
-		/**
-		 * Stores the records in order
-		 */
-		BinarySearchTree<String> tree;
-
-		/**
-		 * Stores the records in order of when they were added
-		 */
-		ArrayList<String> list;
-
-		/**
-		 * Creates a new cache
-		 */
-		public Cache() {
-			tree = new BinarySearchTree<>();
-			list = new ArrayList<>();
-		}
-
-		/**
-		 * Adds a record to the cache
-		 *
-		 * @param record The record to add
-		 */
-		public void add(@NotNull String record) {
-			list.add(record);
-
-			// If there are more than 100 records, remove the oldest one
-			if (list.size() > 100) {
-				tree.remove(list.get(0));
-				list.remove(0);
-			}
-
-			tree.add(record);
-		}
-
-		/**
-		 * Gets a record from the cache
-		 *
-		 * @param record The record to get
-		 *
-		 * @return The record
-		 */
-		public String get(String record) {
-			// TODO: Rework the list so that it stores the records in order of when they were last accessed
-			return tree.get(record);
-		}
-
-		/**
-		 * Removes a record from the cache
-		 *
-		 * @param record The record to remove
-		 */
-		public void remove(String record) {
-			tree.remove(record);
-		}
-	}
-
-	private class CacheV2 {
+	private class Cache {
 		private static final int TOP_CACHE_SIZE = 100;
 		private static final int RECENT_CACHE_SIZE = 100;
 		private final Item[] recentList;
@@ -402,7 +336,7 @@ public class DataBase implements Closeable {
 		private int recentListSize;
 		private int topListSize;
 
-		public CacheV2() {
+		public Cache() {
 			recentList = new Item[RECENT_CACHE_SIZE];
 			topList = new Item[TOP_CACHE_SIZE];
 			recentListSize = 0;

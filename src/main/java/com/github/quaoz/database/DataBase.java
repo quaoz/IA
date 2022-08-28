@@ -2,6 +2,8 @@ package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.BinarySearchTree;
+import com.github.quaoz.util.Pair;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -184,54 +187,41 @@ public class DataBase implements Closeable {
 	 *
 	 * @return The record from the database
 	 */
-	public String get(String field, int compField) {
+	public String get(String field) {
+		field = field.strip();
+
 		if (field == null) {
 			return null;
 		}
 
-		//TODO: if we are searching with a compField != 0 we have to do a linear search as the records will not be sorted
-		if (compField != 0) {
-			/* A bad workaround for now is to just collect all the records which match this one and return the first one
-			 *
-			 * This isn't a big issue as it doesn't make sense for get search by any non-unique identifier anyway, the
-			 * first field is always the unique one and (so far) I don't think that get is called with any other field.
-			 * It may make sense to remove the compField parameter from get entirely as I cannot think of a scenario
-			 * where it is preferable to use get over collect for any non-unique field.
-			 */
-			return collect(field, compField).get(0);
-		}
-
-		String cached = cache.get(field, compField);
+		String cached = cache.get(field, 0);
 		return config.recordCount > 0
-				? cached == null ? get(field, 0, config.recordCount, compField) : cached
+				? cached == null ? get(field, 0, config.recordCount) : cached
 				: null;
 	}
 
 	/**
 	 * Gets a record from the database
 	 *
-	 * @param compField The record to get
 	 * @param start     The start index of the search
 	 * @param end       The end index of the search
 	 *
 	 * @return The record from the database
 	 */
-	private @Nullable String get(@NotNull String field, long start, long end, int compField) {
+	private @Nullable String get(@NotNull String field, long start, long end) {
 		long mid = (start + end) / 2;
 		String midRecord = get(mid);
 
-		int comparison = compField == 0
-				? midRecord.substring(0, config.fields[0]).strip().compareTo(field)
-				: midRecord.substring(config.fields[compField - 1], config.fields[compField]).strip().compareTo(field);
+		int comparison = midRecord.substring(0, config.fields[0]).strip().compareTo(field);
 
 		if (comparison == 0) {
 			return midRecord;
 		} else if (end - start <= 1) {
 			return null;
 		} else if (comparison > 0) {
-			return get(field, start, mid, compField);
+			return get(field, start, mid);
 		} else {
-			return get(field, mid, end, compField);
+			return get(field, mid, end);
 		}
 	}
 
@@ -245,13 +235,12 @@ public class DataBase implements Closeable {
 		ArrayList<String> list = new ArrayList<>();
 		field = field.strip();
 
+		if (field == null) {
+			return null;
+		}
+
 		if (compField == 0) {
-			for (long i = 0; i < config.recordCount; i++) {
-				String line = get(i);
-				if (line.substring(0, config.fields[0]).strip().equals(field)) {
-					list.add(line);
-				}
-			}
+			list.add(get(field));
 		} else {
 			for (long i = 0; i < config.recordCount; i++) {
 				String line = get(i);
@@ -262,6 +251,44 @@ public class DataBase implements Closeable {
 		}
 
 		return list;
+	}
+
+	public ArrayList<Pair<String, Integer>> collect(String field, int compField, int count) {
+		field = field.strip();
+		if (field == null) {
+			return null;
+		}
+
+		ArrayList<Pair<String, Integer>> records = new ArrayList<>(count);
+
+		if (compField == 0) {
+			records.add(new Pair<>(get(field), 0));
+
+			if (records.get(0) != null) {
+				records.get(0).setValue(1);
+			}
+		} else {
+			String line = get(0);
+			records.add(new Pair<>(line, FuzzySearch.ratio(line, field)));
+
+			for (long i = 1; i < config.recordCount; i++) {
+				line = get(i);
+				int ratio = FuzzySearch.weightedRatio(line.substring(config.fields[compField - 1], config.fields[compField]).strip(), field);
+
+				for (int j = 0; j < count; j++) {
+					if (ratio > records.get(j).getValue()) {
+						records.add(j, new Pair<>(line, ratio));
+
+						if (i >= count) {
+							records.remove(count);
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		return records;
 	}
 
 	/**
@@ -404,6 +431,7 @@ public class DataBase implements Closeable {
 			return null;
 		}
 
+		// FIXME does not work
 		public void remove(String field) {
 			field = field.strip();
 

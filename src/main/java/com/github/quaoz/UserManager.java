@@ -25,7 +25,7 @@ public class UserManager {
 	}
 
 	public static boolean validateUser(String username, char[] password) {
-		String userRecord = userDatabase.get(username, 0);
+		String userRecord = userDatabase.get(username);
 
 		if (userRecord != null) {
 			String hash = userRecord.substring(userConfig.fields[1], userConfig.fields[2]).strip();
@@ -36,12 +36,12 @@ public class UserManager {
 	}
 
 	public static String getEmail(String username) {
-		String user = userDatabase.get(username, 0);
+		String user = userDatabase.get(username);
 		return user.substring(userConfig.fields[0], userConfig.fields[1]).strip();
 	}
 
 	public static boolean userExists(String username) {
-		return userDatabase.get(username, 0) != null;
+		return userDatabase.get(username) != null;
 	}
 
 	public static void close() {

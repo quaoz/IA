@@ -35,6 +35,6 @@ public class RecordManager {
 	}
 
 	public static String getRecord(Integer id) {
-		return recordsDatabase.get(String.valueOf(id), 0);
+		return recordsDatabase.get(String.valueOf(id));
 	}
 }

@@ -16,7 +16,7 @@ public class MothManager {
 	private static final DataBase mothsDatabase = new DataBase(MOTHS_DB_FILE.toPath(), MOTHS_CONF_FILE.toPath(), mothsConfig);
 
 	public static Moth basicSearch(String name) {
-		String record = mothsDatabase.get(name, 0);
+		String record = mothsDatabase.get(name);
 
 		if (record == null) {
 			return null;

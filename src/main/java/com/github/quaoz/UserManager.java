@@ -24,7 +24,7 @@ public class UserManager {
 	// Database
 	private static final File USER_DB_FILE = new File("src/main/java/com/github/quaoz/tests/db/users.db");
 	private static final File USER_CONF_FILE = new File("src/main/java/com/github/quaoz/tests/db/users.json");
-	private static final DataBaseConfig userConfig = new DataBaseConfig().init(418, new Integer[]{64, 318, 418});
+	private static final DataBaseConfig userConfig = new DataBaseConfig().init(419, new Integer[]{64, 318, 418});
 	private static final DataBase userDatabase = new DataBase(USER_DB_FILE.toPath(), USER_CONF_FILE.toPath(), userConfig);
 
 	static {
@@ -104,7 +104,7 @@ public class UserManager {
 	}
 
 	public static void addUser(String username, String email, char[] password) {
-		String record = String.format("%-64s%-254s%-100s", username, email, Argon2id.hash(password));
+		String record = String.format("%-64s%-254s%-100s\n", username, email, Argon2id.hash(password));
 		userDatabase.add(record);
 	}
 

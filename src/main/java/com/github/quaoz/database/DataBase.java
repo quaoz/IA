@@ -3,6 +3,7 @@ package com.github.quaoz.database;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.util.Pair;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-// TODO: fuzzy search?
 public class DataBase implements Closeable {
 	private final Cache cache;
 	private final File location;
@@ -88,7 +88,7 @@ public class DataBase implements Closeable {
 	}
 
 	/**
-	 * Adds a record to the database using RandomAccessFile to write to the file
+	 * Adds a record to the database
 	 *
 	 * @param record The record to add
 	 */
@@ -99,6 +99,7 @@ public class DataBase implements Closeable {
 		if (config.recordCount == 0) {
 			RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
 		} else if (config.recordCount == 1) {
+			// Insert the record at the start or end if there is only one record
 			String base = new String(RandomFileHandler.readBytes(location, 0, config.recordLength));
 			int comparison = record.substring(0, config.fields[0]).compareTo(base.substring(0, config.fields[0]));
 
@@ -137,16 +138,16 @@ public class DataBase implements Closeable {
 	}
 
 	/**
-	 * Adds a record to the database using RandomAccessFile to write to the file
+	 * Adds a record to the database
 	 *
 	 * @param record The record to add
 	 * @param start  The start index
 	 * @param end    The end index
 	 */
 	private void add(@NotNull String record, long start, long end) {
+		// Performs a binary search to find the correct place to insert the record
 		long mid = (start + end) / 2;
-		int comparison = record.substring(0, config.fields[0]).compareTo(
-				get(mid).substring(0, config.fields[0]));
+		int comparison = record.substring(0, config.fields[0]).compareTo(get(mid).substring(0, config.fields[0]));
 
 		if (end - start == 1) {
 			if (comparison < 0) {
@@ -181,20 +182,20 @@ public class DataBase implements Closeable {
 	/**
 	 * Gets a record from the database
 	 *
-	 * @param field The record to get
+	 * @param identifier The record to get
 	 *
 	 * @return The record from the database
 	 */
-	public String get(String field) {
-		field = field.strip();
+	public String get(String identifier) {
+		identifier = identifier.strip();
 
-		if (field == null) {
+		if (identifier == null) {
 			return null;
 		}
 
-		String cached = cache.get(field, 0);
+		String cached = cache.get(identifier);
 		return config.recordCount > 0
-				? cached == null ? get(field, 0, config.recordCount) : cached
+				? cached == null ? get(identifier, 0, config.recordCount) : cached
 				: null;
 	}
 
@@ -224,6 +225,8 @@ public class DataBase implements Closeable {
 	}
 
 	/**
+	 * Searches for and returns all records containing this field
+	 *
 	 * @param field     The field to search for
 	 * @param compField The index of the field
 	 *
@@ -251,6 +254,15 @@ public class DataBase implements Closeable {
 		return list;
 	}
 
+	/**
+	 * Searches for and returns the records with the closest matches to the field
+	 *
+	 * @param field     The field to search for
+	 * @param compField The index of the field
+	 * @param count     The number of matches to return
+	 *
+	 * @return A list of the closest matches to the field
+	 */
 	public ArrayList<Pair<String, Integer>> collect(String field, int compField, int count) {
 		field = field.strip();
 		if (field == null) {
@@ -259,29 +271,25 @@ public class DataBase implements Closeable {
 
 		ArrayList<Pair<String, Integer>> records = new ArrayList<>(count);
 
-		if (compField == 0) {
-			records.add(new Pair<>(get(field), 0));
 
-			if (records.get(0) != null) {
-				records.get(0).setValue(1);
-			}
-		} else {
-			String line = get(0);
-			records.add(new Pair<>(line, FuzzySearch.ratio(line, field)));
+		String line = get(0);
+		System.out.println(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip());
+		System.out.println(FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field));
+		records.add(new Pair<>(line, FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field)));
 
-			for (long i = 1; i < config.recordCount; i++) {
-				line = get(i);
-				int ratio = FuzzySearch.weightedRatio(line.substring(config.fields[compField - 1], config.fields[compField]).strip(), field);
+		for (long i = 1; i < config.recordCount; i++) {
+			line = get(i);
+			int ratio = FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field);
 
-				for (int j = 0; j < count; j++) {
-					if (ratio > records.get(j).getValue()) {
-						records.add(j, new Pair<>(line, ratio));
+			// Inserts the record into the correct place
+			for (int j = 0; j < count; j++) {
+				if (ratio > records.get(j).getValue()) {
+					records.add(j, new Pair<>(line, ratio));
 
-						if (i >= count) {
-							records.remove(count);
-						}
-						break;
+					if (i >= count) {
+						records.remove(count);
 					}
+					break;
 				}
 			}
 		}
@@ -329,10 +337,10 @@ public class DataBase implements Closeable {
 	}
 
 	private class Cache {
-		private static final int TOP_CACHE_SIZE = 100;
-		private static final int RECENT_CACHE_SIZE = 100;
-		private final Item[] recentList;
-		private final Item[] topList;
+		private static final int TOP_CACHE_SIZE = 5;
+		private static final int RECENT_CACHE_SIZE = 5;
+		private Item[] recentList;
+		private Item[] topList;
 		private int recentListSize;
 		private int topListSize;
 
@@ -343,22 +351,13 @@ public class DataBase implements Closeable {
 			topListSize = 0;
 		}
 
-		public @Nullable String get(String field, int compField) {
-			field = field.strip();
+		public @Nullable String get(String identifier) {
+			identifier = identifier.strip();
 
-			if (compField == 0) {
-				for (Item item : topList) {
-					if (item != null && field.equals(item.value.substring(0, config.fields[0]).strip())) {
-						add(item.value);
-						return item.value;
-					}
-				}
-			} else {
-				for (Item item : recentList) {
-					if (item != null && field.equals(item.value.substring(config.fields[compField], config.fields[compField + 1]))) {
-						add(item.value);
-						return item.value;
-					}
+			for (Item item : topList) {
+				if (item != null && identifier.equals(item.value.substring(0, config.fields[0]).strip())) {
+					add(item.value);
+					return item.value;
 				}
 			}
 
@@ -369,21 +368,27 @@ public class DataBase implements Closeable {
 		public void remove(String field) {
 			field = field.strip();
 
-			for (int i = 0; i < topListSize; i++) {
-				if (field.equals(topList[i].value.substring(0, config.fields[0]))) {
-					System.arraycopy(topList, i + 1, topList, i, topListSize - i);
-					topListSize--;
-					return;
+			Pair<Item[], Integer> pair = remove(field, topList, topListSize);
+			topList = pair.getKey();
+			topListSize = pair.getValue();
+
+			pair = remove(field, recentList, recentListSize);
+			recentList = pair.getKey();
+			recentListSize = pair.getValue();
+		}
+
+		@Contract("_, _, _ -> new")
+		private @NotNull Pair<Item[], Integer> remove(String field, Item[] list, int size) {
+			for (int i = 0; i < size; i++) {
+				if (field.equals(list[i].value.substring(0, config.fields[0]).strip())) {
+					System.arraycopy(list, i + 1, list, i, size - i - 1);
+					size--;
+					list[size] = null;
+					break;
 				}
 			}
 
-			for (int i = 0; i < recentListSize; i++) {
-				if (field.equals(recentList[i].value.substring(0, config.fields[0]))) {
-					System.arraycopy(recentList, i + 1, recentList, i, recentListSize - i);
-					recentListSize--;
-					return;
-				}
-			}
+			return new Pair<>(list, size);
 		}
 
 		public void add(@NotNull String record) {

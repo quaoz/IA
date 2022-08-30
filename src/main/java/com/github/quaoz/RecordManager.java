@@ -14,15 +14,9 @@ public class RecordManager {
 	private static final DataBaseConfig recordsConfig = new DataBaseConfig().init(144, new Integer[]{16, 80, 112, 128, 144});
 	private static final DataBase recordsDatabase = new DataBase(RECORDS_DB_FILE.toPath(), RECORDS_CONF_FILE.toPath(), recordsConfig);
 
-	public static boolean addRecord(Integer id, String species, String location, String date, String size) {
-		String record = String.format("%-16s %-64s %-32s %-16s %-16s", id, species, location, date, size);
-
-		if (record.length() != recordsConfig.recordLength) {
-			return false;
-		}
-
+	public static void addRecord(Integer id, String species, String location, String date, String size) {
+		String record = String.format("%-16s %-64s %-32s %-16s %-16s\n", id, species, location, date, size);
 		recordsDatabase.add(record);
-		return true;
 	}
 
 	public static void close() {

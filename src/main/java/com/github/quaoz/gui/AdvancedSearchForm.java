@@ -49,6 +49,13 @@ public class AdvancedSearchForm {
 			//TODO: Do search
 			ArrayList<Moth> moths = MothManager.advancedSearch(nameField.getText().strip(), locationField.getText().strip(), Integer.getInteger(sizeStartField.getText().strip()), Integer.getInteger(sizeEndField.getText().strip()), Integer.getInteger(flightStartField.getText().strip()), Integer.getInteger(flightEndField.getText().strip()), habitatField.getText().strip(), foodField.getText().strip());
 
+			/*
+			* Some things dont need to be fuzzy searched.
+			* If size or flight time is given first get records which match them
+			* Food sources should use token search
+			* Habitat, name and location fuzzy
+			* */
+
 			String[] records = new String[moths.size()];
 			for (int i = 0; i < moths.size(); i++) {
 				records[i] = moths.get(i).getName();

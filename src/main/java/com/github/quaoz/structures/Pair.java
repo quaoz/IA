@@ -1,4 +1,4 @@
-package com.github.quaoz.util;
+package com.github.quaoz.structures;
 
 import java.util.Objects;
 

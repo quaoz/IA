@@ -4,15 +4,22 @@ import com.github.quaoz.gui.GUI;
 import org.tinylog.provider.ProviderRegistry;
 
 public class Main {
+	private static final GUI gui = new GUI();
+	private static String user = "";
+
+	public static String getUser() {
+		return user;
+	}
+
+	public static void setUser(String user) {
+		Main.user = user;
+	}
+
+	public static GUI getGui() {
+		return gui;
+	}
+
 	public static void main(String[] args) {
-		GUI gui = new GUI().init();
-
-		/*MothManager.addMoth("Moth", "Moth moth", "10:15", "6:9", "Bog", "Bog plant");
-		MothManager.addMoth("Moth2", "Moth mothus", "9:11", "7:9", "Wood", "Grass");
-		MothManager.addMoth("Moth3", "Moth mothu", "3:5", "8:10", "Hills", "Tree");
-		MothManager.addMoth("Moth4", "Moth mothi", "12:16", "4:7", "City", "Flowers");
-		MothManager.addMoth("Moth5", "Moth motho", "5:7", "3:8", "House", "Plant");*/
-
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			MothManager.close();
 			RecordManager.close();

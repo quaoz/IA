@@ -207,7 +207,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * @return The balanced tree
 	 */
 	private BinaryNode<T> balance(BinaryNode<T> node) {
-		// Return null if the tree is empty
+		// Return if the subtree is empty
 		if (node == null) {
 			return null;
 		}

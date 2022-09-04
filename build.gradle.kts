@@ -35,6 +35,12 @@ dependencies {
     implementation("org.tinylog:tinylog-api:2.5.0")
     implementation("org.tinylog:tinylog-impl:2.5.0")
 
-    // Other
+    // Fuzzy matching
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
+
+    // Geocoding
+    implementation("com.byteowls:jopencage:1.4.0")
+
+    // Dotenv
+    implementation("io.github.cdimascio:dotenv-java:2.2.4")
 }

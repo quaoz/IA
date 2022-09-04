@@ -10,9 +10,7 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:d:grow"/>
-    <rowspec value="top:4dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="top:5dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:grow"/>
     <colspec value="left:4dlu:noGrow"/>
@@ -35,18 +33,19 @@
         </constraints>
         <properties>
           <horizontalAlignment value="10"/>
-          <text value="Search"/>
+          <labelFor value="6b09d"/>
+          <text resource-bundle="ia" key="search"/>
         </properties>
       </component>
       <hspacer id="b237d">
         <constraints>
-          <grid row="2" column="4" row-span="11" col-span="1" vsize-policy="1" hsize-policy="6" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="4" row-span="9" col-span="1" vsize-policy="1" hsize-policy="6" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
         </constraints>
       </hspacer>
       <hspacer id="ec1d6">
         <constraints>
-          <grid row="2" column="0" row-span="11" col-span="1" vsize-policy="1" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="9" col-span="1" vsize-policy="1" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
         </constraints>
       </hspacer>
@@ -65,7 +64,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Search"/>
+          <text resource-bundle="ia" key="search"/>
         </properties>
       </component>
       <vspacer id="50bc4">

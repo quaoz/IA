@@ -121,11 +121,12 @@
       </component>
       <component id="4ab93" class="javax.swing.JLabel">
         <constraints>
-          <grid row="8" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="6" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties>
-          <text value="to"/>
+          <labelFor value="1b94"/>
+          <text resource-bundle="ia" key="to"/>
         </properties>
       </component>
       <component id="b1c65" class="javax.swing.JTextField" binding="flightStartField">
@@ -152,7 +153,8 @@
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties>
-          <text value="to"/>
+          <labelFor value="1ca24"/>
+          <text resource-bundle="ia" key="to"/>
         </properties>
       </component>
       <component id="3cd22" class="javax.swing.JLabel" binding="nameLabel">
@@ -161,7 +163,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Name"/>
+          <text resource-bundle="ia" key="name"/>
         </properties>
       </component>
       <component id="1dd29" class="javax.swing.JLabel" binding="locationLabel">
@@ -170,7 +172,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Location"/>
+          <labelFor value="27759"/>
+          <text resource-bundle="ia" key="location"/>
         </properties>
       </component>
       <component id="cf89f" class="javax.swing.JLabel" binding="sizeLabel">
@@ -179,7 +182,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Size"/>
+          <labelFor value="5cc2f"/>
+          <text resource-bundle="ia" key="size"/>
         </properties>
       </component>
       <component id="232d8" class="javax.swing.JLabel" binding="flightTimeLabel">
@@ -188,7 +192,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Flys from"/>
+          <labelFor value="b1c65"/>
+          <text resource-bundle="ia" key="flies.from"/>
         </properties>
       </component>
       <component id="84f4b" class="javax.swing.JLabel" binding="habitatLabel">
@@ -197,7 +202,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Habitat"/>
+          <labelFor value="73c42"/>
+          <text resource-bundle="ia" key="habitat"/>
         </properties>
       </component>
       <component id="2ce43" class="javax.swing.JLabel" binding="foodLabel">
@@ -206,7 +212,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Food Sources"/>
+          <labelFor value="18ff0"/>
+          <text resource-bundle="ia" key="food.sources"/>
         </properties>
       </component>
       <component id="3b8ec" class="javax.swing.JButton" binding="searchButton">
@@ -215,17 +222,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Search"/>
-        </properties>
-      </component>
-      <component id="76fce" class="javax.swing.JButton" binding="cancelButton">
-        <constraints>
-          <grid row="16" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <label value="Cancel"/>
-          <text value="Cancel"/>
+          <text resource-bundle="ia" key="search"/>
         </properties>
       </component>
       <component id="d4c63" class="javax.swing.JLabel" binding="titleLabel">
@@ -234,7 +231,16 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Advanced Search"/>
+          <text resource-bundle="ia" key="advanced.search"/>
+        </properties>
+      </component>
+      <component id="d85ca" class="javax.swing.JButton" binding="cancelButton">
+        <constraints>
+          <grid row="16" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text resource-bundle="ia" key="cancel"/>
         </properties>
       </component>
     </children>

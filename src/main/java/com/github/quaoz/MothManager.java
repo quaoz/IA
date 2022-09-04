@@ -9,7 +9,6 @@ import org.tinylog.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MothManager {
 	private static final File MOTHS_DB_FILE = new File("src/main/java/com/github/quaoz/tests/db/moths.db");
@@ -18,8 +17,8 @@ public class MothManager {
 	private static final DataBaseConfig mothsConfig = new DataBaseConfig().init(369, new Integer[]{64, 128, 144, 176, 240, 368});
 	private static final DataBase mothsDatabase = new DataBase(MOTHS_DB_FILE.toPath(), MOTHS_CONF_FILE.toPath(), mothsConfig);
 
-	public static void addMoth(String name, String sciName, String size, String flight, String habitat, String food) {
-		String record = String.format("%-64s%-64s%-16s%-32s%-64s%-128s\n", name, sciName, size, flight, habitat, food);
+	public static void addMoth(String name, String sciName, double sizeLower, double sizeUpper, int flightStart, int flightEnd, String habitat, String food) {
+		String record = String.format("%-64s%-64s%-16s%-32s%-64s%-128s\n", name, sciName, String.format("%s:%s", sizeLower, sizeUpper), String.format("%s:%s", flightStart, flightEnd), habitat, food);
 		mothsDatabase.add(record);
 	}
 
@@ -39,8 +38,8 @@ public class MothManager {
 		return new Moth(
 				name,
 				sciName,
-				Integer.getInteger(size.split(":")[0]),
-				Integer.getInteger(size.split(":")[1]),
+				Double.parseDouble(size.split(":")[0]),
+				Double.parseDouble(size.split(":")[1]),
 				Integer.getInteger(flight.split(":")[0]),
 				Integer.getInteger(flight.split(":")[1]),
 				habitat,
@@ -51,7 +50,7 @@ public class MothManager {
 	//@Deprecated
 	public static ArrayList<Moth> advancedSearch(String name, String location, Integer sizeLower, Integer sizeUpper, Integer flightStart, Integer flightEnd, String habitat, String foodSources) {
 		ArrayList<Moth> moths = new ArrayList<>();
-		ArrayList<String> list = new ArrayList<>();
+		ArrayList<String> list;
 
 		list = name != null
 				? mothsDatabase.collect(name, 0)
@@ -101,15 +100,11 @@ public class MothManager {
 				String size = s.substring(mothsConfig.fields[1], mothsConfig.fields[2]).strip();
 				String flight = s.substring(mothsConfig.fields[2], mothsConfig.fields[3]).strip();
 
-				System.out.println(Arrays.toString(size.split(":")));
-				System.out.println(size.split(":")[0]);
-				System.out.println(Integer.parseInt(size.split(":")[0]));
-
 				moths.add(new Moth(
 						s.substring(0, mothsConfig.fields[0]).strip(),
 						s.substring(mothsConfig.fields[0], mothsConfig.fields[1]).strip(),
-						Integer.parseInt(size.split(":")[0]),
-						Integer.parseInt(size.split(":")[1]),
+						Double.parseDouble(size.split(":")[0]),
+						Double.parseDouble(size.split(":")[1]),
 						Integer.parseInt(flight.split(":")[0]),
 						Integer.parseInt(flight.split(":")[1]),
 						s.substring(mothsConfig.fields[3], mothsConfig.fields[4]).strip(),

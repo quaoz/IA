@@ -1,13 +1,20 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.Main;
+import com.github.quaoz.Moth;
+import com.github.quaoz.MothManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Method;
+import java.text.DateFormatSymbols;
+import java.util.ResourceBundle;
 
 public class RecordForm {
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private JPanel panel;
 	private JTextField searchField;
 	private JButton advancedSearchButton;
@@ -28,27 +35,31 @@ public class RecordForm {
 		$$$setupUI$$$();
 	}
 
-	public RecordForm(GUI gui) {
+	public RecordForm() {
+		Moth moth = Main.getGui().getRecord();
+
+		nameLabel.setText(moth.getName());
+		sciNameLabel.setText(moth.getSciName());
+
+		sizeLabel.setText("Size: " + moth.getSizeLower() + " to " + moth.getSizeUpper());
+		flightTimeLabel.setText("Flies from " + DateFormatSymbols.getInstance().getMonths()[moth.getFlightStart()] + " to " + DateFormatSymbols.getInstance().getMonths()[moth.getFlightEnd()]);
+		habitatLabel.setText("Habitat: " + moth.getHabitat());
+		foodSourceLabel.setText("Food sources: " + moth.getFood());
+
 		recordsButton.addActionListener(e -> {
 			//TODO: get records
-			gui.render(GUI.Content.SEARCH_RESULTS);
+			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
 		});
 
-		submitRecordButton.addActionListener(e -> {
-			gui.render(GUI.Content.SUBMIT_RECORD);
-		});
+		submitRecordButton.addActionListener(e -> Main.getGui().render(GUI.Content.SUBMIT_RECORD));
 
-		advancedSearchButton.addActionListener(e -> {
-			gui.render(GUI.Content.ADVANCED_SEARCH);
-		});
+		advancedSearchButton.addActionListener(e -> Main.getGui().render(GUI.Content.ADVANCED_SEARCH));
 
-		profileButton.addActionListener(e -> {
-			gui.render(GUI.Content.PROFILE);
-		});
+		profileButton.addActionListener(e -> Main.getGui().render(GUI.Content.PROFILE));
 
 		searchField.addActionListener(e -> {
-			//TODO: Do search
-			gui.render(GUI.Content.SEARCH_RESULTS);
+			Main.getGui().setSearchResults(MothManager.collectMoths(searchField.getText().strip(), 0, 100));
+			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
 		});
 	}
 
@@ -73,39 +84,81 @@ public class RecordForm {
 		CellConstraints cc = new CellConstraints();
 		panel.add(searchField, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		advancedSearchButton = new JButton();
-		advancedSearchButton.setText("Advanced Search");
+		this.$$$loadButtonText$$$(advancedSearchButton, this.$$$getMessageFromBundle$$$("ia", "advanced.search"));
 		panel.add(advancedSearchButton, cc.xy(5, 1));
 		submitRecordButton = new JButton();
-		submitRecordButton.setText("Submit Record");
+		this.$$$loadButtonText$$$(submitRecordButton, this.$$$getMessageFromBundle$$$("ia", "submit.record"));
 		panel.add(submitRecordButton, cc.xy(7, 1));
 		profileButton = new JButton();
-		profileButton.setText("Profile");
+		this.$$$loadButtonText$$$(profileButton, this.$$$getMessageFromBundle$$$("ia", "profile"));
 		panel.add(profileButton, cc.xy(9, 1));
 		final Spacer spacer1 = new Spacer();
 		panel.add(spacer1, cc.xy(11, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer2 = new Spacer();
 		panel.add(spacer2, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		nameLabel = new JLabel();
-		nameLabel.setText("Label");
+		nameLabel.setText("");
 		panel.add(nameLabel, cc.xy(3, 3));
 		sciNameLabel = new JLabel();
-		sciNameLabel.setText("Label");
+		sciNameLabel.setText("");
 		panel.add(sciNameLabel, cc.xy(3, 5));
 		sizeLabel = new JLabel();
-		sizeLabel.setText("Size");
+		sizeLabel.setText("");
 		panel.add(sizeLabel, cc.xy(5, 3));
 		flightTimeLabel = new JLabel();
-		flightTimeLabel.setText("Flight Time");
+		flightTimeLabel.setText("");
 		panel.add(flightTimeLabel, cc.xy(5, 5));
 		habitatLabel = new JLabel();
-		habitatLabel.setText("Habitat");
+		habitatLabel.setText("");
 		panel.add(habitatLabel, cc.xy(5, 7));
 		foodSourceLabel = new JLabel();
-		foodSourceLabel.setText("Food Sources");
+		foodSourceLabel.setText("");
 		panel.add(foodSourceLabel, cc.xy(5, 9));
 		recordsButton = new JButton();
-		recordsButton.setText("View Records");
+		this.$$$loadButtonText$$$(recordsButton, this.$$$getMessageFromBundle$$$("ia", "view.records"));
 		panel.add(recordsButton, cc.xy(3, 7));
+	}
+
+	private String $$$getMessageFromBundle$$$(String path, String key) {
+		ResourceBundle bundle;
+		try {
+			Class<?> thisClass = this.getClass();
+			if ($$$cachedGetBundleMethod$$$ == null) {
+				Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
+				$$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
+			}
+			bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
+		} catch (Exception e) {
+			bundle = ResourceBundle.getBundle(path);
+		}
+		return bundle.getString(key);
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadButtonText$$$(AbstractButton component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
 	}
 
 	/**

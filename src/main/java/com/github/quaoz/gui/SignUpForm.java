@@ -1,5 +1,6 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.Main;
 import com.github.quaoz.UserManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -8,10 +9,13 @@ import com.jgoodies.forms.layout.FormLayout;
 import javax.swing.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 public class SignUpForm {
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private final Pattern alphanumericChecker = Pattern.compile("[^a-zA-Z0-9-]");
 	// https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
 	private final Pattern emailPattern = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
@@ -42,16 +46,17 @@ public class SignUpForm {
 		$$$setupUI$$$();
 	}
 
-	public SignUpForm(GUI gui) {
+	public SignUpForm() {
 		registeredButton.addActionListener(e -> {
 			//TODO: register
 			if (checkUsername() && checkEmail() && checkPassword() && checkPasswordRepeat()) {
 				UserManager.addUser(usernameField.getText().strip(), emailField.getText().strip(), passwordField.getPassword());
-				gui.render(GUI.Content.HOME_LOGGED_IN);
+				Main.setUser(usernameField.getText().strip());
+				Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
 			}
 		});
 
-		cancelButton.addActionListener(e -> gui.render(GUI.Content.PAST_CONTENT));
+		cancelButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
 
 		usernameField.addFocusListener(new FocusAdapter() {
 			@Override
@@ -249,28 +254,28 @@ public class SignUpForm {
 		final Spacer spacer4 = new Spacer();
 		panel.add(spacer4, cc.xy(3, 31, CellConstraints.DEFAULT, CellConstraints.FILL));
 		usernameLabel = new JLabel();
-		usernameLabel.setText("Username");
+		this.$$$loadLabelText$$$(usernameLabel, this.$$$getMessageFromBundle$$$("ia", "username"));
 		panel.add(usernameLabel, cc.xy(3, 3));
 		emailLabel = new JLabel();
-		emailLabel.setText("Email");
+		this.$$$loadLabelText$$$(emailLabel, this.$$$getMessageFromBundle$$$("ia", "email"));
 		panel.add(emailLabel, cc.xy(3, 9));
 		emailField = new JTextField();
 		panel.add(emailField, cc.xy(3, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
 		passwordLabel = new JLabel();
-		passwordLabel.setText("Password");
+		this.$$$loadLabelText$$$(passwordLabel, this.$$$getMessageFromBundle$$$("ia", "password"));
 		panel.add(passwordLabel, cc.xy(3, 15));
 		repeatPassword = new JLabel();
-		repeatPassword.setText("Repeat Password");
+		this.$$$loadLabelText$$$(repeatPassword, this.$$$getMessageFromBundle$$$("ia", "repeat.password"));
 		panel.add(repeatPassword, cc.xy(3, 21));
 		passwordField = new JPasswordField();
 		panel.add(passwordField, cc.xy(3, 17, CellConstraints.FILL, CellConstraints.DEFAULT));
 		repeatPasswordField = new JPasswordField();
 		panel.add(repeatPasswordField, cc.xy(3, 23, CellConstraints.FILL, CellConstraints.DEFAULT));
 		registeredButton = new JButton();
-		registeredButton.setText("Register");
+		this.$$$loadButtonText$$$(registeredButton, this.$$$getMessageFromBundle$$$("ia", "register"));
 		panel.add(registeredButton, cc.xy(3, 27));
 		cancelButton = new JButton();
-		cancelButton.setText("Cancel");
+		this.$$$loadButtonText$$$(cancelButton, this.$$$getMessageFromBundle$$$("ia", "cancel"));
 		panel.add(cancelButton, cc.xy(3, 29));
 		usernameValidLabel = new JLabel();
 		usernameValidLabel.setText("");
@@ -296,6 +301,79 @@ public class SignUpForm {
 		passwordMessage = new JLabel();
 		passwordMessage.setText("");
 		panel.add(passwordMessage, cc.xy(3, 19));
+		usernameLabel.setLabelFor(usernameField);
+		emailLabel.setLabelFor(emailField);
+		passwordLabel.setLabelFor(passwordField);
+		repeatPassword.setLabelFor(repeatPasswordField);
+	}
+
+	private String $$$getMessageFromBundle$$$(String path, String key) {
+		ResourceBundle bundle;
+		try {
+			Class<?> thisClass = this.getClass();
+			if ($$$cachedGetBundleMethod$$$ == null) {
+				Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
+				$$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
+			}
+			bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
+		} catch (Exception e) {
+			bundle = ResourceBundle.getBundle(path);
+		}
+		return bundle.getString(key);
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadLabelText$$$(JLabel component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setDisplayedMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadButtonText$$$(AbstractButton component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
 	}
 
 	/**

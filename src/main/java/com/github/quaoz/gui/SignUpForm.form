@@ -84,7 +84,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Username"/>
+          <labelFor value="49c06"/>
+          <text resource-bundle="ia" key="username"/>
         </properties>
       </component>
       <component id="9c771" class="javax.swing.JLabel" binding="emailLabel">
@@ -93,7 +94,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Email"/>
+          <labelFor value="27921"/>
+          <text resource-bundle="ia" key="email"/>
         </properties>
       </component>
       <component id="27921" class="javax.swing.JTextField" binding="emailField">
@@ -111,7 +113,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Password"/>
+          <labelFor value="272b0"/>
+          <text resource-bundle="ia" key="password"/>
         </properties>
       </component>
       <component id="ad1" class="javax.swing.JLabel" binding="repeatPassword">
@@ -120,7 +123,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Repeat Password"/>
+          <labelFor value="b5e39"/>
+          <text resource-bundle="ia" key="repeat.password"/>
         </properties>
       </component>
       <component id="272b0" class="javax.swing.JPasswordField" binding="passwordField">
@@ -147,7 +151,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Register"/>
+          <text resource-bundle="ia" key="register"/>
         </properties>
       </component>
       <component id="a88f4" class="javax.swing.JButton" binding="cancelButton">
@@ -156,7 +160,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Cancel"/>
+          <text resource-bundle="ia" key="cancel"/>
         </properties>
       </component>
       <component id="4aaed" class="javax.swing.JLabel" binding="usernameValidLabel">

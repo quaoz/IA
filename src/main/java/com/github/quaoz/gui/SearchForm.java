@@ -6,8 +6,11 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Method;
+import java.util.ResourceBundle;
 
 public class SearchForm {
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private JButton searchButton;
 	private JLabel titleLabel;
 	private JTextField searchBox;
@@ -33,27 +36,97 @@ public class SearchForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
+		panel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:grow,top:5dlu:noGrow,center:max(d;4px):noGrow"));
 		panel.setMinimumSize(new Dimension(240, 180));
 		panel.setPreferredSize(new Dimension(240, 180));
 		titleLabel = new JLabel();
 		titleLabel.setHorizontalAlignment(10);
-		titleLabel.setText("Search");
+		this.$$$loadLabelText$$$(titleLabel, this.$$$getMessageFromBundle$$$("ia", "search"));
 		CellConstraints cc = new CellConstraints();
 		panel.add(titleLabel, cc.xy(3, 3, CellConstraints.LEFT, CellConstraints.DEFAULT));
 		final Spacer spacer1 = new Spacer();
-		panel.add(spacer1, cc.xywh(5, 3, 1, 11, CellConstraints.RIGHT, CellConstraints.DEFAULT));
+		panel.add(spacer1, cc.xywh(5, 3, 1, 9, CellConstraints.RIGHT, CellConstraints.DEFAULT));
 		final Spacer spacer2 = new Spacer();
-		panel.add(spacer2, cc.xywh(1, 3, 1, 11, CellConstraints.LEFT, CellConstraints.DEFAULT));
+		panel.add(spacer2, cc.xywh(1, 3, 1, 9, CellConstraints.LEFT, CellConstraints.DEFAULT));
 		searchBox = new JTextField();
 		panel.add(searchBox, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.CENTER));
 		searchButton = new JButton();
-		searchButton.setText("Search");
+		this.$$$loadButtonText$$$(searchButton, this.$$$getMessageFromBundle$$$("ia", "search"));
 		panel.add(searchButton, cc.xy(3, 7));
 		final Spacer spacer3 = new Spacer();
 		panel.add(spacer3, cc.xy(3, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final Spacer spacer4 = new Spacer();
 		panel.add(spacer4, cc.xy(3, 9, CellConstraints.DEFAULT, CellConstraints.FILL));
+		titleLabel.setLabelFor(searchBox);
+	}
+
+	private String $$$getMessageFromBundle$$$(String path, String key) {
+		ResourceBundle bundle;
+		try {
+			Class<?> thisClass = this.getClass();
+			if ($$$cachedGetBundleMethod$$$ == null) {
+				Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
+				$$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
+			}
+			bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
+		} catch (Exception e) {
+			bundle = ResourceBundle.getBundle(path);
+		}
+		return bundle.getString(key);
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadLabelText$$$(JLabel component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setDisplayedMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadButtonText$$$(AbstractButton component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
 	}
 
 	/**

@@ -4,7 +4,6 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.BinarySearchTree;
 import com.github.quaoz.util.Argon2id;
-import com.github.quaoz.util.DualPivotIntroSort;
 import org.tinylog.Logger;
 
 import java.io.*;
@@ -12,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
 
 // https://netcorecloud.com/tutorials/send-email-in-java-using-gmail-smtp/
 // https://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
@@ -29,15 +27,15 @@ public class UserManager {
 
 	static {
 		try {
-			URL = new URL("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-10000.txt");
+			URL = new URL("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt");
 		} catch (MalformedURLException e) {
 			Logger.error(e, "Broken password url");
 			throw new RuntimeException(e);
 		}
 
-		File common_passwords = new File("src/main/resources/common_passwords.txt");
+		File commonPasswordsFile = new File("src/main/resources/common_passwords.txt");
 
-		if (!common_passwords.exists()) {
+		if (!commonPasswordsFile.exists()) {
 			File destination = new File("src/main/resources/common_passwords.txt");
 			File source;
 
@@ -61,22 +59,14 @@ public class UserManager {
 				fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 				Logger.info("Finished download, took: " + (System.currentTimeMillis() - start) + "ms");
 
-				Logger.info("Sorting passwords...");
-				start = System.currentTimeMillis();
+				Logger.info("Writing passwords to file...");
 
-				ArrayList<String> lines = new ArrayList<>();
 				for (String line = br.readLine(); line != null; line = br.readLine()) {
 					if (line.length() >= 8) {
-						lines.add(line);
+						printWriter.println(line);
 					}
 				}
 
-				DualPivotIntroSort.sort(lines);
-				Logger.info("Finished sorting, took: " + (System.currentTimeMillis() - start) + "ms");
-
-				Logger.info("Writing passwords to file...");
-				start = System.currentTimeMillis();
-				lines.forEach(printWriter::println);
 				Logger.info("Finished writing, took: " + (System.currentTimeMillis() - start) + "ms");
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -84,7 +74,7 @@ public class UserManager {
 		}
 
 		try (
-				BufferedReader br = new BufferedReader(new FileReader(common_passwords))
+				BufferedReader br = new BufferedReader(new FileReader(commonPasswordsFile))
 		) {
 			// Import the lines into a binary search tree
 			Logger.info("Constructing common passwords tree...");
@@ -95,7 +85,7 @@ public class UserManager {
 			}
 
 			commonPasswords.balance();
-			Logger.info("Finished tree construction, took: " + (System.currentTimeMillis() - start) + "ms");
+			Logger.info("Finished tree construction, took: " + (System.currentTimeMillis() - start) + "ms. Tree height: " + commonPasswords.height());
 		} catch (IOException e) {
 			Logger.error(e, "Unable to read common password file");
 			e.printStackTrace();

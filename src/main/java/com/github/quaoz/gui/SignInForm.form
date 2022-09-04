@@ -66,7 +66,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Username"/>
+          <labelFor value="84321"/>
+          <text resource-bundle="ia" key="username"/>
         </properties>
       </component>
       <component id="29ba2" class="javax.swing.JLabel" binding="passwordLabel">
@@ -75,7 +76,8 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Password"/>
+          <labelFor value="fa00b"/>
+          <text resource-bundle="ia" key="password"/>
         </properties>
       </component>
       <component id="fa00b" class="javax.swing.JPasswordField" binding="passwordField">
@@ -93,7 +95,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Sign In"/>
+          <text resource-bundle="ia" key="sign.in"/>
         </properties>
       </component>
       <component id="c578e" class="javax.swing.JButton" binding="cancelButton">
@@ -102,7 +104,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Cancel"/>
+          <text resource-bundle="ia" key="cancel"/>
         </properties>
       </component>
     </children>

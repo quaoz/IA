@@ -3,14 +3,14 @@ package com.github.quaoz;
 public class Moth {
 	private String name;
 	private String sciName;
-	private int sizeUpper;
-	private int sizeLower;
+	private double sizeUpper;
+	private double sizeLower;
 	private int flightStart;
 	private int flightEnd;
 	private String habitat;
 	private String food;
 
-	public Moth(String name, String sciName, int sizeUpper, int sizeLower, int flightStart, int flightEnd, String habitat, String food) {
+	public Moth(String name, String sciName, double sizeUpper, double sizeLower, int flightStart, int flightEnd, String habitat, String food) {
 		this.name = name;
 		this.sciName = sciName;
 		this.sizeUpper = sizeUpper;
@@ -37,7 +37,7 @@ public class Moth {
 		this.sciName = sciName;
 	}
 
-	public int getSizeUpper() {
+	public double getSizeUpper() {
 		return sizeUpper;
 	}
 
@@ -45,7 +45,7 @@ public class Moth {
 		this.sizeUpper = sizeUpper;
 	}
 
-	public int getSizeLower() {
+	public double getSizeLower() {
 		return sizeLower;
 	}
 

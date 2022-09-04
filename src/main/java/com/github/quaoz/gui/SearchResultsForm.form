@@ -11,7 +11,16 @@
     <properties/>
     <border type="none"/>
     <children>
-      <scrollpane id="69d1f" binding="recordScrollPane">
+      <component id="2ae7c" class="javax.swing.JButton" binding="backButton">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text resource-bundle="ia" key="back"/>
+        </properties>
+      </component>
+      <scrollpane id="fb332">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false" defaultalign-vert="false"/>
@@ -19,21 +28,14 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="368af" class="javax.swing.JList" binding="recordList" custom-create="true">
+          <component id="36b4a" class="javax.swing.JTable" binding="table" custom-create="true">
             <constraints/>
-            <properties/>
+            <properties>
+              <autoCreateRowSorter value="false"/>
+            </properties>
           </component>
         </children>
       </scrollpane>
-      <component id="2ae7c" class="javax.swing.JButton" binding="backButton">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <text value="Back"/>
-        </properties>
-      </component>
     </children>
   </grid>
 </form>

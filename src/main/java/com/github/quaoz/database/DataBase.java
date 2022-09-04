@@ -1,7 +1,7 @@
 package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.quaoz.util.Pair;
+import com.github.quaoz.structures.Pair;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -271,10 +271,7 @@ public class DataBase implements Closeable {
 
 		ArrayList<Pair<String, Integer>> records = new ArrayList<>(count);
 
-
 		String line = get(0);
-		System.out.println(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip());
-		System.out.println(FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field));
 		records.add(new Pair<>(line, FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field)));
 
 		for (long i = 1; i < config.recordCount; i++) {
@@ -283,7 +280,7 @@ public class DataBase implements Closeable {
 
 			// Inserts the record into the correct place
 			for (int j = 0; j < count; j++) {
-				if (ratio > records.get(j).getValue()) {
+				if (records.size() <= j || ratio > records.get(j).getValue()) {
 					records.add(j, new Pair<>(line, ratio));
 
 					if (i >= count) {

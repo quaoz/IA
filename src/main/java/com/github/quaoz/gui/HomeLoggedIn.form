@@ -41,7 +41,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Advanced Search"/>
+          <text resource-bundle="ia" key="advanced.search"/>
         </properties>
       </component>
       <component id="cdeaf" class="javax.swing.JButton" binding="submitRecordButton">
@@ -50,7 +50,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Submit Record"/>
+          <text resource-bundle="ia" key="submit.record"/>
         </properties>
       </component>
       <component id="4bd30" class="javax.swing.JButton" binding="profileButton">
@@ -59,7 +59,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Profile"/>
+          <text resource-bundle="ia" key="profile"/>
         </properties>
       </component>
       <hspacer id="2268d">

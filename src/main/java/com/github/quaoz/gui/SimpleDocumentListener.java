@@ -8,6 +8,7 @@ import javax.swing.event.DocumentListener;
  */
 @FunctionalInterface
 public interface SimpleDocumentListener extends DocumentListener {
+
 	/**
 	 * Gives notification that there was a change to the document. Called in place of {@link DocumentListener#changedUpdate(DocumentEvent)}, {@link DocumentListener#insertUpdate(DocumentEvent)} and {@link DocumentListener#removeUpdate(DocumentEvent)}.
 	 *

@@ -46,7 +46,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Advanced Search"/>
+          <text resource-bundle="ia" key="advanced.search"/>
         </properties>
       </component>
       <component id="28cc4" class="javax.swing.JButton" binding="submitRecordButton">
@@ -55,7 +55,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Submit Record"/>
+          <text resource-bundle="ia" key="submit.record"/>
         </properties>
       </component>
       <component id="a27cc" class="javax.swing.JButton" binding="profileButton">
@@ -64,7 +64,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Profile"/>
+          <text resource-bundle="ia" key="profile"/>
         </properties>
       </component>
       <hspacer id="7ee4e">
@@ -85,7 +85,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Label"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="39e43" class="javax.swing.JLabel" binding="sciNameLabel">
@@ -94,7 +94,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Label"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="70579" class="javax.swing.JLabel" binding="sizeLabel">
@@ -103,7 +103,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Size"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="aa887" class="javax.swing.JLabel" binding="flightTimeLabel">
@@ -112,7 +112,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Flight Time"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="b9ef1" class="javax.swing.JLabel" binding="habitatLabel">
@@ -121,7 +121,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Habitat"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="cc7ee" class="javax.swing.JLabel" binding="foodSourceLabel">
@@ -130,7 +130,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Food Sources"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="73406" class="javax.swing.JButton" binding="recordsButton">
@@ -139,7 +139,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="View Records"/>
+          <text resource-bundle="ia" key="view.records"/>
         </properties>
       </component>
     </children>

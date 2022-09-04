@@ -1,13 +1,17 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.Main;
 import com.github.quaoz.UserManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
+import java.lang.reflect.Method;
+import java.util.ResourceBundle;
 
 public class SignInForm {
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private JPanel panel;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -23,16 +27,17 @@ public class SignInForm {
 		$$$setupUI$$$();
 	}
 
-	public SignInForm(GUI gui) {
+	public SignInForm() {
 		signInButton.addActionListener(e -> {
 			//TODO: Sign in
 			if (UserManager.validateUser(usernameField.getText().strip(), passwordField.getPassword())) {
-				gui.render(GUI.Content.HOME_LOGGED_IN);
+				Main.setUser(usernameField.getText().strip());
+				Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
 			}
 		});
 
 		cancelButton.addActionListener(e -> {
-			gui.render(GUI.Content.PAST_CONTENT);
+			Main.getGui().render(GUI.Content.PAST_CONTENT);
 		});
 	}
 
@@ -62,19 +67,90 @@ public class SignInForm {
 		final Spacer spacer4 = new Spacer();
 		panel.add(spacer4, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 		usernameLabel = new JLabel();
-		usernameLabel.setText("Username");
+		this.$$$loadLabelText$$$(usernameLabel, this.$$$getMessageFromBundle$$$("ia", "username"));
 		panel.add(usernameLabel, cc.xy(3, 3));
 		passwordLabel = new JLabel();
-		passwordLabel.setText("Password");
+		this.$$$loadLabelText$$$(passwordLabel, this.$$$getMessageFromBundle$$$("ia", "password"));
 		panel.add(passwordLabel, cc.xy(3, 7));
 		passwordField = new JPasswordField();
 		panel.add(passwordField, cc.xy(3, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
 		signInButton = new JButton();
-		signInButton.setText("Sign In");
+		this.$$$loadButtonText$$$(signInButton, this.$$$getMessageFromBundle$$$("ia", "sign.in"));
 		panel.add(signInButton, cc.xy(3, 11));
 		cancelButton = new JButton();
-		cancelButton.setText("Cancel");
+		this.$$$loadButtonText$$$(cancelButton, this.$$$getMessageFromBundle$$$("ia", "cancel"));
 		panel.add(cancelButton, cc.xy(3, 13));
+		usernameLabel.setLabelFor(usernameField);
+		passwordLabel.setLabelFor(passwordField);
+	}
+
+	private String $$$getMessageFromBundle$$$(String path, String key) {
+		ResourceBundle bundle;
+		try {
+			Class<?> thisClass = this.getClass();
+			if ($$$cachedGetBundleMethod$$$ == null) {
+				Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
+				$$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
+			}
+			bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
+		} catch (Exception e) {
+			bundle = ResourceBundle.getBundle(path);
+		}
+		return bundle.getString(key);
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadLabelText$$$(JLabel component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setDisplayedMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadButtonText$$$(AbstractButton component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
 	}
 
 	/**

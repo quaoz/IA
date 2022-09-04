@@ -1,22 +1,38 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.Main;
+import com.github.quaoz.Moth;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class SearchResultsForm {
-	public String[] records;
+	private static Method $$$cachedGetBundleMethod$$$ = null;
+	public ArrayList<Moth> records;
 	private JPanel panel;
-	private JList<String> recordList;
-	private JScrollPane recordScrollPane;
 	private JButton backButton;
+	private JTable table;
 
-	public SearchResultsForm(GUI gui) {
+	public SearchResultsForm() {
+		this.records = Main.getGui().getSearchResults();
 		$$$setupUI$$$();
-		backButton.addActionListener(e ->
-				gui.render(GUI.Content.PAST_CONTENT)
-		);
+
+		backButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Moth moth = records.get(table.rowAtPoint(e.getPoint()));
+				Main.getGui().setRecord(moth);
+				Main.getGui().render(GUI.Content.RECORD);
+			}
+		});
 	}
 
 	public JPanel resolve() {
@@ -34,13 +50,56 @@ public class SearchResultsForm {
 		createUIComponents();
 		panel = new JPanel();
 		panel.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
-		recordScrollPane = new JScrollPane();
-		CellConstraints cc = new CellConstraints();
-		panel.add(recordScrollPane, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
-		recordScrollPane.setViewportView(recordList);
 		backButton = new JButton();
-		backButton.setText("Back");
+		this.$$$loadButtonText$$$(backButton, this.$$$getMessageFromBundle$$$("ia", "back"));
+		CellConstraints cc = new CellConstraints();
 		panel.add(backButton, cc.xy(1, 3));
+		final JScrollPane scrollPane1 = new JScrollPane();
+		panel.add(scrollPane1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		table.setAutoCreateRowSorter(false);
+		scrollPane1.setViewportView(table);
+	}
+
+	private String $$$getMessageFromBundle$$$(String path, String key) {
+		ResourceBundle bundle;
+		try {
+			Class<?> thisClass = this.getClass();
+			if ($$$cachedGetBundleMethod$$$ == null) {
+				Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
+				$$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
+			}
+			bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
+		} catch (Exception e) {
+			bundle = ResourceBundle.getBundle(path);
+		}
+		return bundle.getString(key);
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadButtonText$$$(AbstractButton component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
 	}
 
 	/**
@@ -51,7 +110,23 @@ public class SearchResultsForm {
 	}
 
 	private void createUIComponents() {
-		// TODO: place custom component creation code here
-		// recordList.setListData(records);
+		String[] columnNames = {"Species", "Scientific Name", "Size", "Flight", "Habitat", "Food Sources"};
+		String[][] data = new String[records.size()][6];
+
+		int count = 0;
+		for (Moth moth : records) {
+			data[count][0] = moth.getName();
+			data[count][1] = moth.getSciName();
+			data[count][2] = moth.getSizeLower() + " - " + moth.getSizeUpper();
+			data[count][3] = moth.getFlightStart() + " - " + moth.getFlightEnd();
+			data[count][4] = moth.getHabitat();
+			data[count][5] = moth.getFood();
+			count++;
+		}
+
+		table = new JTable(data, columnNames);
+
+		// Hacky way to prevent editing
+		table.setDefaultEditor(Object.class, null);
 	}
 }

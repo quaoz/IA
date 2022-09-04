@@ -1,5 +1,6 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.Main;
 import com.github.quaoz.Moth;
 import com.github.quaoz.MothManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -8,9 +9,12 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 public class AdvancedSearchForm {
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private JTextField nameField;
 	private JTextField locationField;
 	private JTextField habitatField;
@@ -37,10 +41,8 @@ public class AdvancedSearchForm {
 		$$$setupUI$$$();
 	}
 
-	public AdvancedSearchForm(GUI gui, SearchResultsForm searchResults) {
-		cancelButton.addActionListener(e -> {
-			gui.render(GUI.Content.PAST_CONTENT);
-		});
+	public AdvancedSearchForm() {
+		cancelButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
 
 		//FIXME
 		searchButton.addActionListener(e -> {
@@ -51,9 +53,8 @@ public class AdvancedSearchForm {
 			for (int i = 0; i < moths.size(); i++) {
 				records[i] = moths.get(i).getName();
 			}
-			searchResults.records = records;
 
-			gui.render(GUI.Content.SEARCH_RESULTS);
+			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
 		});
 	}
 
@@ -96,43 +97,118 @@ public class AdvancedSearchForm {
 		sizeEndField = new JTextField();
 		panel.add(sizeEndField, cc.xy(9, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JLabel label1 = new JLabel();
-		label1.setText("to");
-		panel.add(label1, cc.xy(7, 9, CellConstraints.CENTER, CellConstraints.DEFAULT));
+		this.$$$loadLabelText$$$(label1, this.$$$getMessageFromBundle$$$("ia", "to"));
+		panel.add(label1, cc.xyw(7, 9, 2, CellConstraints.CENTER, CellConstraints.DEFAULT));
 		flightStartField = new JTextField();
 		panel.add(flightStartField, cc.xy(5, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
 		flightEndField = new JTextField();
 		panel.add(flightEndField, cc.xy(9, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JLabel label2 = new JLabel();
-		label2.setText("to");
+		this.$$$loadLabelText$$$(label2, this.$$$getMessageFromBundle$$$("ia", "to"));
 		panel.add(label2, cc.xy(7, 11, CellConstraints.CENTER, CellConstraints.DEFAULT));
 		nameLabel = new JLabel();
-		nameLabel.setText("Name");
+		this.$$$loadLabelText$$$(nameLabel, this.$$$getMessageFromBundle$$$("ia", "name"));
 		panel.add(nameLabel, cc.xy(3, 5));
 		locationLabel = new JLabel();
-		locationLabel.setText("Location");
+		this.$$$loadLabelText$$$(locationLabel, this.$$$getMessageFromBundle$$$("ia", "location"));
 		panel.add(locationLabel, cc.xy(3, 7));
 		sizeLabel = new JLabel();
-		sizeLabel.setText("Size");
+		this.$$$loadLabelText$$$(sizeLabel, this.$$$getMessageFromBundle$$$("ia", "size"));
 		panel.add(sizeLabel, cc.xy(3, 9));
 		flightTimeLabel = new JLabel();
-		flightTimeLabel.setText("Flys from");
+		this.$$$loadLabelText$$$(flightTimeLabel, this.$$$getMessageFromBundle$$$("ia", "flies.from"));
 		panel.add(flightTimeLabel, cc.xy(3, 11));
 		habitatLabel = new JLabel();
-		habitatLabel.setText("Habitat");
+		this.$$$loadLabelText$$$(habitatLabel, this.$$$getMessageFromBundle$$$("ia", "habitat"));
 		panel.add(habitatLabel, cc.xy(3, 13));
 		foodLabel = new JLabel();
-		foodLabel.setText("Food Sources");
+		this.$$$loadLabelText$$$(foodLabel, this.$$$getMessageFromBundle$$$("ia", "food.sources"));
 		panel.add(foodLabel, cc.xy(3, 15));
 		searchButton = new JButton();
-		searchButton.setText("Search");
+		this.$$$loadButtonText$$$(searchButton, this.$$$getMessageFromBundle$$$("ia", "search"));
 		panel.add(searchButton, cc.xy(9, 17));
-		cancelButton = new JButton();
-		cancelButton.setLabel("Cancel");
-		cancelButton.setText("Cancel");
-		panel.add(cancelButton, cc.xy(5, 17));
 		titleLabel = new JLabel();
-		titleLabel.setText("Advanced Search");
+		this.$$$loadLabelText$$$(titleLabel, this.$$$getMessageFromBundle$$$("ia", "advanced.search"));
 		panel.add(titleLabel, cc.xyw(5, 3, 5));
+		cancelButton = new JButton();
+		this.$$$loadButtonText$$$(cancelButton, this.$$$getMessageFromBundle$$$("ia", "cancel"));
+		panel.add(cancelButton, cc.xy(5, 17));
+		label1.setLabelFor(sizeEndField);
+		label2.setLabelFor(flightEndField);
+		locationLabel.setLabelFor(locationField);
+		sizeLabel.setLabelFor(sizeStartField);
+		flightTimeLabel.setLabelFor(flightStartField);
+		habitatLabel.setLabelFor(habitatField);
+		foodLabel.setLabelFor(foodField);
+	}
+
+	private String $$$getMessageFromBundle$$$(String path, String key) {
+		ResourceBundle bundle;
+		try {
+			Class<?> thisClass = this.getClass();
+			if ($$$cachedGetBundleMethod$$$ == null) {
+				Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
+				$$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
+			}
+			bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
+		} catch (Exception e) {
+			bundle = ResourceBundle.getBundle(path);
+		}
+		return bundle.getString(key);
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadLabelText$$$(JLabel component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setDisplayedMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
+	}
+
+	/**
+	 * @noinspection ALL
+	 */
+	private void $$$loadButtonText$$$(AbstractButton component, String text) {
+		StringBuffer result = new StringBuffer();
+		boolean haveMnemonic = false;
+		char mnemonic = '\0';
+		int mnemonicIndex = -1;
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '&') {
+				i++;
+				if (i == text.length()) break;
+				if (!haveMnemonic && text.charAt(i) != '&') {
+					haveMnemonic = true;
+					mnemonic = text.charAt(i);
+					mnemonicIndex = result.length();
+				}
+			}
+			result.append(text.charAt(i));
+		}
+		component.setText(result.toString());
+		if (haveMnemonic) {
+			component.setMnemonic(mnemonic);
+			component.setDisplayedMnemonicIndex(mnemonicIndex);
+		}
 	}
 
 	/**

@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.util.ResourceBundle;
 
 public class Profile {
-	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private JTextField searchField;
 	private JButton advancedSearchButton;
 	private JButton submitRecordButton;
@@ -73,6 +72,8 @@ public class Profile {
 		recordList.setDoubleBuffered(false);
 		recordScrollPane.setViewportView(recordList);
 	}
+
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 
 	private String $$$getMessageFromBundle$$$(String path, String key) {
 		ResourceBundle bundle;

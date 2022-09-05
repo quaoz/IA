@@ -22,7 +22,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 public class SubmitRecordForm {
-	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private JPanel panel;
 	private JTextField speciesField;
 	private JTextField locationField;
@@ -232,6 +231,8 @@ public class SubmitRecordForm {
 		latitudeLabel.setLabelFor(latitudeField);
 		longitudeLabel.setLabelFor(longitudeField);
 	}
+
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 
 	private String $$$getMessageFromBundle$$$(String path, String key) {
 		ResourceBundle bundle;

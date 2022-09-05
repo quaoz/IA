@@ -2,6 +2,7 @@ package com.github.quaoz;
 
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
+import com.github.quaoz.util.CustomRatio;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
@@ -47,52 +48,26 @@ public class MothManager {
 		);
 	}
 
-	//@Deprecated
-	public static ArrayList<Moth> advancedSearch(String name, String location, Integer sizeLower, Integer sizeUpper, Integer flightStart, Integer flightEnd, String habitat, String foodSources) {
-		ArrayList<Moth> moths = new ArrayList<>();
-		ArrayList<String> list;
-
-		list = name != null
-				? mothsDatabase.collect(name, 0)
-				: sizeLower != null && sizeUpper != null
-				? mothsDatabase.collect(sizeLower + ":" + sizeUpper, 2)
-				: flightStart != null && flightEnd != null
-				? mothsDatabase.collect(flightStart + ":" + flightEnd, 3)
-				: habitat != null
-				? mothsDatabase.collect(habitat, 5)
-				: mothsDatabase.collect(foodSources, 6);
-
-		for (String s : list) {
-			String size = s.substring(mothsConfig.fields[1], mothsConfig.fields[2]).strip();
-			String flight = s.substring(mothsConfig.fields[2], mothsConfig.fields[3]).strip();
-
-			moths.add(new Moth(
-					s.substring(0, mothsConfig.fields[0]).strip(),
-					s.substring(mothsConfig.fields[0], mothsConfig.fields[1]).strip(),
-					Integer.getInteger(size.split(":")[0]),
-					Integer.getInteger(size.split(":")[1]),
-					Integer.getInteger(flight.split(":")[0]),
-					Integer.getInteger(flight.split(":")[1]),
-					s.substring(mothsConfig.fields[3], mothsConfig.fields[4]).strip(),
-					s.substring(mothsConfig.fields[4], mothsConfig.fields[5]).strip()
-			));
-		}
-
-		return moths;
+	public static @NotNull ArrayList<Moth> collectMoths(@NotNull String field, int compField) {
+		return collectMoths(field, compField, null);
 	}
 
-	public static @NotNull ArrayList<Moth> collectMoths(@NotNull String field, int compField) {
-		return collectMoths(field, compField, 10);
+	public static @NotNull ArrayList<Moth> collectMoths(@NotNull String field, int compField, CustomRatio customRatio) {
+		return collectMoths(field, compField, 10, customRatio);
 	}
 
 	public static @NotNull ArrayList<Moth> collectMoths(@NotNull String field, int compField, int count) {
+		return collectMoths(field, compField, count, null);
+	}
+
+	public static @NotNull ArrayList<Moth> collectMoths(@NotNull String field, int compField, int count, CustomRatio customRatio) {
 		field = field.strip();
 
 		ArrayList<String> rawMoths = mothsDatabase.collect(field, compField);
 		ArrayList<Moth> moths = new ArrayList<>();
 
 		if (rawMoths.size() <= 1) {
-			mothsDatabase.collect(field, compField, count).forEach((n) -> rawMoths.add(n.getKey()));
+			mothsDatabase.collect(field, compField, count, customRatio).forEach((n) -> rawMoths.add(n.getKey()));
 		}
 
 		for (String s : rawMoths) {

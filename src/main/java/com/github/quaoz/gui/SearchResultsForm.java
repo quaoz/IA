@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class SearchResultsForm {
-	private static Method $$$cachedGetBundleMethod$$$ = null;
 	public ArrayList<Moth> records;
 	private JPanel panel;
 	private JButton backButton;
@@ -59,6 +58,8 @@ public class SearchResultsForm {
 		table.setAutoCreateRowSorter(false);
 		scrollPane1.setViewportView(table);
 	}
+
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 
 	private String $$$getMessageFromBundle$$$(String path, String key) {
 		ResourceBundle bundle;

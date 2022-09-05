@@ -99,53 +99,14 @@
         </constraints>
         <properties/>
       </component>
-      <component id="5cc2f" class="javax.swing.JTextField" binding="sizeStartField">
-        <constraints>
-          <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties>
-          <minimumSize width="49" height="30"/>
-        </properties>
-      </component>
-      <component id="1b94" class="javax.swing.JTextField" binding="sizeEndField">
-        <constraints>
-          <grid row="8" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
-      </component>
       <component id="4ab93" class="javax.swing.JLabel">
         <constraints>
           <grid row="8" column="6" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties>
-          <labelFor value="1b94"/>
           <text resource-bundle="ia" key="to"/>
         </properties>
-      </component>
-      <component id="b1c65" class="javax.swing.JTextField" binding="flightStartField">
-        <constraints>
-          <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="1ca24" class="javax.swing.JTextField" binding="flightEndField">
-        <constraints>
-          <grid row="10" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
       </component>
       <component id="2c352" class="javax.swing.JLabel">
         <constraints>
@@ -153,7 +114,6 @@
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties>
-          <labelFor value="1ca24"/>
           <text resource-bundle="ia" key="to"/>
         </properties>
       </component>
@@ -182,7 +142,6 @@
           <forms/>
         </constraints>
         <properties>
-          <labelFor value="5cc2f"/>
           <text resource-bundle="ia" key="size"/>
         </properties>
       </component>
@@ -192,7 +151,6 @@
           <forms/>
         </constraints>
         <properties>
-          <labelFor value="b1c65"/>
           <text resource-bundle="ia" key="flies.from"/>
         </properties>
       </component>
@@ -242,6 +200,34 @@
         <properties>
           <text resource-bundle="ia" key="cancel"/>
         </properties>
+      </component>
+      <component id="19023" class="javax.swing.JSpinner" binding="sizeLowerSpinner">
+        <constraints>
+          <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="c86bb" class="javax.swing.JSpinner" binding="sizeUpperSpinner">
+        <constraints>
+          <grid row="8" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="8609b" class="javax.swing.JSpinner" binding="flightStartSpinner">
+        <constraints>
+          <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="bf465" class="javax.swing.JSpinner" binding="flightEndSpinner">
+        <constraints>
+          <grid row="10" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>

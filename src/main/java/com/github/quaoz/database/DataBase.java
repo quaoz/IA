@@ -2,6 +2,7 @@ package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.Pair;
+import com.github.quaoz.util.CustomRatio;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -263,20 +264,34 @@ public class DataBase implements Closeable {
 	 *
 	 * @return A list of the closest matches to the field
 	 */
-	public ArrayList<Pair<String, Integer>> collect(String field, int compField, int count) {
+	public ArrayList<Pair<String, Double>> collect(String field, int compField, int count) {
+		return collect(field, compField, count, null);
+	}
+
+	/**
+	 * Searches for and returns the records with the closest matches to the field
+	 *
+	 * @param field     The field to search for
+	 * @param compField The index of the field
+	 * @param count     The number of matches to return
+	 *
+	 * @return A list of the closest matches to the field
+	 */
+	public ArrayList<Pair<String, Double>> collect(String field, int compField, int count, CustomRatio customRatio) {
 		field = field.strip();
 		if (field == null) {
 			return null;
 		}
 
-		ArrayList<Pair<String, Integer>> records = new ArrayList<>(count);
+		ArrayList<Pair<String, Double>> records = new ArrayList<>(count);
 
 		String line = get(0);
-		records.add(new Pair<>(line, FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field)));
+		records.add(new Pair<>(line, (double) FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field)));
 
 		for (long i = 1; i < config.recordCount; i++) {
-			line = get(i);
-			int ratio = FuzzySearch.weightedRatio(line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip(), field);
+			line = get(i).substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField]).strip();
+
+			double ratio = customRatio == null ? FuzzySearch.weightedRatio(line, field) : customRatio.ratio(line, field);
 
 			// Inserts the record into the correct place
 			for (int j = 0; j < count; j++) {

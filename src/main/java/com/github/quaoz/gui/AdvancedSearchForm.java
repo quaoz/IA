@@ -3,8 +3,10 @@ package com.github.quaoz.gui;
 import com.github.quaoz.Main;
 import com.github.quaoz.Moth;
 import com.github.quaoz.MothManager;
+import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.CustomRatio;
 import com.github.quaoz.util.Geocoder;
+import com.github.quaoz.util.Swap;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -72,6 +74,12 @@ public class AdvancedSearchForm {
 				sizeLower = sizeUpper;
 			} else if (sizeUpper == null) {
 				sizeUpper = sizeLower;
+			} else {
+				if (sizeLower > sizeUpper) {
+					Double tmp = sizeLower;
+					sizeLower = sizeUpper;
+					sizeUpper = tmp;
+				}
 			}
 
 			ArrayList<Moth> records = new ArrayList<>();
@@ -83,17 +91,14 @@ public class AdvancedSearchForm {
 					Double sizeLower2 = Double.parseDouble(s2.split(":")[0]);
 					Double sizeUpper2 = Double.parseDouble(s2.split(":")[1]);
 
-					Double difference1 = sizeLower1 > sizeLower2
-							? sizeLower1 - sizeLower2
-							: sizeLower2 - sizeLower1;
-
-					Double difference2 = sizeUpper1 > sizeUpper2
-							? sizeUpper1 - sizeUpper2
-							: sizeUpper2 - sizeUpper1;
+					Double difference1 = Math.abs(sizeLower1 - sizeLower2);
+					Double difference2 = Math.abs(sizeUpper1 - sizeUpper2);
 
 					return -(difference1 + difference2);
 				});
 			}
+
+			ArrayList<Pair<Moth, Double>> processedRecords = new ArrayList<>();
 
 			/*
 			 * Some things don't need to be fuzzy searched.

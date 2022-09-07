@@ -19,6 +19,7 @@ public class HomeLoggedOut {
 	private JButton signUpButton;
 
 	public HomeLoggedOut() {
+
 		advancedSearchButton.addActionListener(e -> Main.getGui().render(GUI.Content.ADVANCED_SEARCH));
 		signInButton.addActionListener(e -> Main.getGui().render(GUI.Content.SIGN_IN));
 		signUpButton.addActionListener(e -> Main.getGui().render(GUI.Content.SIGN_UP));

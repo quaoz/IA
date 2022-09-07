@@ -22,7 +22,7 @@ dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
 
     // JSON
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
 
     // Hashing
     implementation("de.mkammerer:argon2-jvm:2.11")
@@ -43,4 +43,8 @@ dependencies {
 
     // Dotenv
     implementation("io.github.cdimascio:dotenv-java:2.2.4")
+
+    implementation("com.formdev:flatlaf:2.4")
+
+    //https://github.com/JFormDesigner/FlatLaf
 }

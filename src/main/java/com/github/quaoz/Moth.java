@@ -1,87 +1,102 @@
 package com.github.quaoz;
 
-public class Moth {
-	private String name;
-	private String sciName;
-	private double sizeUpper;
-	private double sizeLower;
-	private int flightStart;
-	private int flightEnd;
-	private String habitat;
-	private String food;
+import org.jetbrains.annotations.NotNull;
 
-	public Moth(String name, String sciName, double sizeUpper, double sizeLower, int flightStart, int flightEnd, String habitat, String food) {
-		this.name = name;
-		this.sciName = sciName;
-		this.sizeUpper = sizeUpper;
-		this.sizeLower = sizeLower;
-		this.flightStart = flightStart;
-		this.flightEnd = flightEnd;
-		this.habitat = habitat;
-		this.food = food;
-	}
+public class Moth implements Comparable<Moth> {
+  private String name;
+  private String sciName;
+  private double sizeUpper;
+  private double sizeLower;
+  private int flightStart;
+  private int flightEnd;
+  private String habitat;
+  private String food;
 
-	public String getName() {
-		return name;
-	}
+  public Moth(
+      String name,
+      String sciName,
+      double sizeUpper,
+      double sizeLower,
+      int flightStart,
+      int flightEnd,
+      String habitat,
+      String food) {
+    this.name = name;
+    this.sciName = sciName;
+    this.sizeUpper = sizeUpper;
+    this.sizeLower = sizeLower;
+    this.flightStart = flightStart;
+    this.flightEnd = flightEnd;
+    this.habitat = habitat;
+    this.food = food;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getSciName() {
-		return sciName;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setSciName(String sciName) {
-		this.sciName = sciName;
-	}
+  public String getSciName() {
+    return sciName;
+  }
 
-	public double getSizeUpper() {
-		return sizeUpper;
-	}
+  public void setSciName(String sciName) {
+    this.sciName = sciName;
+  }
 
-	public void setSizeUpper(int sizeUpper) {
-		this.sizeUpper = sizeUpper;
-	}
+  public double getSizeUpper() {
+    return sizeUpper;
+  }
 
-	public double getSizeLower() {
-		return sizeLower;
-	}
+  public void setSizeUpper(int sizeUpper) {
+    this.sizeUpper = sizeUpper;
+  }
 
-	public void setSizeLower(int sizeLower) {
-		this.sizeLower = sizeLower;
-	}
+  public double getSizeLower() {
+    return sizeLower;
+  }
 
-	public int getFlightStart() {
-		return flightStart;
-	}
+  public void setSizeLower(int sizeLower) {
+    this.sizeLower = sizeLower;
+  }
 
-	public void setFlightStart(int flightStart) {
-		this.flightStart = flightStart;
-	}
+  public int getFlightStart() {
+    return flightStart;
+  }
 
-	public int getFlightEnd() {
-		return flightEnd;
-	}
+  public void setFlightStart(int flightStart) {
+    this.flightStart = flightStart;
+  }
 
-	public void setFlightEnd(int flightEnd) {
-		this.flightEnd = flightEnd;
-	}
+  public int getFlightEnd() {
+    return flightEnd;
+  }
 
-	public String getHabitat() {
-		return habitat;
-	}
+  public void setFlightEnd(int flightEnd) {
+    this.flightEnd = flightEnd;
+  }
 
-	public void setHabitat(String habitat) {
-		this.habitat = habitat;
-	}
+  public String getHabitat() {
+    return habitat;
+  }
 
-	public String getFood() {
-		return food;
-	}
+  public void setHabitat(String habitat) {
+    this.habitat = habitat;
+  }
 
-	public void setFood(String food) {
-		this.food = food;
-	}
+  public String getFood() {
+    return food;
+  }
+
+  public void setFood(String food) {
+    this.food = food;
+  }
+
+  @Override
+  public int compareTo(@NotNull Moth o) {
+    return this.getName().compareTo(o.getName());
+  }
 }

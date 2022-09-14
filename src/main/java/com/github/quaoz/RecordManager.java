@@ -3,7 +3,6 @@ package com.github.quaoz;
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.Pair;
-import com.github.quaoz.util.CustomRatio;
 import com.github.quaoz.util.Geocoder;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
@@ -44,6 +43,14 @@ public class RecordManager {
     }
   }
 
+  public static @NotNull ArrayList<Moth> searchUser(String username) {
+    username = username.strip();
+    ArrayList<Moth> moths = new ArrayList<>();
+
+    recordsDatabase.collect(username, 5).forEach(s -> moths.add(MothManager.basicSearch(s)));
+    return moths;
+  }
+
   public static @NotNull ArrayList<Pair<Moth, Double>> searchLocation(String location) {
     location = Geocoder.standardise(location);
     ArrayList<Pair<String, Double>> records =
@@ -51,33 +58,29 @@ public class RecordManager {
             location,
             2,
             100,
-            new CustomRatio() {
-              @Override
-              public double ratio(String s1, String s2) {
-                List<String> split1 = new ArrayList<>(List.of(s1.split(", ")));
-                List<String> split2 = new ArrayList<>(List.of(s2.split(", ")));
+            (s1, s2) -> {
+              List<String> split1 = new ArrayList<>(List.of(s1.split(", ")));
+              List<String> split2 = new ArrayList<>(List.of(s2.split(", ")));
 
-                double ratio = 0.0;
+              double ratio = 0.0;
 
-                for (int i = 0; i < split1.size(); i++) {
-                  if (split1.get(i).strip().equals("null")
-                      || split2.get(i).strip().equals("null")) {
-                    split1.remove(i);
-                    split2.remove(i);
-                    i--;
-                  }
+              for (int i = 0; i < split1.size(); i++) {
+                if (split1.get(i).strip().equals("null") || split2.get(i).strip().equals("null")) {
+                  split1.remove(i);
+                  split2.remove(i);
+                  i--;
                 }
-
-                for (int i = 0; i < split1.size(); i++) {
-                  if (split1.get(i).equals(split2.get(i))) {
-                    ratio += i + 1;
-                  } else {
-                    ratio--;
-                  }
-                }
-
-                return ratio;
               }
+
+              for (int i = 0; i < split1.size(); i++) {
+                if (split1.get(i).equals(split2.get(i))) {
+                  ratio += i + 1;
+                } else {
+                  ratio--;
+                }
+              }
+
+              return ratio;
             });
 
     ArrayList<Pair<Moth, Double>> moths = new ArrayList<>();

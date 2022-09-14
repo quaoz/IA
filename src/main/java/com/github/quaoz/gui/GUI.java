@@ -18,11 +18,11 @@ public class GUI {
   private final SignInForm signInForm;
   private final SignUpForm signUpForm;
   private final AdvancedSearchForm advancedSearchForm;
-  private final Profile profile;
   private final SubmitRecordForm submitRecordForm;
   private final AddMothForm addMothForm;
   private final SimpleStack<Content> callStack;
   private ArrayList<Moth> searchResults;
+  private ArrayList<Moth> userResults;
   private Moth record;
   private Content currentContent;
 
@@ -49,7 +49,6 @@ public class GUI {
     signInForm = new SignInForm();
     signUpForm = new SignUpForm();
     advancedSearchForm = new AdvancedSearchForm();
-    profile = new Profile();
     submitRecordForm = new SubmitRecordForm();
     addMothForm = new AddMothForm();
 
@@ -90,11 +89,13 @@ public class GUI {
       case SIGN_IN -> frame.setContentPane(signInForm.resolve());
       case SIGN_UP -> frame.setContentPane(signUpForm.resolve());
       case ADVANCED_SEARCH -> frame.setContentPane(advancedSearchForm.resolve());
-      case PROFILE -> frame.setContentPane(profile.resolve());
+      case PROFILE -> frame.setContentPane(
+			  new Profile().resolve()); // Created ad hoc
       case SUBMIT_RECORD -> frame.setContentPane(submitRecordForm.resolve());
       case SEARCH_RESULTS -> frame.setContentPane(
           new SearchResultsForm().resolve()); // Created ad hoc
-      case RECORD -> frame.setContentPane(new RecordForm().resolve());
+      case RECORD -> frame.setContentPane(
+			  new RecordForm().resolve()); // Created ad hoc
       case ADD_MOTH -> frame.setContentPane(addMothForm.resolve());
       case PAST_CONTENT -> {
         render(callStack.pop());

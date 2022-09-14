@@ -4,6 +4,7 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.CustomRatio;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
@@ -43,7 +44,7 @@ public class MothManager {
     mothsDatabase.add(record);
   }
 
-  public static Moth basicSearch(String name) {
+  public static @NotNull Moth basicSearch(@NotNull String name) {
     name = name.strip();
     String record = mothsDatabase.get(name);
 

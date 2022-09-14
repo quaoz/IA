@@ -1,7 +1,9 @@
 package com.github.quaoz.gui;
 
 import com.github.quaoz.Main;
+import com.github.quaoz.Moth;
 import com.github.quaoz.MothManager;
+import com.github.quaoz.RecordManager;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -9,6 +11,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Profile {
@@ -18,11 +21,14 @@ public class Profile {
   private JButton submitRecordButton;
   private JButton homeButton;
   private JPanel panel;
-  private JList<String> recordList;
   private JScrollPane recordScrollPane;
+  private JTable table;
+  private ArrayList<Moth> records;
 
   public Profile() {
     $$$setupUI$$$();
+    records = RecordManager.searchUser(Main.getUser());
+
     submitRecordButton.addActionListener(e -> Main.getGui().render(GUI.Content.SUBMIT_RECORD));
     advancedSearchButton.addActionListener(e -> Main.getGui().render(GUI.Content.ADVANCED_SEARCH));
     homeButton.addActionListener(e -> Main.getGui().render(GUI.Content.HOME_LOGGED_IN));
@@ -178,8 +184,6 @@ public class Profile {
             null,
             0,
             false));
-    recordList.setDoubleBuffered(false);
-    recordScrollPane.setViewportView(recordList);
   }
 
   private String $$$getMessageFromBundle$$$(String path, String key) {
@@ -234,32 +238,25 @@ public class Profile {
   }
 
   private void createUIComponents() {
-    String[] items = {
-      "item",
-      "and another",
-      "damn",
-      "even more?",
-      "thats crazy",
-      "",
-      "the last one was empty",
-      "we just gonna use numbers now",
-      "1",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2",
-      "2"
-    };
-    recordList = new JList<>(items);
+	  String[] columnNames = {
+		  "Species", "Scientific Name", "Size", "Flight", "Habitat", "Food Sources"
+  };
+	  String[][] data = new String[records.size()][6];
+
+	  int count = 0;
+	  for (Moth moth : records) {
+		  data[count][0] = moth.getName();
+		  data[count][1] = moth.getSciName();
+		  data[count][2] = moth.getSizeLower() + " - " + moth.getSizeUpper();
+		  data[count][3] = moth.getFlightStart() + " - " + moth.getFlightEnd();
+		  data[count][4] = moth.getHabitat();
+		  data[count][5] = moth.getFood();
+		  count++;
+	  }
+
+	  table = new JTable(data, columnNames);
+
+	  // Hacky way to prevent editing
+	  table.setDefaultEditor(Object.class, null);
   }
 }

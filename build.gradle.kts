@@ -13,9 +13,10 @@ spotless {
         removeUnusedImports()
 
         googleJavaFormat("1.15.0")
+        formatAnnotations()
 
-        indentWithTabs()
         trimTrailingWhitespace()
+        indentWithTabs()
         endWithNewline()
     }
 
@@ -61,7 +62,7 @@ dependencies {
     // Dotenv
     implementation("io.github.cdimascio:dotenv-java:2.2.4")
 
-    //https://github.com/JFormDesigner/FlatLaf
+    // https://github.com/JFormDesigner/FlatLaf
     implementation("com.formdev:flatlaf:2.4")
     implementation("com.formdev:flatlaf-intellij-themes:2.4")
 }
@@ -73,9 +74,11 @@ val fatJar = task("fatJar", type = Jar::class) {
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    from(configurations.runtimeClasspath.get().map {
-        if (it.isDirectory) it else zipTree(it)
-    })
+    from(
+        configurations.runtimeClasspath.get().map {
+            if (it.isDirectory) it else zipTree(it)
+        }
+    )
     with(tasks.jar.get() as CopySpec)
 }
 

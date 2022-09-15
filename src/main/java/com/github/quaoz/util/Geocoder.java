@@ -9,41 +9,41 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.NotNull;
 
 public class Geocoder {
-  private static final JOpenCageGeocoder jOpenCageGeocoder;
+	private static final JOpenCageGeocoder jOpenCageGeocoder;
 
-  static {
-    Dotenv dotenv = Dotenv.load();
-    String key = dotenv.get("OPEN_CAGE_API_KEY");
+	static {
+		Dotenv dotenv = Dotenv.load();
+		String key = dotenv.get("OPEN_CAGE_API_KEY");
 
-    jOpenCageGeocoder = new JOpenCageGeocoder(key);
-  }
+		jOpenCageGeocoder = new JOpenCageGeocoder(key);
+	}
 
-  public static String standardise(double latitude, double longitude) {
-    JOpenCageReverseRequest request = new JOpenCageReverseRequest(latitude, longitude);
-    request.setMinConfidence(1);
-    request.setNoAnnotations(false);
+	public static String standardise(double latitude, double longitude) {
+		JOpenCageReverseRequest request = new JOpenCageReverseRequest(latitude, longitude);
+		request.setMinConfidence(1);
+		request.setNoAnnotations(false);
 
-    return standardise(jOpenCageGeocoder.reverse(request));
-  }
+		return standardise(jOpenCageGeocoder.reverse(request));
+	}
 
-  public static String standardise(@NotNull String location) {
-    JOpenCageForwardRequest request = new JOpenCageForwardRequest(location);
-    request.setMinConfidence(1);
-    request.setNoAnnotations(false);
+	public static String standardise(@NotNull String location) {
+		JOpenCageForwardRequest request = new JOpenCageForwardRequest(location);
+		request.setMinConfidence(1);
+		request.setNoAnnotations(false);
 
-    return standardise(jOpenCageGeocoder.forward(request));
-  }
+		return standardise(jOpenCageGeocoder.forward(request));
+	}
 
-  private static String standardise(@NotNull JOpenCageResponse results) {
-    results.orderResultByConfidence();
+	private static String standardise(@NotNull JOpenCageResponse results) {
+		results.orderResultByConfidence();
 
-    JOpenCageComponents components = results.getFirstComponents();
-    return String.format(
-        "%s, %s, %s, %s, %s",
-        components.getCountry(),
-        components.getState(),
-        components.getStateDistrict(),
-        components.getCounty(),
-        components.getCity());
-  }
+		JOpenCageComponents components = results.getFirstComponents();
+		return String.format(
+				"%s, %s, %s, %s, %s",
+				components.getCountry(),
+				components.getState(),
+				components.getStateDistrict(),
+				components.getCounty(),
+				components.getCity());
+	}
 }

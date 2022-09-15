@@ -1,11 +1,28 @@
 plugins {
     id("java")
     id("idea")
-    idea
+    id("com.diffplug.spotless") version "6.11.0"
 }
 
 group = "com.github.quaoz"
 version = "1.0-SNAPSHOT"
+
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+
+        googleJavaFormat("1.15.0")
+
+        indentWithTabs()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    kotlinGradle {
+        ktlint()
+    }
+}
 
 repositories {
     mavenCentral()

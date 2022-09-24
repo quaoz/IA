@@ -93,6 +93,7 @@ public class GUI {
 					new SearchResultsForm().resolve()); // Created ad hoc
 			case RECORD -> frame.setContentPane(new RecordForm().resolve()); // Created ad hoc
 			case ADD_MOTH -> frame.setContentPane(addMothForm.resolve());
+			case RECORDS -> frame.setContentPane(new RecordsForm().resolve()); // Created ad hoc
 			case PAST_CONTENT -> {
 				render(callStack.pop());
 				callStack.pop();
@@ -118,6 +119,7 @@ public class GUI {
 		SEARCH_RESULTS,
 		RECORD,
 		ADD_MOTH,
+		RECORDS,
 		PAST_CONTENT,
 	}
 }

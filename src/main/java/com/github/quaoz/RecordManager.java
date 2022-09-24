@@ -42,6 +42,43 @@ public class RecordManager {
 		}
 	}
 
+	public static @NotNull ArrayList<Record> getSpecies(String species) {
+		species = species.strip();
+		ArrayList<Record> records = new ArrayList<>();
+
+		recordsDatabase
+				.collect(species, 1)
+				.forEach(
+						s ->
+								records.add(
+										new Record(
+												Integer.parseInt(
+														s.substring(0, recordsConfig.fields[0])
+																.strip()),
+												s.substring(
+																recordsConfig.fields[0],
+																recordsConfig.fields[1])
+														.strip(),
+												s.substring(
+																recordsConfig.fields[1],
+																recordsConfig.fields[2])
+														.strip(),
+												s.substring(
+																recordsConfig.fields[2],
+																recordsConfig.fields[3])
+														.strip(),
+												Double.parseDouble(
+														s.substring(
+																		recordsConfig.fields[3],
+																		recordsConfig.fields[4])
+																.strip()),
+												s.substring(
+																recordsConfig.fields[4],
+																recordsConfig.fields[5])
+														.strip())));
+		return records;
+	}
+
 	public static @NotNull ArrayList<Moth> searchUser(String username) {
 		username = username.strip();
 		ArrayList<Moth> moths = new ArrayList<>();

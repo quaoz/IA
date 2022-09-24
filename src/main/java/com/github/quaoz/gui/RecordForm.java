@@ -44,7 +44,8 @@ public class RecordForm {
 		recordsButton.addActionListener(
 				e -> {
 					// TODO: get records
-					Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+					Main.getGui().setRecord(moth);
+					Main.getGui().render(GUI.Content.RECORDS);
 				});
 
 		submitRecordButton.addActionListener(e -> Main.getGui().render(GUI.Content.SUBMIT_RECORD));

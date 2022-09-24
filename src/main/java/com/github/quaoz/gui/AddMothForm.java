@@ -84,13 +84,31 @@ public class AddMothForm {
 		submitButton.addActionListener(
 				e -> {
 					if (checkSpecies() && checkSciName()) {
+						Double sizeLower = (Double) sizeLowerSpinner.getValue();
+						Double sizeUpper = (Double) sizeUpperSpinner.getValue();
+
+						if (sizeLower > sizeUpper) {
+							Double tmp = sizeLower;
+							sizeLower = sizeUpper;
+							sizeUpper = tmp;
+						}
+
+						Integer flightStart = (Integer) flightStartSpinner.getValue();
+						Integer flightEnd = (Integer) flightEndSpinner.getValue();
+
+						if (flightStart > flightEnd) {
+							Integer tmp = flightStart;
+							flightStart = flightEnd;
+							flightEnd = tmp;
+						}
+
 						MothManager.addMoth(
 								speciesField.getText().strip(),
 								sciNameField.getText().strip(),
-								(Double) sizeLowerSpinner.getValue(),
-								(Double) sizeUpperSpinner.getValue(),
-								(Integer) flightStartSpinner.getValue(),
-								(Integer) flightEndSpinner.getValue(),
+								sizeLower,
+								sizeUpper,
+								flightStart,
+								flightEnd,
 								habitatField.getText().strip(),
 								foodField.getText().strip());
 

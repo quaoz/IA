@@ -13,7 +13,7 @@ spotless {
         importOrder()
         removeUnusedImports()
 
-        googleJavaFormat("1.15.0").aosp().reflowLongStrings()
+        googleJavaFormat("1.15.0")
         formatAnnotations()
 
         trimTrailingWhitespace()

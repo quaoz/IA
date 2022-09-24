@@ -9,12 +9,10 @@ version = "1.0-SNAPSHOT"
 
 spotless {
     java {
-        importOrder()
         removeUnusedImports()
-
-        googleJavaFormat("1.15.0")
+        googleJavaFormat("1.15.0").aosp()
         formatAnnotations()
-
+        importOrder()
         trimTrailingWhitespace()
         indentWithTabs()
         endWithNewline()

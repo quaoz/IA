@@ -9,10 +9,13 @@ version = "1.0-SNAPSHOT"
 
 spotless {
     java {
-        removeUnusedImports()
-        googleJavaFormat("1.15.0").aosp()
-        formatAnnotations()
+        toggleOffOn()
         importOrder()
+        removeUnusedImports()
+
+        googleJavaFormat("1.15.0").aosp().reflowLongStrings()
+        formatAnnotations()
+
         trimTrailingWhitespace()
         indentWithTabs()
         endWithNewline()
@@ -20,6 +23,11 @@ spotless {
 
     kotlinGradle {
         ktlint()
+    }
+
+    json {
+        target("src/**/*.json")
+        simple()
     }
 }
 

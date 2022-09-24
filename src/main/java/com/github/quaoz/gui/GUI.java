@@ -1,6 +1,5 @@
 package com.github.quaoz.gui;
 
-
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import com.formdev.flatlaf.util.SystemInfo;
 import com.github.quaoz.Moth;

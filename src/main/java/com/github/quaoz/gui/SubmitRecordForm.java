@@ -1,6 +1,5 @@
 package com.github.quaoz.gui;
 
-
 import com.github.quaoz.Main;
 import com.github.quaoz.Moth;
 import com.github.quaoz.MothManager;
@@ -142,7 +141,11 @@ public class SubmitRecordForm {
 																				+ s.get(0)
 																				.getKey()
 																				.getName()
-																				+ ", if this is not your moth then please register a new moth bellow."));
+																				+ ", if this is not"
+																				+ " your moth then"
+																				+ " please register"
+																				+ " a new moth"
+																				+ " bellow."));
 							}
 						});
 

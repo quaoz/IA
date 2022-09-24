@@ -1,6 +1,5 @@
 package com.github.quaoz.util;
 
-
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 

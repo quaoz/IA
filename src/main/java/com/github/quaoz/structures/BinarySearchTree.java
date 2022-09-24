@@ -1,6 +1,5 @@
 package com.github.quaoz.structures;
 
-
 import java.util.ArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,5 @@
 package com.github.quaoz.gui;
 
-
 import com.github.quaoz.Main;
 import com.github.quaoz.Moth;
 import com.jgoodies.forms.layout.CellConstraints;

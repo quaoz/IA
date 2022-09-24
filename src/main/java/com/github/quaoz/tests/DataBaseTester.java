@@ -1,6 +1,5 @@
 package com.github.quaoz.tests;
 
-
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import java.io.File;

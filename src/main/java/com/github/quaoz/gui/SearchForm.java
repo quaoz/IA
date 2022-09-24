@@ -1,6 +1,5 @@
 package com.github.quaoz.gui;
 
-
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;

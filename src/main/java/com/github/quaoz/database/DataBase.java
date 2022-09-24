@@ -1,6 +1,5 @@
 package com.github.quaoz.database;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.CustomRatio;

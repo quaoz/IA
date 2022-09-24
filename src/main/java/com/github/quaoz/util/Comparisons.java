@@ -1,6 +1,5 @@
 package com.github.quaoz.util;
 
-
 import org.jetbrains.annotations.NotNull;
 
 /** Class to simplify comparisons between two comparable objects */

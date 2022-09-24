@@ -1,6 +1,5 @@
 package com.github.quaoz;
 
-
 import org.jetbrains.annotations.NotNull;
 
 public class Moth implements Comparable<Moth> {

@@ -1,6 +1,5 @@
 package com.github.quaoz.util;
 
-
 import com.byteowls.jopencage.JOpenCageGeocoder;
 import com.byteowls.jopencage.model.JOpenCageComponents;
 import com.byteowls.jopencage.model.JOpenCageForwardRequest;

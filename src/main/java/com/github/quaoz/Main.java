@@ -1,6 +1,5 @@
 package com.github.quaoz;
 
-
 import com.github.quaoz.gui.GUI;
 import org.tinylog.provider.ProviderRegistry;
 

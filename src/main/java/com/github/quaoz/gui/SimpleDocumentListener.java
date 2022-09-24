@@ -1,6 +1,5 @@
 package com.github.quaoz.gui;
 
-
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 

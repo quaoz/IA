@@ -1,6 +1,5 @@
 package com.github.quaoz.structures;
 
-
 import java.util.Objects;
 
 public class Pair<K, V> {

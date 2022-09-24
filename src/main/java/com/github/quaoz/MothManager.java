@@ -1,6 +1,5 @@
 package com.github.quaoz;
 
-
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.Pair;

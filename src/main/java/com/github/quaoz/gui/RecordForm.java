@@ -6,14 +6,14 @@ import com.github.quaoz.MothManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.text.DateFormatSymbols;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 public class RecordForm {
+
 	private JPanel panel;
 	private JTextField searchField;
 	private JButton advancedSearchButton;
@@ -35,32 +35,40 @@ public class RecordForm {
 
 		sizeLabel.setText("Size: " + moth.sizeLower() + " to " + moth.sizeUpper());
 		flightTimeLabel.setText(
-				"Flies from "
-						+ DateFormatSymbols.getInstance().getMonths()[moth.flightStart()]
-						+ " to "
-						+ DateFormatSymbols.getInstance().getMonths()[moth.flightEnd()]);
+			"Flies from " +
+			DateFormatSymbols.getInstance().getMonths()[moth.flightStart()] +
+			" to " +
+			DateFormatSymbols.getInstance().getMonths()[moth.flightEnd()]
+		);
 		habitatLabel.setText("Habitat: " + moth.habitat());
 		foodSourceLabel.setText("Food sources: " + moth.food());
 
-		recordsButton.addActionListener(
-				e -> {
-					// TODO: get records
-					Main.getGui().setRecord(moth);
-					Main.getGui().render(GUI.Content.RECORDS);
-				});
+		recordsButton.addActionListener(e -> {
+			// TODO: get records
+			Main.getGui().setRecord(moth);
+			Main.getGui().render(GUI.Content.RECORDS);
+		});
 
-		submitRecordButton.addActionListener(e -> Main.getGui().render(GUI.Content.SUBMIT_RECORD));
+		submitRecordButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.SUBMIT_RECORD)
+		);
 
-		advancedSearchButton.addActionListener(e -> Main.getGui().render(GUI.Content.ADVANCED_SEARCH));
+		advancedSearchButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.ADVANCED_SEARCH)
+		);
 
-		profileButton.addActionListener(e -> Main.getGui().render(GUI.Content.PROFILE));
+		profileButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PROFILE)
+		);
 
-		searchField.addActionListener(
-				e -> {
-					Main.getGui()
-							.setSearchResults(MothManager.collectMoths(searchField.getText().strip(), 0, 100));
-					Main.getGui().render(GUI.Content.SEARCH_RESULTS);
-				});
+		searchField.addActionListener(e -> {
+			Main
+				.getGui()
+				.setSearchResults(
+					MothManager.collectMoths(searchField.getText().strip(), 0, 100)
+				);
+			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+		});
 	}
 
 	public JPanel resolve() {

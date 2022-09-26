@@ -1,8 +1,7 @@
 package com.github.quaoz.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class to swap elements of arrays
@@ -17,7 +16,11 @@ public class Swap {
 	 * @param idy   The index of the second element
 	 * @param <T>   The value type
 	 */
-	public static <T extends Comparable<T>> void swap(T @NotNull [] array, int idx, int idy) {
+	public static <T extends Comparable<T>> void swap(
+		T@NotNull[] array,
+		int idx,
+		int idy
+	) {
 		T swap = array[idx];
 		array[idx] = array[idy];
 		array[idy] = swap;
@@ -33,7 +36,11 @@ public class Swap {
 	 * @param <T>        The array type
 	 */
 	public static <T extends Comparable<T>> void swapBlock(
-			T[] array, int blockStart, int blockEnd, int dest) {
+		T[] array,
+		int blockStart,
+		int blockEnd,
+		int dest
+	) {
 		final int blockSize = blockEnd - blockStart;
 		int i = 0;
 
@@ -51,7 +58,11 @@ public class Swap {
 	 * @param idy  The index of the second element
 	 * @param <E>  The value type
 	 */
-	public static <E extends Comparable<E>> void swap(@NotNull List<E> list, int idx, int idy) {
+	public static <E extends Comparable<E>> void swap(
+		@NotNull List<E> list,
+		int idx,
+		int idy
+	) {
 		list.set(idy, list.set(idx, list.get(idy)));
 	}
 }

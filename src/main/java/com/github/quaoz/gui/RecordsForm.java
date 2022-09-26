@@ -5,14 +5,14 @@ import com.github.quaoz.Record;
 import com.github.quaoz.RecordManager;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 public class RecordsForm {
+
 	private final ArrayList<Record> records;
 	private JButton backButton;
 	private JPanel panel;
@@ -22,14 +22,16 @@ public class RecordsForm {
 	public RecordsForm() {
 		records = RecordManager.getSpecies(Main.getGui().getRecord().name());
 		$$$setupUI$$$();
-		backButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+		backButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PAST_CONTENT)
+		);
 	}
 
 	public JPanel resolve() {
 		return panel;
 	}
 
-// spotless:off
+	// spotless:off
 
 	private void createUIComponents() {
 		// TODO: place custom component creation code here

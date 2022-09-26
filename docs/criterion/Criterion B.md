@@ -36,19 +36,19 @@ screen.
 
 #### Records:
 
-* When a record is clicked a box will appear showing extra information about that record
+- When a record is clicked a box will appear showing extra information about that record
 
 ![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image8.png)
 
 #### Submit Record:
 
-* Some of this information (sex, size and time) will be optional
+- Some of this information (sex, size and time) will be optional
 
 ![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image7.png)
 
 #### Profile:
 
-* When a record is clicked a box will appear showing extra information about that record
+- When a record is clicked a box will appear showing extra information about that record
 
 ![](https://github.com/quaoz/IA/raw/dev/docs/criterion/images/image12.png)
 

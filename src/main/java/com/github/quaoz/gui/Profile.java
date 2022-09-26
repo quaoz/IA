@@ -4,14 +4,14 @@ import com.github.quaoz.*;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 public class Profile {
+
 	private final ArrayList<Moth> records;
 	private JTextField searchField;
 	private JButton advancedSearchButton;
@@ -27,26 +27,34 @@ public class Profile {
 		this.records = RecordManager.searchUser(UserManager.getUser());
 		$$$setupUI$$$();
 
-		submitRecordButton.addActionListener(e -> Main.getGui().render(GUI.Content.SUBMIT_RECORD));
-		advancedSearchButton.addActionListener(e -> Main.getGui().render(GUI.Content.ADVANCED_SEARCH));
-		homeButton.addActionListener(e -> Main.getGui().render(GUI.Content.HOME_LOGGED_IN));
+		submitRecordButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.SUBMIT_RECORD)
+		);
+		advancedSearchButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.ADVANCED_SEARCH)
+		);
+		homeButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.HOME_LOGGED_IN)
+		);
 
-		searchField.addActionListener(
-				e -> {
-					Main.getGui()
-							.setSearchResults(MothManager.collectMoths(searchField.getText().strip(), 0, 100));
-					Main.getGui().render(GUI.Content.SEARCH_RESULTS);
-				});
-		signOutButton.addActionListener(
-				e -> {
-					UserManager.setUser("");
-					Main.getGui().render(GUI.Content.HOME_LOGGED_OUT);
-				});
+		searchField.addActionListener(e -> {
+			Main
+				.getGui()
+				.setSearchResults(
+					MothManager.collectMoths(searchField.getText().strip(), 0, 100)
+				);
+			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+		});
+		signOutButton.addActionListener(e -> {
+			UserManager.setUser("");
+			Main.getGui().render(GUI.Content.HOME_LOGGED_OUT);
+		});
 	}
 
 	public JPanel resolve() {
 		return panel;
 	}
+
 	// spotless:off
 
 	/**
@@ -144,7 +152,12 @@ public class Profile {
 	//spotless:on
 	private void createUIComponents() {
 		String[] columnNames = {
-				"Species", "Scientific Name", "Size", "Flight", "Habitat", "Food Sources"
+			"Species",
+			"Scientific Name",
+			"Size",
+			"Flight",
+			"Habitat",
+			"Food Sources",
 		};
 
 		String[][] data = new String[records.size()][6];

@@ -5,13 +5,13 @@ import com.github.quaoz.MothManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 public class HomeLoggedIn {
+
 	private JTextField searchField;
 	private JButton advancedSearchButton;
 	private JButton submitRecordButton;
@@ -19,16 +19,24 @@ public class HomeLoggedIn {
 	private JPanel panel;
 
 	public HomeLoggedIn() {
-		submitRecordButton.addActionListener(e -> Main.getGui().render(GUI.Content.SUBMIT_RECORD));
-		advancedSearchButton.addActionListener(e -> Main.getGui().render(GUI.Content.ADVANCED_SEARCH));
-		profileButton.addActionListener(e -> Main.getGui().render(GUI.Content.PROFILE));
+		submitRecordButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.SUBMIT_RECORD)
+		);
+		advancedSearchButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.ADVANCED_SEARCH)
+		);
+		profileButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PROFILE)
+		);
 
-		searchField.addActionListener(
-				e -> {
-					Main.getGui()
-							.setSearchResults(MothManager.collectMoths(searchField.getText().strip(), 0, 100));
-					Main.getGui().render(GUI.Content.SEARCH_RESULTS);
-				});
+		searchField.addActionListener(e -> {
+			Main
+				.getGui()
+				.setSearchResults(
+					MothManager.collectMoths(searchField.getText().strip(), 0, 100)
+				);
+			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+		});
 	}
 
 	public JPanel resolve() {

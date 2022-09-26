@@ -8,15 +8,15 @@ import com.github.quaoz.structures.Pair;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 public class AdvancedSearchForm {
+
 	private JTextField nameField;
 	private JTextField locationField;
 	private JTextField habitatField;
@@ -37,122 +37,133 @@ public class AdvancedSearchForm {
 	private JSpinner flightEndSpinner;
 
 	public AdvancedSearchForm() {
-		cancelButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+		cancelButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PAST_CONTENT)
+		);
 
 		sizeLowerSpinner.setModel(new SpinnerNumberModel(0, 0, 30, 0.1));
 		sizeUpperSpinner.setModel(new SpinnerNumberModel(1, 0, 30, 0.1));
 		flightStartSpinner.setModel(
-				new SpinnerNumberModel(Calendar.getInstance().get(Calendar.MONTH) + 1, 1, 12, 1));
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.MONTH) + 1,
+				1,
+				12,
+				1
+			)
+		);
 		flightEndSpinner.setModel(
-				new SpinnerNumberModel(Calendar.getInstance().get(Calendar.MONTH) + 1, 1, 12, 1));
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.MONTH) + 1,
+				1,
+				12,
+				1
+			)
+		);
 
 		// FIXME
-		searchButton.addActionListener(
-				e -> {
-					String name = nameField.getText().strip();
-					String habitat = habitatField.getText().strip();
-					String food = foodField.getText().strip();
-					String location = locationField.getText().strip();
+		searchButton.addActionListener(e -> {
+			String name = nameField.getText().strip();
+			String habitat = habitatField.getText().strip();
+			String food = foodField.getText().strip();
+			String location = locationField.getText().strip();
 
-					Double sizeLower = null;
-					Double sizeUpper = null;
+			Double sizeLower = null;
+			Double sizeUpper = null;
 
-					try {
-						sizeLower = (Double) sizeLowerSpinner.getValue();
-					} catch (ClassCastException ignored) {
-					}
+			try {
+				sizeLower = (Double) sizeLowerSpinner.getValue();
+			} catch (ClassCastException ignored) {}
 
-					try {
-						sizeUpper = (Double) sizeUpperSpinner.getValue();
-					} catch (ClassCastException ignored) {
-					}
+			try {
+				sizeUpper = (Double) sizeUpperSpinner.getValue();
+			} catch (ClassCastException ignored) {}
 
-					if (sizeLower == null) {
-						sizeLower = sizeUpper;
-					} else if (sizeUpper == null) {
-						sizeUpper = sizeLower;
-					} else {
-						if (sizeLower > sizeUpper) {
-							Double tmp = sizeLower;
-							sizeLower = sizeUpper;
-							sizeUpper = tmp;
+			if (sizeLower == null) {
+				sizeLower = sizeUpper;
+			} else if (sizeUpper == null) {
+				sizeUpper = sizeLower;
+			} else {
+				if (sizeLower > sizeUpper) {
+					Double tmp = sizeLower;
+					sizeLower = sizeUpper;
+					sizeUpper = tmp;
+				}
+			}
+
+			Integer flightStart = null;
+			Integer flightEnd = null;
+
+			try {
+				flightStart = (Integer) flightStartSpinner.getValue();
+			} catch (NumberFormatException | ClassCastException ignored) {}
+
+			try {
+				flightEnd = (Integer) flightEndSpinner.getValue();
+			} catch (NumberFormatException | ClassCastException ignored) {}
+
+			if (flightStart == null) {
+				flightStart = flightEnd;
+			} else if (flightEnd == null) {
+				flightEnd = flightStart;
+			} else {
+				if (flightStart > flightEnd) {
+					Integer tmp = flightStart;
+					flightStart = flightEnd;
+					flightEnd = tmp;
+				}
+			}
+
+			ArrayList<Pair<Moth, Double>> records = new ArrayList<>();
+
+			if (sizeLower != null) {
+				records =
+					MothManager.collectMoths(
+						String.format("%s:%s", sizeLower, sizeUpper),
+						2,
+						100,
+						(s1, s2) -> {
+							Double sizeLower1 = Double.parseDouble(s1.split(":")[0]);
+							Double sizeUpper1 = Double.parseDouble(s1.split(":")[1]);
+							Double sizeLower2 = Double.parseDouble(s2.split(":")[0]);
+							Double sizeUpper2 = Double.parseDouble(s2.split(":")[1]);
+
+							Double difference1 = Math.abs(sizeLower1 - sizeLower2);
+							Double difference2 = Math.abs(sizeUpper1 - sizeUpper2);
+
+							return -(difference1 + difference2);
 						}
-					}
+					);
+			} else if (!location.isBlank()) {
+				records = RecordManager.searchLocation(location);
+			} else if (flightEnd != null) {
+				records =
+					MothManager.collectMoths(
+						String.format("%s:%s", flightStart, flightEnd),
+						3,
+						100,
+						(s1, s2) -> {
+							Integer flightStart1 = Integer.parseInt(s1.split(":")[0]);
+							Integer flightEnd1 = Integer.parseInt(s1.split(":")[1]);
+							Integer flightStart2 = Integer.parseInt(s2.split(":")[0]);
+							Integer flightEnd2 = Integer.parseInt(s2.split(":")[1]);
 
-					Integer flightStart = null;
-					Integer flightEnd = null;
+							Integer difference1 = Math.abs(flightStart1 - flightStart2);
+							Integer difference2 = Math.abs(flightEnd1 - flightEnd2);
 
-					try {
-						flightStart = (Integer) flightStartSpinner.getValue();
-					} catch (NumberFormatException | ClassCastException ignored) {
-					}
-
-					try {
-						flightEnd = (Integer) flightEndSpinner.getValue();
-					} catch (NumberFormatException | ClassCastException ignored) {
-					}
-
-					if (flightStart == null) {
-						flightStart = flightEnd;
-					} else if (flightEnd == null) {
-						flightEnd = flightStart;
-					} else {
-						if (flightStart > flightEnd) {
-							Integer tmp = flightStart;
-							flightStart = flightEnd;
-							flightEnd = tmp;
+							return -(difference1 + difference2);
 						}
-					}
+					);
+			} else if (!habitat.isBlank()) {
+				records = MothManager.collectMoths(habitat, 4, 100);
+			} else if (!food.isBlank()) {
+				records = MothManager.collectMoths(food, 5, 100);
+			} else if (!name.isBlank()) {
+				records = MothManager.collectMoths(name, 0, 100);
+			}
 
-					ArrayList<Pair<Moth, Double>> records = new ArrayList<>();
-
-					if (sizeLower != null) {
-						records =
-								MothManager.collectMoths(
-										String.format("%s:%s", sizeLower, sizeUpper),
-										2,
-										100,
-										(s1, s2) -> {
-											Double sizeLower1 = Double.parseDouble(s1.split(":")[0]);
-											Double sizeUpper1 = Double.parseDouble(s1.split(":")[1]);
-											Double sizeLower2 = Double.parseDouble(s2.split(":")[0]);
-											Double sizeUpper2 = Double.parseDouble(s2.split(":")[1]);
-
-											Double difference1 = Math.abs(sizeLower1 - sizeLower2);
-											Double difference2 = Math.abs(sizeUpper1 - sizeUpper2);
-
-											return -(difference1 + difference2);
-										});
-					} else if (!location.isBlank()) {
-						records = RecordManager.searchLocation(location);
-					} else if (flightEnd != null) {
-						records =
-								MothManager.collectMoths(
-										String.format("%s:%s", flightStart, flightEnd),
-										3,
-										100,
-										(s1, s2) -> {
-											Integer flightStart1 = Integer.parseInt(s1.split(":")[0]);
-											Integer flightEnd1 = Integer.parseInt(s1.split(":")[1]);
-											Integer flightStart2 = Integer.parseInt(s2.split(":")[0]);
-											Integer flightEnd2 = Integer.parseInt(s2.split(":")[1]);
-
-											Integer difference1 = Math.abs(flightStart1 - flightStart2);
-											Integer difference2 = Math.abs(flightEnd1 - flightEnd2);
-
-											return -(difference1 + difference2);
-										});
-					} else if (!habitat.isBlank()) {
-						records = MothManager.collectMoths(habitat, 4, 100);
-					} else if (!food.isBlank()) {
-						records = MothManager.collectMoths(food, 5, 100);
-					} else if (!name.isBlank()) {
-						records = MothManager.collectMoths(name, 0, 100);
-					}
-
-					Main.getGui().setSearchResults(records);
-					Main.getGui().render(GUI.Content.SEARCH_RESULTS);
-				});
+			Main.getGui().setSearchResults(records);
+			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+		});
 	}
 
 	public JPanel resolve() {

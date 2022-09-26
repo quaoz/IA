@@ -16,7 +16,10 @@ public class Comparisons {
 	 *
 	 * @return boolean Whether base is smalled than the value
 	 */
-	public static <T extends Comparable<T>> boolean smaller(@NotNull T base, T value) {
+	public static <T extends Comparable<T>> boolean smaller(
+		@NotNull T base,
+		T value
+	) {
 		return base.compareTo(value) < 0;
 	}
 
@@ -29,7 +32,10 @@ public class Comparisons {
 	 *
 	 * @return boolean Whether base is smalled or equal to the value
 	 */
-	public static <T extends Comparable<T>> boolean smallerOrEqual(@NotNull T base, T value) {
+	public static <T extends Comparable<T>> boolean smallerOrEqual(
+		@NotNull T base,
+		T value
+	) {
 		return base.compareTo(value) <= 0;
 	}
 
@@ -42,7 +48,10 @@ public class Comparisons {
 	 *
 	 * @return boolean Whether base is smalled than the value
 	 */
-	public static <T extends Comparable<T>> boolean bigger(@NotNull T base, T value) {
+	public static <T extends Comparable<T>> boolean bigger(
+		@NotNull T base,
+		T value
+	) {
 		return base.compareTo(value) > 0;
 	}
 
@@ -55,7 +64,10 @@ public class Comparisons {
 	 *
 	 * @return boolean Whether base is bigger or equal to the value
 	 */
-	public static <T extends Comparable<T>> boolean biggerOrEqual(@NotNull T base, T value) {
+	public static <T extends Comparable<T>> boolean biggerOrEqual(
+		@NotNull T base,
+		T value
+	) {
 		return base.compareTo(value) >= 0;
 	}
 
@@ -68,7 +80,10 @@ public class Comparisons {
 	 *
 	 * @return boolean Whether the base is smalled than the value
 	 */
-	public static <T extends Comparable<T>> boolean equal(@NotNull T base, T value) {
+	public static <T extends Comparable<T>> boolean equal(
+		@NotNull T base,
+		T value
+	) {
 		return base.compareTo(value) == 0;
 	}
 
@@ -81,7 +96,10 @@ public class Comparisons {
 	 *
 	 * @return boolean Whether the base is smalled than the value
 	 */
-	public static <T extends Comparable<T>> boolean notEqual(@NotNull T base, T value) {
+	public static <T extends Comparable<T>> boolean notEqual(
+		@NotNull T base,
+		T value
+	) {
 		return base.compareTo(value) != 0;
 	}
 
@@ -106,7 +124,7 @@ public class Comparisons {
 	 *
 	 * @return The largest value in the array
 	 */
-	public static <T extends Comparable<T>> T max(T @NotNull [] array) {
+	public static <T extends Comparable<T>> T max(T@NotNull[] array) {
 		int index = 0;
 
 		for (int i = 1; i < array.length - 1; i++) {
@@ -153,7 +171,7 @@ public class Comparisons {
 	 *
 	 * @return The smallest value in the array
 	 */
-	public static <T extends Comparable<T>> T min(T @NotNull [] array) {
+	public static <T extends Comparable<T>> T min(T@NotNull[] array) {
 		int index = 0;
 
 		for (int i = 1; i < array.length - 1; i++) {

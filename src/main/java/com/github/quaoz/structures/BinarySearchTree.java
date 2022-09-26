@@ -1,12 +1,12 @@
 package com.github.quaoz.structures;
 
+import java.util.ArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-
 public class BinarySearchTree<T extends Comparable<T>> {
+
 	private BinaryNode<T> root;
 
 	/**
@@ -497,6 +497,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * A simple node class for the binary search tree containing a value and a left and right child
 	 */
 	private static class BinaryNode<T extends Comparable<T>> {
+
 		/**
 		 * The value of the node
 		 */

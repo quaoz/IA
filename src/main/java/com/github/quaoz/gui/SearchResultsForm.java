@@ -4,16 +4,16 @@ import com.github.quaoz.Main;
 import com.github.quaoz.Moth;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 public class SearchResultsForm {
+
 	public ArrayList<Moth> records;
 	private JPanel panel;
 	private JButton backButton;
@@ -24,19 +24,23 @@ public class SearchResultsForm {
 		this.records = Main.getGui().getSearchResults();
 		$$$setupUI$$$();
 
-		backButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+		backButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PAST_CONTENT)
+		);
 
 		table.addMouseListener(
-				new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						Moth moth = records.get(table.rowAtPoint(e.getPoint()));
-						Main.getGui().setRecord(moth);
-						Main.getGui().render(GUI.Content.RECORD);
-					}
-				});
+			new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					Moth moth = records.get(table.rowAtPoint(e.getPoint()));
+					Main.getGui().setRecord(moth);
+					Main.getGui().render(GUI.Content.RECORD);
+				}
+			}
+		);
 	}
-// spotless:off
+
+	// spotless:off
 
 	public JPanel resolve() {
 		return panel;
@@ -119,7 +123,12 @@ public class SearchResultsForm {
 	//spotless:on
 	private void createUIComponents() {
 		String[] columnNames = {
-				"Species", "Scientific Name", "Size", "Flight", "Habitat", "Food Sources"
+			"Species",
+			"Scientific Name",
+			"Size",
+			"Flight",
+			"Habitat",
+			"Food Sources",
 		};
 		String[][] data = new String[records.size()][6];
 

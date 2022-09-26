@@ -4,6 +4,7 @@ package com.github.quaoz.structures;
  * A simple generic queue
  */
 public class SimpleQueue<T> {
+
 	/**
 	 * The first element in the queue
 	 */
@@ -96,6 +97,7 @@ public class SimpleQueue<T> {
 	 * Simple node
 	 */
 	private static class Node<T> {
+
 		public T value;
 		public Node<T> next;
 

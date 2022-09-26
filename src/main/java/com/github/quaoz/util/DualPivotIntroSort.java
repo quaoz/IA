@@ -1,8 +1,7 @@
 package com.github.quaoz.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Dual-pivot intro sort is a modified intro sort which uses dual-pivot quick sort instead of
@@ -12,6 +11,7 @@ import java.util.List;
  * log n)
  */
 public class DualPivotIntroSort {
+
 	/**
 	 * Implements a modified intro sort algorithm without the need to specify the bounds
 	 *
@@ -20,8 +20,10 @@ public class DualPivotIntroSort {
 	 *
 	 * @return The sorted array
 	 */
-	public static <T extends Comparable<T>> T @NotNull [] sort(T @NotNull [] array) {
-		final int maxDepth = (int) (2 * Math.floor(Math.log(array.length) / Math.log(2)));
+	public static <T extends Comparable<T>> T@NotNull[] sort(T@NotNull[] array) {
+		final int maxDepth = (int) (
+			2 * Math.floor(Math.log(array.length) / Math.log(2))
+		);
 		return sort(array, 0, array.length - 1, maxDepth);
 	}
 
@@ -37,13 +39,21 @@ public class DualPivotIntroSort {
 	 *
 	 * @return The sorted array
 	 */
-	static <T extends Comparable<T>> T @NotNull [] sort(
-			T @NotNull [] array, int left, int right, int maxDepth) {
+	static <T extends Comparable<T>> T@NotNull[] sort(
+		T@NotNull[] array,
+		int left,
+		int right,
+		int maxDepth
+	) {
 		final int size = right - left;
 
 		if (size > 16) {
 			if (maxDepth != 0) {
-				final int[] partition = DualPivotQuickSort.partition(array, left, right);
+				final int[] partition = DualPivotQuickSort.partition(
+					array,
+					left,
+					right
+				);
 
 				sort(array, left, partition[0] - 1, maxDepth - 1);
 				sort(array, partition[0] + 1, partition[1] - 1, maxDepth - 1);
@@ -67,7 +77,9 @@ public class DualPivotIntroSort {
 	 * @return The sorted list
 	 */
 	public static <E extends Comparable<E>> List<E> sort(@NotNull List<E> list) {
-		final int maxDepth = (int) (2 * Math.floor(Math.log(list.size()) / Math.log(2)));
+		final int maxDepth = (int) (
+			2 * Math.floor(Math.log(list.size()) / Math.log(2))
+		);
 		return sort(list, 0, list.size() - 1, maxDepth);
 	}
 
@@ -83,7 +95,12 @@ public class DualPivotIntroSort {
 	 *
 	 * @return The sorted list
 	 */
-	static <E extends Comparable<E>> List<E> sort(List<E> list, int left, int right, int maxDepth) {
+	static <E extends Comparable<E>> List<E> sort(
+		List<E> list,
+		int left,
+		int right,
+		int maxDepth
+	) {
 		final int size = right - left;
 
 		if (size > 16) {

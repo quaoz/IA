@@ -5,8 +5,6 @@ import com.github.quaoz.UserManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -14,13 +12,15 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
+import javax.swing.*;
 
 public class SignUpForm {
+
 	private final Pattern alphanumericChecker = Pattern.compile("[^a-zA-Z0-9-]");
 	// https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
-	private final Pattern emailPattern =
-			Pattern.compile(
-					"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
+	private final Pattern emailPattern = Pattern.compile(
+		"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+	);
 	private JPanel panel;
 	private JTextField usernameField;
 	private JTextField emailField;
@@ -42,92 +42,103 @@ public class SignUpForm {
 	private JLabel passwordMessage;
 
 	public SignUpForm() {
-		registeredButton.addActionListener(
-				e -> {
-					if (checkUsername() && checkEmail() && checkPassword() && checkPasswordRepeat()) {
-						UserManager.addUser(
-								usernameField.getText().strip(),
-								emailField.getText().strip(),
-								passwordField.getPassword());
-						UserManager.setUser(usernameField.getText().strip());
-						Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
-					}
-				});
+		registeredButton.addActionListener(e -> {
+			if (
+				checkUsername() &&
+				checkEmail() &&
+				checkPassword() &&
+				checkPasswordRepeat()
+			) {
+				UserManager.addUser(
+					usernameField.getText().strip(),
+					emailField.getText().strip(),
+					passwordField.getPassword()
+				);
+				UserManager.setUser(usernameField.getText().strip());
+				Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
+			}
+		});
 
-		cancelButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+		cancelButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PAST_CONTENT)
+		);
 
 		usernameField.addFocusListener(
-				new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent e) {
-						super.focusGained(e);
+			new FocusAdapter() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					super.focusGained(e);
 
-						if (!e.isTemporary()) {
-							usernameValidLabel.setText(null);
-							usernameMessage.setText(null);
-						}
+					if (!e.isTemporary()) {
+						usernameValidLabel.setText(null);
+						usernameMessage.setText(null);
 					}
+				}
 
-					@Override
-					public void focusLost(FocusEvent e) {
-						super.focusLost(e);
-						checkUsername();
-					}
-				});
+				@Override
+				public void focusLost(FocusEvent e) {
+					super.focusLost(e);
+					checkUsername();
+				}
+			}
+		);
 		emailField.addFocusListener(
-				new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent e) {
-						super.focusGained(e);
+			new FocusAdapter() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					super.focusGained(e);
 
-						if (!e.isTemporary()) {
-							emailValidLabel.setText(null);
-							emailMessage.setText(null);
-						}
+					if (!e.isTemporary()) {
+						emailValidLabel.setText(null);
+						emailMessage.setText(null);
 					}
+				}
 
-					@Override
-					public void focusLost(FocusEvent e) {
-						super.focusLost(e);
-						checkEmail();
-					}
-				});
+				@Override
+				public void focusLost(FocusEvent e) {
+					super.focusLost(e);
+					checkEmail();
+				}
+			}
+		);
 		passwordField.addFocusListener(
-				new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent e) {
-						super.focusGained(e);
+			new FocusAdapter() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					super.focusGained(e);
 
-						if (!e.isTemporary()) {
-							passwordValidLabel.setText(null);
-							passwordMessage.setText(null);
-						}
+					if (!e.isTemporary()) {
+						passwordValidLabel.setText(null);
+						passwordMessage.setText(null);
 					}
+				}
 
-					@Override
-					public void focusLost(FocusEvent e) {
-						super.focusLost(e);
-						checkPassword();
-					}
-				});
+				@Override
+				public void focusLost(FocusEvent e) {
+					super.focusLost(e);
+					checkPassword();
+				}
+			}
+		);
 		repeatPasswordField.addFocusListener(
-				new FocusAdapter() {
-					@Override
-					public void focusGained(FocusEvent e) {
-						super.focusGained(e);
+			new FocusAdapter() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					super.focusGained(e);
 
-						if (!e.isTemporary()) {
-							repeatValidLabel.setText(null);
-							repeatMessage.setText(null);
-						}
+					if (!e.isTemporary()) {
+						repeatValidLabel.setText(null);
+						repeatMessage.setText(null);
 					}
+				}
 
-					@Override
-					public void focusLost(FocusEvent e) {
-						super.focusLost(e);
-						checkPasswordRepeat();
-					}
-				});
+				@Override
+				public void focusLost(FocusEvent e) {
+					super.focusLost(e);
+					checkPasswordRepeat();
+				}
+			}
+		);
 
 		usernameField.addActionListener(e -> checkUsername());
 		emailField.addActionListener(e -> checkEmail());
@@ -141,7 +152,9 @@ public class SignUpForm {
 		if (username.length() != 0) {
 			if (alphanumericChecker.matcher(username).find()) {
 				usernameValidLabel.setText("✗");
-				usernameMessage.setText("Username can only contain alphanumeric characters and dash");
+				usernameMessage.setText(
+					"Username can only contain alphanumeric characters and dash"
+				);
 				return false;
 			} else if (username.length() > 64) {
 				usernameValidLabel.setText("✗");

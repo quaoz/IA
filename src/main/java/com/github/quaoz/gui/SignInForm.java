@@ -5,13 +5,13 @@ import com.github.quaoz.UserManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 public class SignInForm {
+
 	private JPanel panel;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -24,13 +24,18 @@ public class SignInForm {
 		signInButton.addActionListener(e -> login());
 		usernameField.addActionListener(e -> login());
 		passwordField.addActionListener(e -> login());
-		cancelButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+		cancelButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PAST_CONTENT)
+		);
 	}
 
 	private void login() {
 		String username = usernameField.getText().strip();
 
-		if (username.length() > 1 && UserManager.validateUser(username, passwordField.getPassword())) {
+		if (
+			username.length() > 1 &&
+			UserManager.validateUser(username, passwordField.getPassword())
+		) {
 			UserManager.setUser(usernameField.getText().strip());
 			Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
 		}

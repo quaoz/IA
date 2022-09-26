@@ -4,6 +4,7 @@ package com.github.quaoz.structures;
  * A simple generic stack
  */
 public class SimpleStack<T> {
+
 	/**
 	 * The top element in the stack
 	 */
@@ -69,6 +70,7 @@ public class SimpleStack<T> {
 	 * Simple node
 	 */
 	private static class Node<T> {
+
 		public T value;
 		public Node<T> previous;
 

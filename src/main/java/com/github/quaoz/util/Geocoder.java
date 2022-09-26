@@ -9,6 +9,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.NotNull;
 
 public class Geocoder {
+
 	private static final JOpenCageGeocoder jOpenCageGeocoder;
 
 	static {
@@ -19,7 +20,10 @@ public class Geocoder {
 	}
 
 	public static String standardise(double latitude, double longitude) {
-		JOpenCageReverseRequest request = new JOpenCageReverseRequest(latitude, longitude);
+		JOpenCageReverseRequest request = new JOpenCageReverseRequest(
+			latitude,
+			longitude
+		);
 		request.setMinConfidence(1);
 		request.setNoAnnotations(false);
 
@@ -39,11 +43,12 @@ public class Geocoder {
 
 		JOpenCageComponents components = results.getFirstComponents();
 		return String.format(
-				"%s, %s, %s, %s, %s",
-				components.getCountry(),
-				components.getState(),
-				components.getStateDistrict(),
-				components.getCounty(),
-				components.getCity());
+			"%s, %s, %s, %s, %s",
+			components.getCountry(),
+			components.getState(),
+			components.getStateDistrict(),
+			components.getCounty(),
+			components.getCity()
+		);
 	}
 }

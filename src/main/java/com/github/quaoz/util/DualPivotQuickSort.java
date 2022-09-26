@@ -1,8 +1,7 @@
 package com.github.quaoz.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Dual-pivot quick sort is a modified quick sort algorithm which uses two pivot values instead of
@@ -58,8 +57,11 @@ public class DualPivotQuickSort {
 	 *
 	 * @return The partition indexes
 	 */
-	static <T extends Comparable<T>> int @NotNull [] partition(
-			T @NotNull [] array, int left, int right) {
+	static <T extends Comparable<T>> int@NotNull[] partition(
+		T@NotNull[] array,
+		int left,
+		int right
+	) {
 		/*
 		 * Randomizing one of the values which will be chosen as a pivot as we do with standard quick sort can
 		 * significantly increase the performance on non-random data sets as it allows dual-pivot quick sort to
@@ -83,7 +85,10 @@ public class DualPivotQuickSort {
 			if (Comparisons.smaller(array[leftIndex], pivotOne)) {
 				Swap.swap(array, leftIndex, index++);
 			} else if (Comparisons.biggerOrEqual(array[leftIndex], pivotTwo)) {
-				while (Comparisons.bigger(array[rightIndex], pivotTwo) && leftIndex < rightIndex) {
+				while (
+					Comparisons.bigger(array[rightIndex], pivotTwo) &&
+					leftIndex < rightIndex
+				) {
 					--rightIndex;
 				}
 
@@ -99,7 +104,7 @@ public class DualPivotQuickSort {
 		Swap.swap(array, left, --index);
 		Swap.swap(array, right, ++rightIndex);
 
-		return new int[]{index, rightIndex};
+		return new int[] { index, rightIndex };
 	}
 
 	/**
@@ -125,7 +130,11 @@ public class DualPivotQuickSort {
 	 *
 	 * @return The sorted list
 	 */
-	static <E extends Comparable<E>> List<E> sort(@NotNull List<E> list, int left, int right) {
+	static <E extends Comparable<E>> List<E> sort(
+		@NotNull List<E> list,
+		int left,
+		int right
+	) {
 		if (left < right) {
 			final int[] partition = partition(list, left, right);
 
@@ -147,8 +156,11 @@ public class DualPivotQuickSort {
 	 *
 	 * @return The partition indexes
 	 */
-	static <E extends Comparable<E>> int @NotNull [] partition(
-			@NotNull List<E> list, int left, int right) {
+	static <E extends Comparable<E>> int@NotNull[] partition(
+		@NotNull List<E> list,
+		int left,
+		int right
+	) {
 		if (Comparisons.bigger(list.get(left), list.get(right))) {
 			Swap.swap(list, left, right);
 		}
@@ -164,7 +176,10 @@ public class DualPivotQuickSort {
 			if (Comparisons.smaller(list.get(leftIndex), pivotOne)) {
 				Swap.swap(list, leftIndex, index++);
 			} else if (Comparisons.biggerOrEqual(list.get(leftIndex), pivotTwo)) {
-				while (Comparisons.bigger(list.get(rightIndex), pivotTwo) && leftIndex < rightIndex) {
+				while (
+					Comparisons.bigger(list.get(rightIndex), pivotTwo) &&
+					leftIndex < rightIndex
+				) {
 					--rightIndex;
 				}
 
@@ -180,6 +195,6 @@ public class DualPivotQuickSort {
 		Swap.swap(list, left, --index);
 		Swap.swap(list, right, ++rightIndex);
 
-		return new int[]{index, rightIndex};
+		return new int[] { index, rightIndex };
 	}
 }

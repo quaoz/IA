@@ -1,8 +1,7 @@
 package com.github.quaoz.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Insertion sort is a simple sorting algorithm, works by virtually splitting the array and placing
@@ -20,7 +19,7 @@ public class InsertionSort {
 	 *
 	 * @return The sorted array
 	 */
-	public static <T extends Comparable<T>> T[] sort(T @NotNull [] array) {
+	public static <T extends Comparable<T>> T[] sort(T@NotNull[] array) {
 		return sort(array, 0, array.length - 1);
 	}
 
@@ -34,8 +33,11 @@ public class InsertionSort {
 	 *
 	 * @return The sorted array
 	 */
-	static <T extends Comparable<T>> T[] sort(T @NotNull [] array, int start, int end) {
-
+	static <T extends Comparable<T>> T[] sort(
+		T@NotNull[] array,
+		int start,
+		int end
+	) {
 		// Iterates through the array
 		for (int i = start; i <= end; i++) {
 			T insertValue = array[i];
@@ -76,8 +78,11 @@ public class InsertionSort {
 	 *
 	 * @return The sorted array
 	 */
-	static <E extends Comparable<E>> List<E> sort(List<E> list, int start, int end) {
-
+	static <E extends Comparable<E>> List<E> sort(
+		List<E> list,
+		int start,
+		int end
+	) {
 		// Iterates through the list
 		for (int i = start; i <= end; i++) {
 			E insertValue = list.get(i);

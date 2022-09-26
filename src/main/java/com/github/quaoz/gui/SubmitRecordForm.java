@@ -5,9 +5,6 @@ import com.github.quaoz.util.Geocoder;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -17,8 +14,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 
 public class SubmitRecordForm {
+
 	private JPanel panel;
 	private JTextField speciesField;
 	private JTextField locationField;
@@ -51,105 +51,129 @@ public class SubmitRecordForm {
 
 		coordinateLocationPanel.setVisible(false);
 		daySpinner.setModel(
-				new SpinnerNumberModel(Calendar.getInstance().get(Calendar.DAY_OF_MONTH), 1, 31, 1));
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+				1,
+				31,
+				1
+			)
+		);
 		monthSpinner.setModel(
-				new SpinnerNumberModel(Calendar.getInstance().get(Calendar.MONTH) + 1, 1, 12, 1));
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.MONTH) + 1,
+				1,
+				12,
+				1
+			)
+		);
 		sizeSpinner.setModel(new SpinnerNumberModel(0, 0, 30, 0.1));
 
-		submitButton.addActionListener(
-				e -> {
-					boolean valid = true;
-					String location = "";
+		submitButton.addActionListener(e -> {
+			boolean valid = true;
+			String location = "";
 
-					if (coordsCheckBox.isSelected()) {
-						try {
-							double latitude = Double.parseDouble(latitudeField.getText().strip());
-							double longitude = Double.parseDouble(longitudeField.getText().strip());
+			if (coordsCheckBox.isSelected()) {
+				try {
+					double latitude = Double.parseDouble(latitudeField.getText().strip());
+					double longitude = Double.parseDouble(
+						longitudeField.getText().strip()
+					);
 
-							location = Geocoder.standardise(latitude, longitude);
-						} catch (NumberFormatException exception) {
-							locationValidLabel.setText("Invalid coordinates");
-							valid = false;
-						}
-					} else if (locationField.getText().strip().length() <= 1) {
-						locationValidLabel.setText("Invalid location");
-						valid = false;
-					} else {
-						location = Geocoder.standardise(locationField.getText().strip());
-					}
+					location = Geocoder.standardise(latitude, longitude);
+				} catch (NumberFormatException exception) {
+					locationValidLabel.setText("Invalid coordinates");
+					valid = false;
+				}
+			} else if (locationField.getText().strip().length() <= 1) {
+				locationValidLabel.setText("Invalid location");
+				valid = false;
+			} else {
+				location = Geocoder.standardise(locationField.getText().strip());
+			}
 
-					if (speciesField.getText().strip().length() <= 1) {
-						speciesMatchLabel.setText("Invalid species");
-						valid = false;
-					}
+			if (speciesField.getText().strip().length() <= 1) {
+				speciesMatchLabel.setText("Invalid species");
+				valid = false;
+			}
 
-					// TODO: Submit record
-					if (valid) {
-						Moth species =
-								MothManager.collectMoths(speciesField.getText().strip(), 0, 1).get(0).getKey();
+			// TODO: Submit record
+			if (valid) {
+				Moth species = MothManager
+					.collectMoths(speciesField.getText().strip(), 0, 1)
+					.get(0)
+					.getKey();
 
-						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-						Date date =
-								new GregorianCalendar(
-										Calendar.getInstance().get(Calendar.YEAR),
-										((Integer) monthSpinner.getValue()),
-										((Integer) daySpinner.getValue()))
-										.getTime();
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				Date date = new GregorianCalendar(
+					Calendar.getInstance().get(Calendar.YEAR),
+					((Integer) monthSpinner.getValue()),
+					((Integer) daySpinner.getValue())
+				)
+					.getTime();
 
-						RecordManager.addRecord(
-								species.name(),
-								location,
-								dateFormat.format(date),
-								((Double) sizeSpinner.getValue()),
-								UserManager.getUser());
-						Main.getGui().render(GUI.Content.PAST_CONTENT);
-					}
-				});
+				RecordManager.addRecord(
+					species.name(),
+					location,
+					dateFormat.format(date),
+					((Double) sizeSpinner.getValue()),
+					UserManager.getUser()
+				);
+				Main.getGui().render(GUI.Content.PAST_CONTENT);
+			}
+		});
 
-		cancelButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+		cancelButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PAST_CONTENT)
+		);
 
 		speciesField
-				.getDocument()
-				.addDocumentListener(
-						new SimpleDocumentListener() {
-							private CompletableFuture<Void> completableFuture;
+			.getDocument()
+			.addDocumentListener(
+				new SimpleDocumentListener() {
+					private CompletableFuture<Void> completableFuture;
 
-							@Override
-							public void update(DocumentEvent e) {
-								if (completableFuture != null) {
-									completableFuture.cancel(true);
-								}
+					@Override
+					public void update(DocumentEvent e) {
+						if (completableFuture != null) {
+							completableFuture.cancel(true);
+						}
 
-								completableFuture =
-										CompletableFuture.supplyAsync(
-														() -> MothManager.collectMoths(speciesField.getText().strip(), 0, 1))
-												.thenAccept(
-														s ->
-																speciesMatchLabel.setText(
-																		"Closest match: "
-																				+ s.get(0).getKey().name()
-																				+ ", if this is not"
-																				+ " your moth then"
-																				+ " please register"
-																				+ " a new moth"
-																				+ " bellow."));
-							}
-						});
-
-		coordsCheckBox.addActionListener(
-				e -> {
-					if (coordsCheckBox.isSelected()) {
-						standardLocationPanel.setVisible(false);
-						coordinateLocationPanel.setVisible(true);
-					} else {
-						standardLocationPanel.setVisible(true);
-						coordinateLocationPanel.setVisible(false);
+						completableFuture =
+							CompletableFuture
+								.supplyAsync(() ->
+									MothManager.collectMoths(speciesField.getText().strip(), 0, 1)
+								)
+								.thenAccept(s ->
+									speciesMatchLabel.setText(
+										"Closest match: " +
+										s.get(0).getKey().name() +
+										", if this is not" +
+										" your moth then" +
+										" please register" +
+										" a new moth" +
+										" bellow."
+									)
+								);
 					}
-				});
+				}
+			);
 
-		registerButton.addActionListener(e -> Main.getGui().render(GUI.Content.ADD_MOTH));
+		coordsCheckBox.addActionListener(e -> {
+			if (coordsCheckBox.isSelected()) {
+				standardLocationPanel.setVisible(false);
+				coordinateLocationPanel.setVisible(true);
+			} else {
+				standardLocationPanel.setVisible(true);
+				coordinateLocationPanel.setVisible(false);
+			}
+		});
+
+		registerButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.ADD_MOTH)
+		);
 	}
-// spotless:off
+
+	// spotless:off
 
 	public JPanel resolve() {
 		return panel;

@@ -3,12 +3,6 @@ package com.github.quaoz.database;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.CustomRatio;
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +12,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
 
 public class DataBase implements Closeable {
+
 	private final Cache cache;
 	private final File location;
 	private final File configLocation;
@@ -43,12 +43,17 @@ public class DataBase implements Closeable {
 			if (!configLocation.toFile().exists()) {
 				Files.createFile(configLocation);
 				Files.copy(
-						Objects.requireNonNull(getClass().getResourceAsStream("/config.json")), configLocation);
+					Objects.requireNonNull(
+						getClass().getResourceAsStream("/config.json")
+					),
+					configLocation
+				);
 			}
 
 			this.location = location.toFile();
 			this.configLocation = configLocation.toFile();
-			this.config = new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
+			this.config =
+				new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
 			updateRecordCount();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -64,7 +69,11 @@ public class DataBase implements Closeable {
 	 * @param configLocation The location of the config file
 	 * @param config         The config object
 	 */
-	public DataBase(@NotNull Path location, @NotNull Path configLocation, DataBaseConfig config) {
+	public DataBase(
+		@NotNull Path location,
+		@NotNull Path configLocation,
+		DataBaseConfig config
+	) {
 		try {
 			Files.createDirectories(location.getParent());
 			Files.createDirectories(configLocation.getParent());
@@ -80,7 +89,8 @@ public class DataBase implements Closeable {
 
 			this.location = location.toFile();
 			this.configLocation = configLocation.toFile();
-			this.config = new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
+			this.config =
+				new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
 			updateRecordCount();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -99,20 +109,37 @@ public class DataBase implements Closeable {
 
 		// If the database is empty directly write the record
 		if (config.recordCount == 0) {
-			RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
+			RandomFileHandler.writeBytes(
+				location,
+				0,
+				record.getBytes(StandardCharsets.UTF_8)
+			);
 		} else if (config.recordCount == 1) {
 			// Insert the record at the start or end if there is only one record
-			String base = new String(RandomFileHandler.readBytes(location, 0, config.recordLength));
-			int comparison =
-					record.substring(0, config.fields[0]).compareTo(base.substring(0, config.fields[0]));
+			String base = new String(
+				RandomFileHandler.readBytes(location, 0, config.recordLength)
+			);
+			int comparison = record
+				.substring(0, config.fields[0])
+				.compareTo(base.substring(0, config.fields[0]));
 
 			if (comparison > 0) {
 				RandomFileHandler.writeBytes(
-						location, config.recordLength, record.getBytes(StandardCharsets.UTF_8));
+					location,
+					config.recordLength,
+					record.getBytes(StandardCharsets.UTF_8)
+				);
 			} else {
-				RandomFileHandler.writeBytes(location, 0, record.getBytes(StandardCharsets.UTF_8));
 				RandomFileHandler.writeBytes(
-						location, config.recordLength, base.getBytes(StandardCharsets.UTF_8));
+					location,
+					0,
+					record.getBytes(StandardCharsets.UTF_8)
+				);
+				RandomFileHandler.writeBytes(
+					location,
+					config.recordLength,
+					base.getBytes(StandardCharsets.UTF_8)
+				);
 			}
 		} else {
 			add(record, 0, config.recordCount);
@@ -152,22 +179,25 @@ public class DataBase implements Closeable {
 	private void add(@NotNull String record, long start, long end) {
 		// Performs a binary search to find the correct place to insert the record
 		long mid = (start + end) / 2;
-		int comparison =
-				record.substring(0, config.fields[0]).compareTo(get(mid).substring(0, config.fields[0]));
+		int comparison = record
+			.substring(0, config.fields[0])
+			.compareTo(get(mid).substring(0, config.fields[0]));
 
 		if (end - start == 1) {
 			if (comparison < 0) {
 				RandomFileHandler.insertBytes(
-						location,
-						record.getBytes(StandardCharsets.UTF_8),
-						(mid - 1) * config.recordLength,
-						config.recordLength);
+					location,
+					record.getBytes(StandardCharsets.UTF_8),
+					(mid - 1) * config.recordLength,
+					config.recordLength
+				);
 			} else {
 				RandomFileHandler.insertBytes(
-						location,
-						record.getBytes(StandardCharsets.UTF_8),
-						mid * config.recordLength,
-						config.recordLength);
+					location,
+					record.getBytes(StandardCharsets.UTF_8),
+					mid * config.recordLength,
+					config.recordLength
+				);
 			}
 		} else if (comparison < 0) {
 			add(record, start, mid);
@@ -189,7 +219,12 @@ public class DataBase implements Closeable {
 		}
 
 		return new String(
-				RandomFileHandler.readBytes(location, index * config.recordLength, config.recordLength));
+			RandomFileHandler.readBytes(
+				location,
+				index * config.recordLength,
+				config.recordLength
+			)
+		);
 	}
 
 	/**
@@ -208,8 +243,8 @@ public class DataBase implements Closeable {
 
 		String cached = cache.get(identifier);
 		return config.recordCount > 0
-				? cached == null ? get(identifier, 0, config.recordCount) : cached
-				: null;
+			? cached == null ? get(identifier, 0, config.recordCount) : cached
+			: null;
 	}
 
 	/**
@@ -224,7 +259,10 @@ public class DataBase implements Closeable {
 		long mid = (start + end) / 2;
 		String midRecord = get(mid);
 
-		int comparison = midRecord.substring(0, config.fields[0]).strip().compareTo(field);
+		int comparison = midRecord
+			.substring(0, config.fields[0])
+			.strip()
+			.compareTo(field);
 
 		if (comparison == 0) {
 			return midRecord;
@@ -258,9 +296,12 @@ public class DataBase implements Closeable {
 		} else {
 			for (long i = 0; i < config.recordCount; i++) {
 				String line = get(i);
-				if (line.substring(config.fields[compField - 1], config.fields[compField])
+				if (
+					line
+						.substring(config.fields[compField - 1], config.fields[compField])
 						.strip()
-						.equals(field)) {
+						.equals(field)
+				) {
 					list.add(line);
 				}
 			}
@@ -278,7 +319,11 @@ public class DataBase implements Closeable {
 	 *
 	 * @return A list of the closest matches to the field
 	 */
-	public ArrayList<Pair<String, Double>> collect(String field, int compField, int count) {
+	public ArrayList<Pair<String, Double>> collect(
+		String field,
+		int compField,
+		int count
+	) {
 		return collect(field, compField, count, null);
 	}
 
@@ -292,7 +337,11 @@ public class DataBase implements Closeable {
 	 * @return A list of the closest matches to the field
 	 */
 	public ArrayList<Pair<String, Double>> collect(
-			String field, int compField, int count, CustomRatio customRatio) {
+		String field,
+		int compField,
+		int count,
+		CustomRatio customRatio
+	) {
 		field = field.strip();
 		if (field == null) {
 			return null;
@@ -301,27 +350,34 @@ public class DataBase implements Closeable {
 		ArrayList<Pair<String, Double>> records = new ArrayList<>(count);
 
 		String line = get(0);
-		String comp =
-				line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField])
-						.strip();
+		String comp = line
+			.substring(
+				compField != 0 ? config.fields[compField - 1] : 0,
+				config.fields[compField]
+			)
+			.strip();
 		records.add(
-				new Pair<>(
-						line,
-						customRatio == null
-								? FuzzySearch.weightedRatio(comp, field)
-								: customRatio.ratio(comp, field)));
+			new Pair<>(
+				line,
+				customRatio == null
+					? FuzzySearch.weightedRatio(comp, field)
+					: customRatio.ratio(comp, field)
+			)
+		);
 
 		for (long i = 1; i < config.recordCount; i++) {
 			line = get(i);
 			comp =
-					line.substring(
-									compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField])
-							.strip();
+				line
+					.substring(
+						compField != 0 ? config.fields[compField - 1] : 0,
+						config.fields[compField]
+					)
+					.strip();
 
-			double ratio =
-					customRatio == null
-							? FuzzySearch.weightedRatio(comp, field)
-							: customRatio.ratio(comp, field);
+			double ratio = customRatio == null
+				? FuzzySearch.weightedRatio(comp, field)
+				: customRatio.ratio(comp, field);
 
 			// Inserts the record into the correct place
 			for (int j = 0; j < count; j++) {
@@ -360,10 +416,17 @@ public class DataBase implements Closeable {
 	private void remove(@NotNull String field, long start, long end) {
 		long mid = (start + end) / 2;
 		String midRecord = get(mid);
-		int comparison = midRecord.substring(0, config.fields[0]).strip().compareTo(field);
+		int comparison = midRecord
+			.substring(0, config.fields[0])
+			.strip()
+			.compareTo(field);
 
 		if (comparison == 0) {
-			RandomFileHandler.deleteLine(location, mid * config.recordLength, config.recordLength);
+			RandomFileHandler.deleteLine(
+				location,
+				mid * config.recordLength,
+				config.recordLength
+			);
 		} else if (end - start > 1) {
 			if (comparison > 0) {
 				remove(field, start, mid);
@@ -379,6 +442,7 @@ public class DataBase implements Closeable {
 	}
 
 	private class Cache {
+
 		private static final int TOP_CACHE_SIZE = 5;
 		private static final int RECENT_CACHE_SIZE = 5;
 		private Item[] recentList;
@@ -397,7 +461,10 @@ public class DataBase implements Closeable {
 			identifier = identifier.strip();
 
 			for (Item item : topList) {
-				if (item != null && identifier.equals(item.value.substring(0, config.fields[0]).strip())) {
+				if (
+					item != null &&
+					identifier.equals(item.value.substring(0, config.fields[0]).strip())
+				) {
 					add(item.value);
 					return item.value;
 				}
@@ -420,9 +487,15 @@ public class DataBase implements Closeable {
 		}
 
 		@Contract("_, _, _ -> new")
-		private @NotNull Pair<Item[], Integer> remove(String field, Item[] list, int size) {
+		private @NotNull Pair<Item[], Integer> remove(
+			String field,
+			Item[] list,
+			int size
+		) {
 			for (int i = 0; i < size; i++) {
-				if (field.equals(list[i].value.substring(0, config.fields[0]).strip())) {
+				if (
+					field.equals(list[i].value.substring(0, config.fields[0]).strip())
+				) {
 					System.arraycopy(list, i + 1, list, i, size - i - 1);
 					size--;
 					list[size] = null;
@@ -449,7 +522,11 @@ public class DataBase implements Closeable {
 
 			// Search the top cache for a matching record
 			for (int i = 0; i < TOP_CACHE_SIZE; i++) {
-				if (recordComp.equals(topList[i].value.substring(0, config.fields[0]).strip())) {
+				if (
+					recordComp.equals(
+						topList[i].value.substring(0, config.fields[0]).strip()
+					)
+				) {
 					// If a record is found increase its hits
 					topList[i].hit();
 
@@ -482,7 +559,13 @@ public class DataBase implements Closeable {
 							topList[i] = topList[endIndex];
 						} else {
 							// Shift the elements down one
-							System.arraycopy(topList, endIndex, topList, endIndex + 1, length);
+							System.arraycopy(
+								topList,
+								endIndex,
+								topList,
+								endIndex + 1,
+								length
+							);
 						}
 						// Add the record in the right place
 						topList[endIndex] = tmp;
@@ -492,7 +575,11 @@ public class DataBase implements Closeable {
 			}
 
 			for (int i = 0; i < RECENT_CACHE_SIZE; i++) {
-				if (recordComp.equals(recentList[i].value.substring(0, config.fields[0]).strip())) {
+				if (
+					recordComp.equals(
+						recentList[i].value.substring(0, config.fields[0]).strip()
+					)
+				) {
 					recentList[i].hit();
 
 					// Move the record into the top cache if it has enough hits
@@ -513,12 +600,23 @@ public class DataBase implements Closeable {
 
 						if (length == 0) {
 							topList[TOP_CACHE_SIZE] = tmp;
-							System.arraycopy(recentList, i + 1, recentList, i, recentList.length - i);
+							System.arraycopy(
+								recentList,
+								i + 1,
+								recentList,
+								i,
+								recentList.length - i
+							);
 						} else {
-							System.arraycopy(topList, endIndex, topList, endIndex + 1, length);
+							System.arraycopy(
+								topList,
+								endIndex,
+								topList,
+								endIndex + 1,
+								length
+							);
 							topList[endIndex] = tmp;
 						}
-
 					} else {
 						System.arraycopy(recentList, 0, recentList, 1, i - 1);
 						recentList[0] = tmp;
@@ -532,6 +630,7 @@ public class DataBase implements Closeable {
 		}
 
 		private class Item {
+
 			public String value;
 			private int hits;
 

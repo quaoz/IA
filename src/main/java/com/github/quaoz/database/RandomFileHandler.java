@@ -1,7 +1,5 @@
 package com.github.quaoz.database;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,6 +7,7 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A file access class that uses {@link RandomAccessFile} to read and write data
@@ -47,7 +46,7 @@ public class RandomFileHandler {
 	 *
 	 * @throws RuntimeException Unable to read the bytes from the file
 	 */
-	public static byte @NotNull [] readBytes(File file, long pos, int numBytes) {
+	public static byte@NotNull[] readBytes(File file, long pos, int numBytes) {
 		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
 			// Seeks to the given position
 			randomAccessFile.seek(pos);
@@ -58,7 +57,11 @@ public class RandomFileHandler {
 			return bytes;
 		} catch (IOException e) {
 			System.err.printf(
-					"Failed to read %d bytes at %d in %s", numBytes, pos, file.getAbsolutePath());
+				"Failed to read %d bytes at %d in %s",
+				numBytes,
+				pos,
+				file.getAbsolutePath()
+			);
 			throw new RuntimeException(e);
 		}
 	}
@@ -95,7 +98,9 @@ public class RandomFileHandler {
 	 * @throws RuntimeException Unable to write the byte to the file
 	 */
 	public static void writeByte(File file, long pos, byte b) {
-		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")) {
+		try (
+			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")
+		) {
 			// Seeks to the given position
 			randomAccessFile.seek(pos);
 
@@ -116,15 +121,20 @@ public class RandomFileHandler {
 	 * @throws RuntimeException Unable to write the bytes to the file
 	 */
 	public static void writeBytes(File file, long pos, byte[] bytes) {
-		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")) {
+		try (
+			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")
+		) {
 			// Seeks to the given position
 			randomAccessFile.seek(pos);
 
 			randomAccessFile.write(bytes);
 		} catch (IOException e) {
 			System.err.printf(
-					"Failed to write bytes %s at %d in %s",
-					Arrays.toString(bytes), pos, file.getAbsolutePath());
+				"Failed to write bytes %s at %d in %s",
+				Arrays.toString(bytes),
+				pos,
+				file.getAbsolutePath()
+			);
 			throw new RuntimeException(e);
 		}
 	}
@@ -139,7 +149,9 @@ public class RandomFileHandler {
 	 * @throws RuntimeException Unable to write the line to the file
 	 */
 	public static void writeLine(File file, long pos, String line) {
-		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")) {
+		try (
+			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")
+		) {
 			// Seeks to the given position
 			randomAccessFile.seek(pos);
 
@@ -160,7 +172,9 @@ public class RandomFileHandler {
 	 * @throws RuntimeException Unable to delete the line from the file
 	 */
 	public static void deleteLine(File file, long index, int lineLength) {
-		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")) {
+		try (
+			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")
+		) {
 			byte[] bytes = new byte[lineLength];
 			long length = randomAccessFile.length() - lineLength;
 
@@ -190,7 +204,12 @@ public class RandomFileHandler {
 	 * @param pos        The position to write at
 	 * @param lineLength The length of the line
 	 */
-	public static void insertBytes(File file, @NotNull String line, long pos, int lineLength) {
+	public static void insertBytes(
+		File file,
+		@NotNull String line,
+		long pos,
+		int lineLength
+	) {
 		insertBytes(file, line.getBytes(StandardCharsets.UTF_8), pos, lineLength);
 	}
 
@@ -204,8 +223,15 @@ public class RandomFileHandler {
 	 *
 	 * @throws RuntimeException Unable to insert the bytes into the file
 	 */
-	public static void insertBytes(File file, byte[] bytes, long pos, int lineLength) {
-		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")) {
+	public static void insertBytes(
+		File file,
+		byte[] bytes,
+		long pos,
+		int lineLength
+	) {
+		try (
+			RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rws")
+		) {
 			long index = randomAccessFile.length() - lineLength;
 			byte[] line = new byte[lineLength];
 
@@ -227,7 +253,12 @@ public class RandomFileHandler {
 			randomAccessFile.seek(index + lineLength);
 			randomAccessFile.write(bytes);
 		} catch (IOException e) {
-			System.err.printf("Failed to insert bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
+			System.err.printf(
+				"Failed to insert bytes %s at %d in %s",
+				Arrays.toString(bytes),
+				pos,
+				file
+			);
 			throw new RuntimeException(e);
 		}
 	}
@@ -244,8 +275,8 @@ public class RandomFileHandler {
 	 *
 	 * @throws FileNotFoundException Unable to find the file
 	 */
-	@NotNull
-	public static Iterator<byte[]> iterator(File file, int lineLength) throws FileNotFoundException {
+	@NotNull public static Iterator<byte[]> iterator(File file, int lineLength)
+		throws FileNotFoundException {
 		return new Iterator<>() {
 			final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 			long pos = 0;

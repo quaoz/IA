@@ -5,8 +5,6 @@ import com.github.quaoz.MothManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -14,8 +12,10 @@ import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
+import javax.swing.*;
 
 public class AddMothForm {
+
 	private JPanel panel;
 	private JTextField speciesField;
 	private JLabel speciesLabel;
@@ -44,78 +44,94 @@ public class AddMothForm {
 		sizeLowerSpinner.setModel(new SpinnerNumberModel(0, 0, 30, 0.1));
 		sizeUpperSpinner.setModel(new SpinnerNumberModel(1, 0, 30, 0.1));
 		flightStartSpinner.setModel(
-				new SpinnerNumberModel(Calendar.getInstance().get(Calendar.MONTH) + 1, 1, 12, 1));
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.MONTH) + 1,
+				1,
+				12,
+				1
+			)
+		);
 		flightEndSpinner.setModel(
-				new SpinnerNumberModel(Calendar.getInstance().get(Calendar.MONTH) + 1, 1, 12, 1));
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.MONTH) + 1,
+				1,
+				12,
+				1
+			)
+		);
 
-		cancelButton.addActionListener(e -> Main.getGui().render(GUI.Content.PAST_CONTENT));
+		cancelButton.addActionListener(e ->
+			Main.getGui().render(GUI.Content.PAST_CONTENT)
+		);
 
 		speciesField.addActionListener(e -> checkSpecies());
 		speciesField.addFocusListener(
-				new FocusListener() {
-					@Override
-					public void focusGained(FocusEvent e) {
-						if (!e.isTemporary()) {
-							speciesValidLabel.setText("");
-						}
+			new FocusListener() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					if (!e.isTemporary()) {
+						speciesValidLabel.setText("");
 					}
+				}
 
-					@Override
-					public void focusLost(FocusEvent e) {
-						checkSpecies();
-					}
-				});
+				@Override
+				public void focusLost(FocusEvent e) {
+					checkSpecies();
+				}
+			}
+		);
 
 		sciNameField.addActionListener(e -> checkSciName());
 		sciNameField.addFocusListener(
-				new FocusListener() {
-					@Override
-					public void focusGained(FocusEvent e) {
-						if (!e.isTemporary()) {
-							sciNameValidLabel.setText("");
-						}
+			new FocusListener() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					if (!e.isTemporary()) {
+						sciNameValidLabel.setText("");
 					}
+				}
 
-					@Override
-					public void focusLost(FocusEvent e) {
-						checkSciName();
-					}
-				});
+				@Override
+				public void focusLost(FocusEvent e) {
+					checkSciName();
+				}
+			}
+		);
 
-		submitButton.addActionListener(
-				e -> {
-					if (checkSpecies() && checkSciName()) {
-						Double sizeLower = (Double) sizeLowerSpinner.getValue();
-						Double sizeUpper = (Double) sizeUpperSpinner.getValue();
+		submitButton.addActionListener(e -> {
+			if (checkSpecies() && checkSciName()) {
+				Double sizeLower = (Double) sizeLowerSpinner.getValue();
+				Double sizeUpper = (Double) sizeUpperSpinner.getValue();
 
-						if (sizeLower > sizeUpper) {
-							Double tmp = sizeLower;
-							sizeLower = sizeUpper;
-							sizeUpper = tmp;
-						}
+				if (sizeLower > sizeUpper) {
+					Double tmp = sizeLower;
+					sizeLower = sizeUpper;
+					sizeUpper = tmp;
+				}
 
-						Integer flightStart = (Integer) flightStartSpinner.getValue();
-						Integer flightEnd = (Integer) flightEndSpinner.getValue();
+				Integer flightStart = (Integer) flightStartSpinner.getValue();
+				Integer flightEnd = (Integer) flightEndSpinner.getValue();
 
-						if (flightStart > flightEnd) {
-							Integer tmp = flightStart;
-							flightStart = flightEnd;
-							flightEnd = tmp;
-						}
+				if (flightStart > flightEnd) {
+					Integer tmp = flightStart;
+					flightStart = flightEnd;
+					flightEnd = tmp;
+				}
 
-						MothManager.addMoth(
-								speciesField.getText().strip(),
-								sciNameField.getText().strip(),
-								sizeLower,
-								sizeUpper,
-								flightStart,
-								flightEnd,
-								habitatField.getText().strip(),
-								foodField.getText().strip());
+				MothManager.addMoth(
+					speciesField.getText().strip(),
+					sciNameField.getText().strip(),
+					sizeLower,
+					sizeUpper,
+					flightStart,
+					flightEnd,
+					habitatField.getText().strip(),
+					foodField.getText().strip()
+				);
 
-						Main.getGui().render(GUI.Content.PAST_CONTENT);
-					}
-				});
+				Main.getGui().render(GUI.Content.PAST_CONTENT);
+			}
+		});
 	}
 
 	private boolean checkSpecies() {

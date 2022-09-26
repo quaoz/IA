@@ -13,21 +13,27 @@ spotless {
         importOrder()
         removeUnusedImports()
 
-        googleJavaFormat("1.15.0")
+        prettier(mapOf("prettier" to "2.7.1", "prettier-plugin-java" to "1.6.2")).config(mapOf("parser" to "java", "useTabs" to true))
         formatAnnotations()
 
         trimTrailingWhitespace()
-        indentWithTabs()
         endWithNewline()
     }
 
     kotlinGradle {
         ktlint()
+        trimTrailingWhitespace()
+        endWithNewline()
     }
 
     json {
         target("src/**/*.json")
-        simple()
+        prettier(mapOf("prettier" to "2.7.1")).config(mapOf("parser" to "json"))
+    }
+
+    format("markdown") {
+        target("*/**/*.md")
+        prettier(mapOf("prettier" to "2.7.1")).config(mapOf("parser" to "markdown"))
     }
 }
 
@@ -81,9 +87,9 @@ val fatJar = task("fatJar", type = Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from(
-            configurations.runtimeClasspath.get().map {
-                if (it.isDirectory) it else zipTree(it)
-            }
+        configurations.runtimeClasspath.get().map {
+            if (it.isDirectory) it else zipTree(it)
+        }
     )
     with(tasks.jar.get() as CopySpec)
 }

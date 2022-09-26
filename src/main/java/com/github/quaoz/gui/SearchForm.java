@@ -3,14 +3,14 @@ package com.github.quaoz.gui;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 @Deprecated
 public class SearchForm {
+
 	private JButton searchButton;
 	private JLabel titleLabel;
 	private JTextField searchBox;

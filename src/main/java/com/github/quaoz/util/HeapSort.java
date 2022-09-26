@@ -1,8 +1,7 @@
 package com.github.quaoz.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Heap sort is a fast sorting algorithm, works by dividing the array into a sorted and unsorted
@@ -21,7 +20,7 @@ public class HeapSort {
 	 *
 	 * @return The sorted array
 	 */
-	public static <T extends Comparable<T>> T @NotNull [] sort(T @NotNull [] array) {
+	public static <T extends Comparable<T>> T@NotNull[] sort(T@NotNull[] array) {
 		return sort(array, 0, array.length);
 	}
 
@@ -35,7 +34,11 @@ public class HeapSort {
 	 *
 	 * @return The sorted array
 	 */
-	static <T extends Comparable<T>> T @NotNull [] sort(T @NotNull [] array, int start, int end) {
+	static <T extends Comparable<T>> T@NotNull[] sort(
+		T@NotNull[] array,
+		int start,
+		int end
+	) {
 		int size = end - start;
 
 		// Build heap
@@ -63,7 +66,11 @@ public class HeapSort {
 	 * @param root  The root of the subtree
 	 * @param <T>   The array type
 	 */
-	static <T extends Comparable<T>> void heapify(T @NotNull [] array, int size, int root) {
+	static <T extends Comparable<T>> void heapify(
+		T@NotNull[] array,
+		int size,
+		int root
+	) {
 		int max = root;
 		final int left = 2 * root + 1;
 		final int right = 2 * root + 2;
@@ -97,7 +104,11 @@ public class HeapSort {
 	 *
 	 * @return The sorted list
 	 */
-	static <E extends Comparable<E>> List<E> sort(List<E> list, int start, int end) {
+	static <E extends Comparable<E>> List<E> sort(
+		List<E> list,
+		int start,
+		int end
+	) {
 		int size = end - start;
 
 		// Build heap
@@ -125,7 +136,11 @@ public class HeapSort {
 	 * @param root The root of the subtree
 	 * @param <E>  The list type
 	 */
-	static <E extends Comparable<E>> void heapify(List<E> list, int size, int root) {
+	static <E extends Comparable<E>> void heapify(
+		List<E> list,
+		int size,
+		int root
+	) {
 		int max = root;
 		final int left = 2 * root + 1;
 		final int right = 2 * root + 2;

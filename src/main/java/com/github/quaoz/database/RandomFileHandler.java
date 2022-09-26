@@ -1,5 +1,7 @@
 package com.github.quaoz.database;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,17 +9,20 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
-import org.jetbrains.annotations.NotNull;
 
-/** A file access class that uses {@link RandomAccessFile} to read and write data */
+/**
+ * A file access class that uses {@link RandomAccessFile} to read and write data
+ */
 public class RandomFileHandler {
 
 	/**
 	 * Reads a byte at a specified position from a file
 	 *
 	 * @param file The file to read from
-	 * @param pos The position to read at
+	 * @param pos  The position to read at
+	 *
 	 * @return The byte at that position
+	 *
 	 * @throws RuntimeException Unable to read the byte from the file
 	 */
 	public static byte readByte(File file, long pos) {
@@ -36,8 +41,10 @@ public class RandomFileHandler {
 	 * Reads a set number of bytes at a specified position from a file
 	 *
 	 * @param file The file to read from
-	 * @param pos The position to read at, measured in bytes from the start of the file
+	 * @param pos  The position to read at, measured in bytes from the start of the file
+	 *
 	 * @return The bytes at that position
+	 *
 	 * @throws RuntimeException Unable to read the bytes from the file
 	 */
 	public static byte @NotNull [] readBytes(File file, long pos, int numBytes) {
@@ -60,8 +67,10 @@ public class RandomFileHandler {
 	 * Reads a line at a specified position in a file
 	 *
 	 * @param file The file to read from
-	 * @param pos The position to read at
+	 * @param pos  The position to read at
+	 *
 	 * @return The line at that position
+	 *
 	 * @throws RuntimeException Unable to read the line from the file
 	 */
 	public static @NotNull String readLine(File file, long pos) {
@@ -80,8 +89,9 @@ public class RandomFileHandler {
 	 * Writes the given byte to a specific position in a file
 	 *
 	 * @param file The file to write to
-	 * @param pos The position to write at
-	 * @param b The byte to write
+	 * @param pos  The position to write at
+	 * @param b    The byte to write
+	 *
 	 * @throws RuntimeException Unable to write the byte to the file
 	 */
 	public static void writeByte(File file, long pos, byte b) {
@@ -99,9 +109,10 @@ public class RandomFileHandler {
 	/**
 	 * Writes an array of bytes to the file
 	 *
-	 * @param file The file to write to
-	 * @param pos The position to write at
+	 * @param file  The file to write to
+	 * @param pos   The position to write at
 	 * @param bytes The bytes to write
+	 *
 	 * @throws RuntimeException Unable to write the bytes to the file
 	 */
 	public static void writeBytes(File file, long pos, byte[] bytes) {
@@ -122,8 +133,9 @@ public class RandomFileHandler {
 	 * Writes a UTF string to a file at the given location
 	 *
 	 * @param file The file to write to
-	 * @param pos The position to write at
+	 * @param pos  The position to write at
 	 * @param line The line to write
+	 *
 	 * @throws RuntimeException Unable to write the line to the file
 	 */
 	public static void writeLine(File file, long pos, String line) {
@@ -141,9 +153,10 @@ public class RandomFileHandler {
 	/**
 	 * Deletes the given line from a file
 	 *
-	 * @param file The file to write to
-	 * @param index The index of the line to delete
+	 * @param file       The file to write to
+	 * @param index      The index of the line to delete
 	 * @param lineLength The length of the lines in the file
+	 *
 	 * @throws RuntimeException Unable to delete the line from the file
 	 */
 	public static void deleteLine(File file, long index, int lineLength) {
@@ -172,9 +185,9 @@ public class RandomFileHandler {
 	/**
 	 * Inserts the given line into the file
 	 *
-	 * @param file The file to write to
-	 * @param line The line to insert
-	 * @param pos The position to write at
+	 * @param file       The file to write to
+	 * @param line       The line to insert
+	 * @param pos        The position to write at
 	 * @param lineLength The length of the line
 	 */
 	public static void insertBytes(File file, @NotNull String line, long pos, int lineLength) {
@@ -184,10 +197,11 @@ public class RandomFileHandler {
 	/**
 	 * Inserts the given bytes into the file
 	 *
-	 * @param file The file to write to
-	 * @param bytes The bytes to insert
-	 * @param pos The position to write at
+	 * @param file       The file to write to
+	 * @param bytes      The bytes to insert
+	 * @param pos        The position to write at
 	 * @param lineLength The length of the line
+	 *
 	 * @throws RuntimeException Unable to insert the bytes into the file
 	 */
 	public static void insertBytes(File file, byte[] bytes, long pos, int lineLength) {
@@ -213,8 +227,7 @@ public class RandomFileHandler {
 			randomAccessFile.seek(index + lineLength);
 			randomAccessFile.write(bytes);
 		} catch (IOException e) {
-			System.err.printf(
-					"Failed to insert bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
+			System.err.printf("Failed to insert bytes %s at %d in %s", Arrays.toString(bytes), pos, file);
 			throw new RuntimeException(e);
 		}
 	}
@@ -223,14 +236,16 @@ public class RandomFileHandler {
 	 * Creates an iterator which iterates over the lines of the file returning each line as an array
 	 * of bytes
 	 *
-	 * @param file The file to iterate over
+	 * @param file       The file to iterate over
 	 * @param lineLength The length of the lines
+	 *
 	 * @return An iterator which iterates over the lines of the file returning each line as an array
-	 *     of bytes
+	 * 		of bytes
+	 *
 	 * @throws FileNotFoundException Unable to find the file
 	 */
-	@NotNull public static Iterator<byte[]> iterator(File file, int lineLength)
-			throws FileNotFoundException {
+	@NotNull
+	public static Iterator<byte[]> iterator(File file, int lineLength) throws FileNotFoundException {
 		return new Iterator<>() {
 			final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
 			long pos = 0;

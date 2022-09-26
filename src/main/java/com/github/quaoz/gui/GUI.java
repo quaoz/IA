@@ -5,10 +5,11 @@ import com.formdev.flatlaf.util.SystemInfo;
 import com.github.quaoz.Moth;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.structures.SimpleStack;
-import java.util.ArrayList;
-import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 public class GUI {
 	private final JFrame frame;

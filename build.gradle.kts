@@ -81,9 +81,9 @@ val fatJar = task("fatJar", type = Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from(
-        configurations.runtimeClasspath.get().map {
-            if (it.isDirectory) it else zipTree(it)
-        }
+            configurations.runtimeClasspath.get().map {
+                if (it.isDirectory) it else zipTree(it)
+            }
     )
     with(tasks.jar.get() as CopySpec)
 }

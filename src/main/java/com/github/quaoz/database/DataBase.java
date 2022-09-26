@@ -3,6 +3,12 @@ package com.github.quaoz.database;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.CustomRatio;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.tinylog.Logger;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -12,11 +18,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
-import me.xdrop.fuzzywuzzy.FuzzySearch;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.tinylog.Logger;
 
 public class DataBase implements Closeable {
 	private final Cache cache;
@@ -27,7 +28,7 @@ public class DataBase implements Closeable {
 	/**
 	 * Creates a new blank database or binds to an existing one
 	 *
-	 * @param location The location of the database
+	 * @param location       The location of the database
 	 * @param configLocation The location of the config file
 	 */
 	public DataBase(@NotNull Path location, @NotNull Path configLocation) {
@@ -42,8 +43,7 @@ public class DataBase implements Closeable {
 			if (!configLocation.toFile().exists()) {
 				Files.createFile(configLocation);
 				Files.copy(
-						Objects.requireNonNull(getClass().getResourceAsStream("/config.json")),
-						configLocation);
+						Objects.requireNonNull(getClass().getResourceAsStream("/config.json")), configLocation);
 			}
 
 			this.location = location.toFile();
@@ -60,9 +60,9 @@ public class DataBase implements Closeable {
 	/**
 	 * Creates a new blank database and config file
 	 *
-	 * @param location The location of the database
+	 * @param location       The location of the database
 	 * @param configLocation The location of the config file
-	 * @param config The config object
+	 * @param config         The config object
 	 */
 	public DataBase(@NotNull Path location, @NotNull Path configLocation, DataBaseConfig config) {
 		try {
@@ -104,8 +104,7 @@ public class DataBase implements Closeable {
 			// Insert the record at the start or end if there is only one record
 			String base = new String(RandomFileHandler.readBytes(location, 0, config.recordLength));
 			int comparison =
-					record.substring(0, config.fields[0])
-							.compareTo(base.substring(0, config.fields[0]));
+					record.substring(0, config.fields[0]).compareTo(base.substring(0, config.fields[0]));
 
 			if (comparison > 0) {
 				RandomFileHandler.writeBytes(
@@ -131,7 +130,9 @@ public class DataBase implements Closeable {
 		return config.recordCount;
 	}
 
-	/** Updates the record count of the database. */
+	/**
+	 * Updates the record count of the database.
+	 */
 	private void updateRecordCount() {
 		try (Stream<String> stream = Files.lines(location.toPath())) {
 			config.recordCount = stream.count();
@@ -145,15 +146,14 @@ public class DataBase implements Closeable {
 	 * Adds a record to the database
 	 *
 	 * @param record The record to add
-	 * @param start The start index
-	 * @param end The end index
+	 * @param start  The start index
+	 * @param end    The end index
 	 */
 	private void add(@NotNull String record, long start, long end) {
 		// Performs a binary search to find the correct place to insert the record
 		long mid = (start + end) / 2;
 		int comparison =
-				record.substring(0, config.fields[0])
-						.compareTo(get(mid).substring(0, config.fields[0]));
+				record.substring(0, config.fields[0]).compareTo(get(mid).substring(0, config.fields[0]));
 
 		if (end - start == 1) {
 			if (comparison < 0) {
@@ -180,6 +180,7 @@ public class DataBase implements Closeable {
 	 * Gets a record from the database
 	 *
 	 * @param index The index of the record to get
+	 *
 	 * @return The string representation of the record at the given index
 	 */
 	public String get(long index) {
@@ -188,14 +189,14 @@ public class DataBase implements Closeable {
 		}
 
 		return new String(
-				RandomFileHandler.readBytes(
-						location, index * config.recordLength, config.recordLength));
+				RandomFileHandler.readBytes(location, index * config.recordLength, config.recordLength));
 	}
 
 	/**
 	 * Gets a record from the database
 	 *
 	 * @param identifier The record to get
+	 *
 	 * @return The record from the database
 	 */
 	public String get(String identifier) {
@@ -215,7 +216,8 @@ public class DataBase implements Closeable {
 	 * Gets a record from the database
 	 *
 	 * @param start The start index of the search
-	 * @param end The end index of the search
+	 * @param end   The end index of the search
+	 *
 	 * @return The record from the database
 	 */
 	private @Nullable String get(@NotNull String field, long start, long end) {
@@ -238,8 +240,9 @@ public class DataBase implements Closeable {
 	/**
 	 * Searches for and returns all records containing this field
 	 *
-	 * @param field The field to search for
+	 * @param field     The field to search for
 	 * @param compField The index of the field
+	 *
 	 * @return A list of all records matching the field
 	 */
 	public ArrayList<String> collect(String field, int compField) {
@@ -269,9 +272,10 @@ public class DataBase implements Closeable {
 	/**
 	 * Searches for and returns the records with the closest matches to the field
 	 *
-	 * @param field The field to search for
+	 * @param field     The field to search for
 	 * @param compField The index of the field
-	 * @param count The number of matches to return
+	 * @param count     The number of matches to return
+	 *
 	 * @return A list of the closest matches to the field
 	 */
 	public ArrayList<Pair<String, Double>> collect(String field, int compField, int count) {
@@ -281,9 +285,10 @@ public class DataBase implements Closeable {
 	/**
 	 * Searches for and returns the records with the closest matches to the field
 	 *
-	 * @param field The field to search for
+	 * @param field     The field to search for
 	 * @param compField The index of the field
-	 * @param count The number of matches to return
+	 * @param count     The number of matches to return
+	 *
 	 * @return A list of the closest matches to the field
 	 */
 	public ArrayList<Pair<String, Double>> collect(
@@ -297,9 +302,7 @@ public class DataBase implements Closeable {
 
 		String line = get(0);
 		String comp =
-				line.substring(
-								compField != 0 ? config.fields[compField - 1] : 0,
-								config.fields[compField])
+				line.substring(compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField])
 						.strip();
 		records.add(
 				new Pair<>(
@@ -312,8 +315,7 @@ public class DataBase implements Closeable {
 			line = get(i);
 			comp =
 					line.substring(
-									compField != 0 ? config.fields[compField - 1] : 0,
-									config.fields[compField])
+									compField != 0 ? config.fields[compField - 1] : 0, config.fields[compField])
 							.strip();
 
 			double ratio =
@@ -353,7 +355,7 @@ public class DataBase implements Closeable {
 	 *
 	 * @param field The field to remove
 	 * @param start The start index of the search
-	 * @param end The end index of the search
+	 * @param end   The end index of the search
 	 */
 	private void remove(@NotNull String field, long start, long end) {
 		long mid = (start + end) / 2;
@@ -395,8 +397,7 @@ public class DataBase implements Closeable {
 			identifier = identifier.strip();
 
 			for (Item item : topList) {
-				if (item != null
-						&& identifier.equals(item.value.substring(0, config.fields[0]).strip())) {
+				if (item != null && identifier.equals(item.value.substring(0, config.fields[0]).strip())) {
 					add(item.value);
 					return item.value;
 				}
@@ -512,8 +513,7 @@ public class DataBase implements Closeable {
 
 						if (length == 0) {
 							topList[TOP_CACHE_SIZE] = tmp;
-							System.arraycopy(
-									recentList, i + 1, recentList, i, recentList.length - i);
+							System.arraycopy(recentList, i + 1, recentList, i, recentList.length - i);
 						} else {
 							System.arraycopy(topList, endIndex, topList, endIndex + 1, length);
 							topList[endIndex] = tmp;

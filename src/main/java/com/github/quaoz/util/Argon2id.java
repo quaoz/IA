@@ -36,7 +36,8 @@ public class Argon2id {
 	 * Verifies whether the password matches the hash
 	 *
 	 * @param passwordHash The hashed password
-	 * @param password The password
+	 * @param password     The password
+	 *
 	 * @return {@code true} if the password matches the hash
 	 */
 	public static boolean verify(String passwordHash, char[] password) {

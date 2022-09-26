@@ -4,12 +4,13 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.Geocoder;
+import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.tinylog.Logger;
 
 public class RecordManager {
 	private static final File RECORDS_DB_FILE =
@@ -18,7 +19,7 @@ public class RecordManager {
 			new File("src/main/java/com/github/quaoz/tests/db/records.json");
 	// id 32, species 64, location 32, date 16, size 16, username 64
 	private static final DataBaseConfig recordsConfig =
-			new DataBaseConfig().init(321, new Integer[] {32, 96, 224, 240, 256, 321});
+			new DataBaseConfig().init(321, new Integer[]{32, 96, 224, 240, 256, 321});
 	private static final DataBase recordsDatabase =
 			new DataBase(RECORDS_DB_FILE.toPath(), RECORDS_CONF_FILE.toPath(), recordsConfig);
 
@@ -52,30 +53,13 @@ public class RecordManager {
 						s ->
 								records.add(
 										new Record(
-												Integer.parseInt(
-														s.substring(0, recordsConfig.fields[0])
-																.strip()),
-												s.substring(
-																recordsConfig.fields[0],
-																recordsConfig.fields[1])
-														.strip(),
-												s.substring(
-																recordsConfig.fields[1],
-																recordsConfig.fields[2])
-														.strip(),
-												s.substring(
-																recordsConfig.fields[2],
-																recordsConfig.fields[3])
-														.strip(),
+												Integer.parseInt(s.substring(0, recordsConfig.fields[0]).strip()),
+												s.substring(recordsConfig.fields[0], recordsConfig.fields[1]).strip(),
+												s.substring(recordsConfig.fields[1], recordsConfig.fields[2]).strip(),
+												s.substring(recordsConfig.fields[2], recordsConfig.fields[3]).strip(),
 												Double.parseDouble(
-														s.substring(
-																		recordsConfig.fields[3],
-																		recordsConfig.fields[4])
-																.strip()),
-												s.substring(
-																recordsConfig.fields[4],
-																recordsConfig.fields[5])
-														.strip())));
+														s.substring(recordsConfig.fields[3], recordsConfig.fields[4]).strip()),
+												s.substring(recordsConfig.fields[4], recordsConfig.fields[5]).strip())));
 		return records;
 	}
 
@@ -101,8 +85,7 @@ public class RecordManager {
 							double ratio = 0.0;
 
 							for (int i = 0; i < split1.size(); i++) {
-								if (split1.get(i).strip().equals("null")
-										|| split2.get(i).strip().equals("null")) {
+								if (split1.get(i).strip().equals("null") || split2.get(i).strip().equals("null")) {
 									split1.remove(i);
 									split2.remove(i);
 									i--;
@@ -125,10 +108,9 @@ public class RecordManager {
 		for (Pair<String, Double> record : records) {
 			Moth moth =
 					MothManager.basicSearch(
-							record.getKey()
-									.substring(recordsConfig.fields[0], recordsConfig.fields[1]));
+							record.getKey().substring(recordsConfig.fields[0], recordsConfig.fields[1]));
 
-			if (moths.stream().noneMatch(m -> m.getKey().getName().equals(moth.getName()))) {
+			if (moths.stream().noneMatch(m -> m.getKey().name().equals(moth.name()))) {
 				moths.add(new Pair<>(moth, record.getValue()));
 			}
 		}

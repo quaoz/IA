@@ -1,14 +1,17 @@
 package com.github.quaoz.structures;
 
-import java.util.ArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 public class BinarySearchTree<T extends Comparable<T>> {
 	private BinaryNode<T> root;
 
-	/** Constructs a new empty binary search tree */
+	/**
+	 * Constructs a new empty binary search tree
+	 */
 	public BinarySearchTree() {
 		root = null;
 	}
@@ -22,7 +25,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		root = new BinaryNode<>(value);
 	}
 
-	/** Removes the root node and replaces it with its left or right child, if it has one */
+	/**
+	 * Removes the root node and replaces it with its left or right child, if it has one
+	 */
 	private @Nullable BinaryNode<T> removeRoot() {
 		BinaryNode<T> prevRoot = root;
 
@@ -72,7 +77,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	/**
 	 * Inserts the given value into the tree
 	 *
-	 * @param node The node to start at
+	 * @param node  The node to start at
 	 * @param value The value to insert
 	 */
 	private void add(@NotNull BinaryNode<T> node, @NotNull T value) {
@@ -97,6 +102,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Removes the given value from the tree
 	 *
 	 * @param value The value to remove
+	 *
 	 * @return The value removed
 	 */
 	public BinaryNode<T> remove(T value) {
@@ -106,8 +112,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	/**
 	 * Removes the given value from the tree
 	 *
-	 * @param node The node to start at
+	 * @param node  The node to start at
 	 * @param value The value to remove
+	 *
 	 * @return The value removed
 	 */
 	private BinaryNode<T> remove(BinaryNode<T> node, T value) {
@@ -144,6 +151,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Gets the minimum value in the tree
 	 *
 	 * @param node The node to start at
+	 *
 	 * @return The minimum value in the tree
 	 */
 	@Contract(pure = true)
@@ -156,7 +164,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		return min(node.left);
 	}
 
-	/** Visually prints the tree */
+	/**
+	 * Visually prints the tree
+	 */
 	public void print() {
 		print(root, 0);
 	}
@@ -164,7 +174,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	/**
 	 * Visually prints the tree
 	 *
-	 * @param node The node to start at
+	 * @param node  The node to start at
 	 * @param depth The current depth
 	 */
 	private void print(BinaryNode<T> node, int depth) {
@@ -185,7 +195,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		print(node.left, depth + 1);
 	}
 
-	/** Balances the tree */
+	/**
+	 * Balances the tree
+	 */
 	public void balance() {
 		root = balance(root);
 	}
@@ -194,6 +206,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Balances the tree
 	 *
 	 * @param node The node to start at
+	 *
 	 * @return The balanced tree
 	 */
 	private BinaryNode<T> balance(BinaryNode<T> node) {
@@ -230,6 +243,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Rotates the tree left
 	 *
 	 * @param node The node to rotate around
+	 *
 	 * @return The new root of the subtree
 	 */
 	private @NotNull BinaryNode<T> rotateLeft(@NotNull BinaryNode<T> node) {
@@ -244,6 +258,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Rotates the tree right
 	 *
 	 * @param node The node to rotate around
+	 *
 	 * @return The new root of the subtree
 	 */
 	private @NotNull BinaryNode<T> rotateRight(@NotNull BinaryNode<T> node) {
@@ -267,6 +282,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Gets the height of the tree
 	 *
 	 * @param node The node to start at
+	 *
 	 * @return The height of the tree
 	 */
 	private int height(BinaryNode<T> node) {
@@ -287,6 +303,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Checks if the tree contains the given value
 	 *
 	 * @param value The value to check for
+	 *
 	 * @return {@code true} if the tree contains the value, {@code false} otherwise
 	 */
 	public boolean contains(T value) {
@@ -296,8 +313,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	/**
 	 * Checks if the tree contains the given value
 	 *
-	 * @param node The node to start at
+	 * @param node  The node to start at
 	 * @param value The value to check for
+	 *
 	 * @return {@code true} if the tree contains the value, {@code false} otherwise
 	 */
 	private boolean contains(BinaryNode<T> node, T value) {
@@ -319,6 +337,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Gets the node with the given value
 	 *
 	 * @param value The value to get the node for
+	 *
 	 * @return The node with the given value
 	 */
 	public T get(T value) {
@@ -328,8 +347,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	/**
 	 * Gets the node with the given value
 	 *
-	 * @param node The node to start at
+	 * @param node  The node to start at
 	 * @param value The value to get the node for
+	 *
 	 * @return The node with the given value
 	 */
 	private T get(BinaryNode<T> node, T value) {
@@ -347,7 +367,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		}
 	}
 
-	/** Traverses the tree pre-order and returns an arraylist of the values */
+	/**
+	 * Traverses the tree pre-order and returns an arraylist of the values
+	 */
 	public ArrayList<T> preOrder() {
 		return preOrder(root);
 	}
@@ -356,6 +378,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Traverses the tree pre-order and returns an arraylist of the values
 	 *
 	 * @param node The node to start at
+	 *
 	 * @return An arraylist of the values
 	 */
 	private @NotNull ArrayList<T> preOrder(BinaryNode<T> node) {
@@ -372,7 +395,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		return list;
 	}
 
-	/** Traverses the tree in-order and returns an arraylist of the values */
+	/**
+	 * Traverses the tree in-order and returns an arraylist of the values
+	 */
 	public ArrayList<T> inOrder() {
 		return inOrder(root);
 	}
@@ -381,6 +406,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Traverses the tree in-order and returns an arraylist of the values
 	 *
 	 * @param node The node to start at
+	 *
 	 * @return An arraylist of the values
 	 */
 	private @NotNull ArrayList<T> inOrder(BinaryNode<T> node) {
@@ -397,7 +423,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		return list;
 	}
 
-	/** Traverses the tree post-order and returns an arraylist of the values */
+	/**
+	 * Traverses the tree post-order and returns an arraylist of the values
+	 */
 	public ArrayList<T> postOrder() {
 		return postOrder(root);
 	}
@@ -406,6 +434,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Traverses the tree post-order and returns an arraylist of the values
 	 *
 	 * @param node The node to start at
+	 *
 	 * @return An arraylist of the values
 	 */
 	private @NotNull ArrayList<T> postOrder(BinaryNode<T> node) {
@@ -422,7 +451,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		return list;
 	}
 
-	/** Traverses the tree level-order and returns an arraylist of the values */
+	/**
+	 * Traverses the tree level-order and returns an arraylist of the values
+	 */
 	public ArrayList<T> levelOrder() {
 		return levelOrder(root);
 	}
@@ -431,6 +462,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * Traverses the tree level-order and returns an arraylist of the values
 	 *
 	 * @param node The node to start at
+	 *
 	 * @return An arraylist of the values
 	 */
 	private @NotNull ArrayList<T> levelOrder(BinaryNode<T> node) {
@@ -465,13 +497,19 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * A simple node class for the binary search tree containing a value and a left and right child
 	 */
 	private static class BinaryNode<T extends Comparable<T>> {
-		/** The value of the node */
+		/**
+		 * The value of the node
+		 */
 		T value;
 
-		/** The left child of the node */
+		/**
+		 * The left child of the node
+		 */
 		BinaryNode<T> left;
 
-		/** The right child of the node */
+		/**
+		 * The right child of the node
+		 */
 		BinaryNode<T> right;
 
 		/**

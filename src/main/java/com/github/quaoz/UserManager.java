@@ -4,12 +4,13 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.BinarySearchTree;
 import com.github.quaoz.util.Argon2id;
+import org.tinylog.Logger;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import org.tinylog.Logger;
 
 // https://netcorecloud.com/tutorials/send-email-in-java-using-gmail-smtp/
 // https://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
@@ -24,9 +25,11 @@ public class UserManager {
 	private static final File USER_CONF_FILE =
 			new File("src/main/java/com/github/quaoz/tests/db/users.json");
 	private static final DataBaseConfig userConfig =
-			new DataBaseConfig().init(419, new Integer[] {64, 318, 418});
+			new DataBaseConfig().init(423, new Integer[]{64, 318, 418, 422});
 	private static final DataBase userDatabase =
 			new DataBase(USER_DB_FILE.toPath(), USER_CONF_FILE.toPath(), userConfig);
+	private static UserAuthLevels userAuthLevel = UserAuthLevels.NONE;
+	private static String user = "";
 
 	static {
 		try {
@@ -52,16 +55,15 @@ public class UserManager {
 			}
 
 			try (FileOutputStream fileOutputStream = new FileOutputStream(source);
-					BufferedReader br = new BufferedReader(new FileReader(source));
-					PrintWriter printWriter = new PrintWriter(new FileWriter(destination, true))) {
+				 BufferedReader br = new BufferedReader(new FileReader(source));
+				 PrintWriter printWriter = new PrintWriter(new FileWriter(destination, true))) {
 				// Download the password list
 				Logger.info("Downloading common passwords...");
 				long start = System.currentTimeMillis();
 
 				ReadableByteChannel readableByteChannel = Channels.newChannel(URL.openStream());
 				fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-				Logger.info(
-						"Finished download, took: " + (System.currentTimeMillis() - start) + "ms");
+				Logger.info("Finished download, took: " + (System.currentTimeMillis() - start) + "ms");
 
 				Logger.info("Writing passwords to file...");
 
@@ -71,8 +73,7 @@ public class UserManager {
 					}
 				}
 
-				Logger.info(
-						"Finished writing, took: " + (System.currentTimeMillis() - start) + "ms");
+				Logger.info("Finished writing, took: " + (System.currentTimeMillis() - start) + "ms");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -99,9 +100,26 @@ public class UserManager {
 		}
 	}
 
+	public static UserAuthLevels getUserAuthLevel() {
+		return userAuthLevel;
+	}
+
+	public static void setUserAuthLevel(UserAuthLevels userAuthLevel) {
+		UserManager.userAuthLevel = userAuthLevel;
+	}
+
+	public static String getUser() {
+		return user;
+	}
+
+	public static void setUser(String user) {
+		UserManager.user = user;
+		userAuthLevel = getAuthLevel(user);
+	}
+
 	public static void addUser(String username, String email, char[] password) {
 		String record =
-				String.format("%-64s%-254s%-100s\n", username, email, Argon2id.hash(password));
+				String.format("%-64s%-254s%-100s%-4s\n", username, email, Argon2id.hash(password), 0);
 		userDatabase.add(record);
 	}
 
@@ -121,6 +139,18 @@ public class UserManager {
 		return user.substring(userConfig.fields[0], userConfig.fields[1]).strip();
 	}
 
+	public static UserAuthLevels getAuthLevel(String username) {
+		String user = userDatabase.get(username);
+
+		return switch (Integer.parseInt(
+				user.substring(userConfig.fields[2], userConfig.fields[3]).strip())) {
+			case 0 -> UserAuthLevels.USER;
+			case 1 -> UserAuthLevels.MODERATOR;
+			case 2 -> UserAuthLevels.ADMIN;
+			default -> UserAuthLevels.NONE;
+		};
+	}
+
 	public static boolean userExists(String username) {
 		return userDatabase.get(username) != null;
 	}
@@ -136,5 +166,12 @@ public class UserManager {
 			Logger.error(e, "Unable to close database");
 			throw new RuntimeException(e);
 		}
+	}
+
+	enum UserAuthLevels {
+		NONE,
+		USER,
+		MODERATOR,
+		ADMIN
 	}
 }

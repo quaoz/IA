@@ -4,11 +4,12 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.CustomRatio;
+import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.tinylog.Logger;
 
 public class MothManager {
 	private static final File MOTHS_DB_FILE =
@@ -17,7 +18,7 @@ public class MothManager {
 			new File("src/main/java/com/github/quaoz/tests/db/moths.json");
 	// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
 	private static final DataBaseConfig mothsConfig =
-			new DataBaseConfig().init(369, new Integer[] {64, 128, 144, 176, 240, 368});
+			new DataBaseConfig().init(369, new Integer[]{64, 128, 144, 176, 240, 368});
 	private static final DataBase mothsDatabase =
 			new DataBase(MOTHS_DB_FILE.toPath(), MOTHS_CONF_FILE.toPath(), mothsConfig);
 
@@ -101,16 +102,13 @@ public class MothManager {
 						new Pair<>(
 								new Moth(
 										s.substring(0, mothsConfig.fields[0]).strip(),
-										s.substring(mothsConfig.fields[0], mothsConfig.fields[1])
-												.strip(),
+										s.substring(mothsConfig.fields[0], mothsConfig.fields[1]).strip(),
 										Double.parseDouble(size.split(":")[0]),
 										Double.parseDouble(size.split(":")[1]),
 										Integer.parseInt(flight.split(":")[0]),
 										Integer.parseInt(flight.split(":")[1]),
-										s.substring(mothsConfig.fields[3], mothsConfig.fields[4])
-												.strip(),
-										s.substring(mothsConfig.fields[4], mothsConfig.fields[5])
-												.strip()),
+										s.substring(mothsConfig.fields[3], mothsConfig.fields[4]).strip(),
+										s.substring(mothsConfig.fields[4], mothsConfig.fields[5]).strip()),
 								pair.getValue()));
 			}
 		}

@@ -1,7 +1,8 @@
 package com.github.quaoz.util;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Heap sort is a fast sorting algorithm, works by dividing the array into a sorted and unsorted
@@ -16,7 +17,8 @@ public class HeapSort {
 	 * Implements a generic heap sort algorithm without having to specify the bounds
 	 *
 	 * @param array The array to be sorted
-	 * @param <T> The array type
+	 * @param <T>   The array type
+	 *
 	 * @return The sorted array
 	 */
 	public static <T extends Comparable<T>> T @NotNull [] sort(T @NotNull [] array) {
@@ -28,8 +30,9 @@ public class HeapSort {
 	 *
 	 * @param array The array to be sorted
 	 * @param start The start index
-	 * @param end The end index
-	 * @param <T> The array type
+	 * @param end   The end index
+	 * @param <T>   The array type
+	 *
 	 * @return The sorted array
 	 */
 	static <T extends Comparable<T>> T @NotNull [] sort(T @NotNull [] array, int start, int end) {
@@ -56,9 +59,9 @@ public class HeapSort {
 	 * Heapifies the subtree
 	 *
 	 * @param array The array to be heapified
-	 * @param size The size of the subtree
-	 * @param root The root of the subtree
-	 * @param <T> The array type
+	 * @param size  The size of the subtree
+	 * @param root  The root of the subtree
+	 * @param <T>   The array type
 	 */
 	static <T extends Comparable<T>> void heapify(T @NotNull [] array, int size, int root) {
 		int max = root;
@@ -87,10 +90,11 @@ public class HeapSort {
 	/**
 	 * Implements a generic heap sort algorithm
 	 *
-	 * @param list The list to be sorted
+	 * @param list  The list to be sorted
 	 * @param start The start index
-	 * @param end The end index
-	 * @param <E> The list type
+	 * @param end   The end index
+	 * @param <E>   The list type
+	 *
 	 * @return The sorted list
 	 */
 	static <E extends Comparable<E>> List<E> sort(List<E> list, int start, int end) {
@@ -119,7 +123,7 @@ public class HeapSort {
 	 * @param list The list to be heapified
 	 * @param size The size of the subtree
 	 * @param root The root of the subtree
-	 * @param <E> The list type
+	 * @param <E>  The list type
 	 */
 	static <E extends Comparable<E>> void heapify(List<E> list, int size, int root) {
 		int max = root;

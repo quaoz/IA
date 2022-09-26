@@ -1,7 +1,8 @@
 package com.github.quaoz.util;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Dual-pivot intro sort is a modified intro sort which uses dual-pivot quick sort instead of
@@ -15,7 +16,8 @@ public class DualPivotIntroSort {
 	 * Implements a modified intro sort algorithm without the need to specify the bounds
 	 *
 	 * @param array The array to be sorted
-	 * @param <T> The array type
+	 * @param <T>   The array type
+	 *
 	 * @return The sorted array
 	 */
 	public static <T extends Comparable<T>> T @NotNull [] sort(T @NotNull [] array) {
@@ -26,12 +28,13 @@ public class DualPivotIntroSort {
 	/**
 	 * Implements a modified intro sort algorithm
 	 *
-	 * @param array The array to be sorted
+	 * @param array    The array to be sorted
 	 * @param maxDepth The number of times the function can recursively call itself before switching
-	 *     to heapsort
-	 * @param left The left bound of the array
-	 * @param right The right bound of the array
-	 * @param <T> The array type
+	 *                 to heapsort
+	 * @param left     The left bound of the array
+	 * @param right    The right bound of the array
+	 * @param <T>      The array type
+	 *
 	 * @return The sorted array
 	 */
 	static <T extends Comparable<T>> T @NotNull [] sort(
@@ -59,7 +62,8 @@ public class DualPivotIntroSort {
 	 * Implements a modified intro sort algorithm without the need to specify the bounds
 	 *
 	 * @param list The list to be sorted
-	 * @param <E> The list type
+	 * @param <E>  The list type
+	 *
 	 * @return The sorted list
 	 */
 	public static <E extends Comparable<E>> List<E> sort(@NotNull List<E> list) {
@@ -70,12 +74,13 @@ public class DualPivotIntroSort {
 	/**
 	 * Implements a modified intro sort algorithm
 	 *
-	 * @param list The list to be sorted
+	 * @param list     The list to be sorted
 	 * @param maxDepth The number of times the function can recursively call itself before switching
-	 *     to heapsort
-	 * @param left The left bound of the list
-	 * @param right The right bound of the list
-	 * @param <E> The list type
+	 *                 to heapsort
+	 * @param left     The left bound of the list
+	 * @param right    The right bound of the list
+	 * @param <E>      The list type
+	 *
 	 * @return The sorted list
 	 */
 	static <E extends Comparable<E>> List<E> sort(List<E> list, int left, int right, int maxDepth) {

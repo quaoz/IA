@@ -3,7 +3,9 @@ package com.github.quaoz.gui;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-/** Generalises all {@link DocumentListener} methods */
+/**
+ * Generalises all {@link DocumentListener} methods
+ */
 @FunctionalInterface
 public interface SimpleDocumentListener extends DocumentListener {
 

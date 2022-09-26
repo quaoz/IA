@@ -1,14 +1,22 @@
 package com.github.quaoz.structures;
 
-/** A simple generic stack */
+/**
+ * A simple generic stack
+ */
 public class SimpleStack<T> {
-	/** The top element in the stack */
+	/**
+	 * The top element in the stack
+	 */
 	private Node<T> top;
 
-	/** The size of the stack */
+	/**
+	 * The size of the stack
+	 */
 	private int size;
 
-	/** Constructs an empty stack */
+	/**
+	 * Constructs an empty stack
+	 */
 	public SimpleStack() {
 		top = null;
 		size = 0;
@@ -57,7 +65,9 @@ public class SimpleStack<T> {
 		return size;
 	}
 
-	/** Simple node */
+	/**
+	 * Simple node
+	 */
 	private static class Node<T> {
 		public T value;
 		public Node<T> previous;

@@ -1,17 +1,27 @@
 package com.github.quaoz.structures;
 
-/** A simple generic queue */
+/**
+ * A simple generic queue
+ */
 public class SimpleQueue<T> {
-	/** The first element in the queue */
+	/**
+	 * The first element in the queue
+	 */
 	private Node<T> head;
 
-	/** The last element in the queue */
+	/**
+	 * The last element in the queue
+	 */
 	private Node<T> tail;
 
-	/** The size of the queue */
+	/**
+	 * The size of the queue
+	 */
 	private int size;
 
-	/** Constructs an empty queue */
+	/**
+	 * Constructs an empty queue
+	 */
 	public SimpleQueue() {
 		head = null;
 		tail = null;
@@ -82,7 +92,9 @@ public class SimpleQueue<T> {
 		return size == 0;
 	}
 
-	/** Simple node */
+	/**
+	 * Simple node
+	 */
 	private static class Node<T> {
 		public T value;
 		public Node<T> next;

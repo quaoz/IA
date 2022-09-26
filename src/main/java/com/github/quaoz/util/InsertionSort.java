@@ -1,7 +1,8 @@
 package com.github.quaoz.util;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Insertion sort is a simple sorting algorithm, works by virtually splitting the array and placing
@@ -15,7 +16,8 @@ public class InsertionSort {
 	 * Implements a generic insertion sort algorithm, assumes the whole array should be sorted
 	 *
 	 * @param array The array to be sorted
-	 * @param <T> The array type
+	 * @param <T>   The array type
+	 *
 	 * @return The sorted array
 	 */
 	public static <T extends Comparable<T>> T[] sort(T @NotNull [] array) {
@@ -27,8 +29,9 @@ public class InsertionSort {
 	 *
 	 * @param array The array to be sorted
 	 * @param start The start index
-	 * @param end The end index
-	 * @param <T> The array type
+	 * @param end   The end index
+	 * @param <T>   The array type
+	 *
 	 * @return The sorted array
 	 */
 	static <T extends Comparable<T>> T[] sort(T @NotNull [] array, int start, int end) {
@@ -55,7 +58,8 @@ public class InsertionSort {
 	 * Implements a generic insertion sort algorithm, assumes the whole list should be sorted
 	 *
 	 * @param list The list to be sorted
-	 * @param <E> The array type
+	 * @param <E>  The array type
+	 *
 	 * @return The sorted list
 	 */
 	public static <E extends Comparable<E>> List<E> sort(List<E> list) {
@@ -65,10 +69,11 @@ public class InsertionSort {
 	/**
 	 * Implements a generic insertion sort algorithm
 	 *
-	 * @param list The list to be sorted
+	 * @param list  The list to be sorted
 	 * @param start The start index
-	 * @param end The end index
-	 * @param <E> The list type
+	 * @param end   The end index
+	 * @param <E>   The list type
+	 *
 	 * @return The sorted array
 	 */
 	static <E extends Comparable<E>> List<E> sort(List<E> list, int start, int end) {

@@ -2,6 +2,7 @@ package com.github.quaoz.tests;
 
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class DataBaseTester {
 	public static void main(String[] args) {
 		DataBaseConfig config = new DataBaseConfig();
 		config.recordLength = 17;
-		config.fields = new Integer[] {10, 17};
+		config.fields = new Integer[]{10, 17};
 
 		File databaseFile = new File("src/main/java/com/github/quaoz/tests/db/test.db");
 		File configFile = new File("src/main/java/com/github/quaoz/tests/db/config.json");

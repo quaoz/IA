@@ -1,7 +1,8 @@
 package com.github.quaoz.util;
 
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Dual-pivot quick sort is a modified quick sort algorithm which uses two pivot values instead of
@@ -17,7 +18,8 @@ public class DualPivotQuickSort {
 	 * right bounds
 	 *
 	 * @param array The array to be sorted
-	 * @param <T> The array type
+	 * @param <T>   The array type
+	 *
 	 * @return The sorted array
 	 */
 	public static <T extends Comparable<T>> T[] sort(T[] array) {
@@ -28,9 +30,10 @@ public class DualPivotQuickSort {
 	 * Implements a generic dual-pivot quick sort algorithm
 	 *
 	 * @param array The array to be sorted
-	 * @param left The left bound of the array
+	 * @param left  The left bound of the array
 	 * @param right The right bound of the array
-	 * @param <T> The array type
+	 * @param <T>   The array type
+	 *
 	 * @return The sorted array
 	 */
 	static <T extends Comparable<T>> T[] sort(T[] array, int left, int right) {
@@ -49,9 +52,10 @@ public class DualPivotQuickSort {
 	 * Partitions an array around two pivot values
 	 *
 	 * @param array The array to partition
-	 * @param left The left bound of the array
+	 * @param left  The left bound of the array
 	 * @param right The right bound of the array
-	 * @param <T> The array type
+	 * @param <T>   The array type
+	 *
 	 * @return The partition indexes
 	 */
 	static <T extends Comparable<T>> int @NotNull [] partition(
@@ -95,7 +99,7 @@ public class DualPivotQuickSort {
 		Swap.swap(array, left, --index);
 		Swap.swap(array, right, ++rightIndex);
 
-		return new int[] {index, rightIndex};
+		return new int[]{index, rightIndex};
 	}
 
 	/**
@@ -103,7 +107,8 @@ public class DualPivotQuickSort {
 	 * right bounds
 	 *
 	 * @param list The list to be sorted
-	 * @param <E> The list type
+	 * @param <E>  The list type
+	 *
 	 * @return The sorted list
 	 */
 	public static <E extends Comparable<E>> List<E> sort(List<E> list) {
@@ -113,10 +118,11 @@ public class DualPivotQuickSort {
 	/**
 	 * Implements a generic dual-pivot quick sort algorithm
 	 *
-	 * @param list The list to be sorted
-	 * @param left The left bound of the list
+	 * @param list  The list to be sorted
+	 * @param left  The left bound of the list
 	 * @param right The right bound of the list
-	 * @param <E> The list type
+	 * @param <E>   The list type
+	 *
 	 * @return The sorted list
 	 */
 	static <E extends Comparable<E>> List<E> sort(@NotNull List<E> list, int left, int right) {
@@ -134,10 +140,11 @@ public class DualPivotQuickSort {
 	/**
 	 * Partitions a list around two pivot values
 	 *
-	 * @param list The list to partition
-	 * @param left The left bound of the list
+	 * @param list  The list to partition
+	 * @param left  The left bound of the list
 	 * @param right The right bound of the list
-	 * @param <E> The list type
+	 * @param <E>   The list type
+	 *
 	 * @return The partition indexes
 	 */
 	static <E extends Comparable<E>> int @NotNull [] partition(
@@ -157,8 +164,7 @@ public class DualPivotQuickSort {
 			if (Comparisons.smaller(list.get(leftIndex), pivotOne)) {
 				Swap.swap(list, leftIndex, index++);
 			} else if (Comparisons.biggerOrEqual(list.get(leftIndex), pivotTwo)) {
-				while (Comparisons.bigger(list.get(rightIndex), pivotTwo)
-						&& leftIndex < rightIndex) {
+				while (Comparisons.bigger(list.get(rightIndex), pivotTwo) && leftIndex < rightIndex) {
 					--rightIndex;
 				}
 
@@ -174,6 +180,6 @@ public class DualPivotQuickSort {
 		Swap.swap(list, left, --index);
 		Swap.swap(list, right, ++rightIndex);
 
-		return new int[] {index, rightIndex};
+		return new int[]{index, rightIndex};
 	}
 }

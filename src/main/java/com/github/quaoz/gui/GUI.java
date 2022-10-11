@@ -61,10 +61,6 @@ public class GUI {
 		Logger.info("GUI created");
 	}
 
-	public static void main(String[] args) {
-		new GUI();
-	}
-
 	public ArrayList<Moth> getSearchResults() {
 		return searchResults;
 	}

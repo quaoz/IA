@@ -9,6 +9,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 // https://netcorecloud.com/tutorials/send-email-in-java-using-gmail-smtp/
@@ -17,28 +22,26 @@ import org.tinylog.Logger;
 // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
 public class UserManager {
 
-	private static final BinarySearchTree<String> commonPasswords = new BinarySearchTree<>();
-	private static final URL URL;
-	// Database
-	private static final File USER_DB_FILE = new File(
-		"src/main/java/com/github/quaoz/tests/db/users.db"
-	);
-	private static final File USER_CONF_FILE = new File(
-		"src/main/java/com/github/quaoz/tests/db/users.json"
-	);
-	private static final DataBaseConfig userConfig = new DataBaseConfig()
-		.init(423, new Integer[] { 64, 318, 418, 422 });
-	private static final DataBase userDatabase = new DataBase(
-		USER_DB_FILE.toPath(),
-		USER_CONF_FILE.toPath(),
-		userConfig
-	);
-	private static UserAuthLevels userAuthLevel = UserAuthLevels.NONE;
-	private static String user = "";
+	private static UserManager userManager;
 
-	static {
+	private UserManager() {
+		final Path USER_DB_FILE = Main
+			.getInstallDir()
+			.resolve(Paths.get("db", "users.db"));
+		final Path USER_CONF_FILE = Main
+			.getInstallDir()
+			.resolve(Paths.get("db", "moths.json"));
+
+		userConfig =
+			new DataBaseConfig().init(423, new Integer[] { 64, 318, 418, 422 });
+		userDatabase = new DataBase(USER_DB_FILE, USER_CONF_FILE, userConfig);
+
+		userAuthLevel = UserAuthLevels.NONE;
+		user = "";
+
+		URL url;
 		try {
-			URL =
+			url =
 				new URL(
 					"https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt"
 				);
@@ -47,12 +50,20 @@ public class UserManager {
 			throw new RuntimeException(e);
 		}
 
-		File commonPasswordsFile = new File(
-			"src/main/resources/common_passwords.txt"
-		);
+		File commonPasswordsFile = Main
+			.getInstallDir()
+			.resolve(Paths.get("data", "common_passwords.txt"))
+			.toFile();
 
 		if (!commonPasswordsFile.exists()) {
-			File destination = new File("src/main/resources/common_passwords.txt");
+			try {
+				Files.createDirectories(commonPasswordsFile.toPath().getParent());
+				Files.createFile(commonPasswordsFile.toPath());
+			} catch (IOException e) {
+				Logger.error(e, "Unable to create common password file");
+				throw new RuntimeException(e);
+			}
+
 			File source;
 
 			try {
@@ -66,7 +77,7 @@ public class UserManager {
 				FileOutputStream fileOutputStream = new FileOutputStream(source);
 				BufferedReader br = new BufferedReader(new FileReader(source));
 				PrintWriter printWriter = new PrintWriter(
-					new FileWriter(destination, true)
+					new FileWriter(commonPasswordsFile, true)
 				)
 			) {
 				// Download the password list
@@ -74,7 +85,7 @@ public class UserManager {
 				long start = System.currentTimeMillis();
 
 				ReadableByteChannel readableByteChannel = Channels.newChannel(
-					URL.openStream()
+					url.openStream()
 				);
 				fileOutputStream
 					.getChannel()
@@ -129,24 +140,38 @@ public class UserManager {
 		}
 	}
 
-	public static UserAuthLevels getUserAuthLevel() {
+	public static synchronized UserManager getInstance() {
+		if (userManager == null) {
+			userManager = new UserManager();
+		}
+
+		return userManager;
+	}
+
+	private final BinarySearchTree<String> commonPasswords = new BinarySearchTree<>();
+	private final DataBaseConfig userConfig;
+	private final DataBase userDatabase;
+	private UserAuthLevels userAuthLevel;
+	private String user;
+
+	public UserAuthLevels getUserAuthLevel() {
 		return userAuthLevel;
 	}
 
-	public static void setUserAuthLevel(UserAuthLevels userAuthLevel) {
-		UserManager.userAuthLevel = userAuthLevel;
+	public void setUserAuthLevel(UserAuthLevels userAuthLevel) {
+		this.userAuthLevel = userAuthLevel;
 	}
 
-	public static String getUser() {
+	public String getUser() {
 		return user;
 	}
 
-	public static void setUser(String user) {
-		UserManager.user = user;
+	public void setUser(String user) {
+		this.user = user;
 		userAuthLevel = getAuthLevel(user);
 	}
 
-	public static void addUser(String username, String email, char[] password) {
+	public void addUser(String username, String email, char[] password) {
 		String record = String.format(
 			"%-64s%-254s%-100s%-4s\n",
 			username,
@@ -157,7 +182,7 @@ public class UserManager {
 		userDatabase.add(record);
 	}
 
-	public static boolean validateUser(String username, char[] password) {
+	public boolean validateUser(String username, char[] password) {
 		String userRecord = userDatabase.get(username);
 
 		if (userRecord != null) {
@@ -170,12 +195,12 @@ public class UserManager {
 		}
 	}
 
-	public static String getEmail(String username) {
+	public String getEmail(String username) {
 		String user = userDatabase.get(username);
 		return user.substring(userConfig.fields[0], userConfig.fields[1]).strip();
 	}
 
-	public static UserAuthLevels getAuthLevel(String username) {
+	public UserAuthLevels getAuthLevel(String username) {
 		String user = userDatabase.get(username);
 
 		return switch (
@@ -190,15 +215,15 @@ public class UserManager {
 		};
 	}
 
-	public static boolean userExists(String username) {
+	public boolean userExists(String username) {
 		return userDatabase.get(username) != null;
 	}
 
-	public static boolean isCommonPassword(char[] password) {
+	public boolean isCommonPassword(char[] password) {
 		return commonPasswords.contains(String.valueOf(password));
 	}
 
-	public static void close() {
+	public void close() {
 		try {
 			userDatabase.close();
 		} catch (IOException e) {
@@ -207,10 +232,29 @@ public class UserManager {
 		}
 	}
 
-	enum UserAuthLevels {
+	public enum UserAuthLevels {
 		NONE,
 		USER,
 		MODERATOR,
-		ADMIN,
+		ADMIN;
+
+		public static UserAuthLevels get(int i) {
+			return switch (i) {
+				case 1 -> USER;
+				case 2 -> MODERATOR;
+				case 3 -> ADMIN;
+				default -> NONE;
+			};
+		}
+
+		@Contract(pure = true)
+		public static int get(@NotNull UserAuthLevels i) {
+			return switch (i) {
+				case USER -> 1;
+				case MODERATOR -> 2;
+				case ADMIN -> 3;
+				default -> 0;
+			};
+		}
 	}
 }

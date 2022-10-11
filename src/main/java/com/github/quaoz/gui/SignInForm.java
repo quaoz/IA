@@ -34,9 +34,11 @@ public class SignInForm {
 
 		if (
 			username.length() > 1 &&
-			UserManager.validateUser(username, passwordField.getPassword())
+			UserManager
+				.getInstance()
+				.validateUser(username, passwordField.getPassword())
 		) {
-			UserManager.setUser(usernameField.getText().strip());
+			UserManager.getInstance().setUser(usernameField.getText().strip());
 			Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
 		}
 	}

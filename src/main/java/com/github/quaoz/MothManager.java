@@ -4,26 +4,27 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.CustomRatio;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 public class MothManager {
 
-	private static final File MOTHS_DB_FILE = new File(
-		"src/main/java/com/github/quaoz/tests/db/moths.db"
-	);
-	private static final File MOTHS_CONF_FILE = new File(
-		"src/main/java/com/github/quaoz/tests/db/moths.json"
-	);
+	private static final Path MOTHS_DB_FILE = Main
+		.getInstallDir()
+		.resolve(Paths.get("db", "moths.db"));
+	private static final Path MOTHS_CONF_FILE = Main
+		.getInstallDir()
+		.resolve(Paths.get("db", "moths.json"));
 	// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
 	private static final DataBaseConfig mothsConfig = new DataBaseConfig()
 		.init(369, new Integer[] { 64, 128, 144, 176, 240, 368 });
 	private static final DataBase mothsDatabase = new DataBase(
-		MOTHS_DB_FILE.toPath(),
-		MOTHS_CONF_FILE.toPath(),
+		MOTHS_DB_FILE,
+		MOTHS_CONF_FILE,
 		mothsConfig
 	);
 

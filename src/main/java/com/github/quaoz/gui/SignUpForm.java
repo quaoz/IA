@@ -49,12 +49,14 @@ public class SignUpForm {
 				checkPassword() &&
 				checkPasswordRepeat()
 			) {
-				UserManager.addUser(
-					usernameField.getText().strip(),
-					emailField.getText().strip(),
-					passwordField.getPassword()
-				);
-				UserManager.setUser(usernameField.getText().strip());
+				UserManager
+					.getInstance()
+					.addUser(
+						usernameField.getText().strip(),
+						emailField.getText().strip(),
+						passwordField.getPassword()
+					);
+				UserManager.getInstance().setUser(usernameField.getText().strip());
 				Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
 			}
 		});
@@ -160,7 +162,7 @@ public class SignUpForm {
 				usernameValidLabel.setText("✗");
 				usernameMessage.setText("Username cannot be over 64 characters");
 				return false;
-			} else if (UserManager.userExists(username)) {
+			} else if (UserManager.getInstance().userExists(username)) {
 				usernameValidLabel.setText("✗");
 				usernameMessage.setText("Username taken");
 				return false;
@@ -201,7 +203,7 @@ public class SignUpForm {
 			if (password.length < 8) {
 				passwordValidLabel.setText("✗");
 				passwordMessage.setText("Password must be 8 or more characters");
-			} else if (UserManager.isCommonPassword(password)) {
+			} else if (UserManager.getInstance().isCommonPassword(password)) {
 				passwordValidLabel.setText("✗");
 				passwordMessage.setText("Common password");
 			} else {

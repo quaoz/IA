@@ -4,8 +4,9 @@ import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.util.Geocoder;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -13,18 +14,18 @@ import org.tinylog.Logger;
 
 public class RecordManager {
 
-	private static final File RECORDS_DB_FILE = new File(
-		"src/main/java/com/github/quaoz/tests/db/records.db"
-	);
-	private static final File RECORDS_CONF_FILE = new File(
-		"src/main/java/com/github/quaoz/tests/db/records.json"
-	);
+	private static final Path RECORDS_DB_FILE = Main
+		.getInstallDir()
+		.resolve(Paths.get("db", "records.db"));
+	private static final Path RECORDS_CONF_FILE = Main
+		.getInstallDir()
+		.resolve(Paths.get("db", "records.json"));
 	// id 32, species 64, location 32, date 16, size 16, username 64
 	private static final DataBaseConfig recordsConfig = new DataBaseConfig()
 		.init(321, new Integer[] { 32, 96, 224, 240, 256, 321 });
 	private static final DataBase recordsDatabase = new DataBase(
-		RECORDS_DB_FILE.toPath(),
-		RECORDS_CONF_FILE.toPath(),
+		RECORDS_DB_FILE,
+		RECORDS_CONF_FILE,
 		recordsConfig
 	);
 

@@ -77,6 +77,9 @@ dependencies {
     // https://github.com/JFormDesigner/FlatLaf
     implementation("com.formdev:flatlaf:2.4")
     implementation("com.formdev:flatlaf-intellij-themes:2.4")
+
+    // Appdirs
+    implementation("net.harawata:appdirs:1.2.1")
 }
 
 val fatJar = task("fatJar", type = Jar::class) {

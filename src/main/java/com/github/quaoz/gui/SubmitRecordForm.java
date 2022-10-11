@@ -116,7 +116,7 @@ public class SubmitRecordForm {
 					location,
 					dateFormat.format(date),
 					((Double) sizeSpinner.getValue()),
-					UserManager.getUser()
+					UserManager.getInstance().getUser()
 				);
 				Main.getGui().render(GUI.Content.PAST_CONTENT);
 			}

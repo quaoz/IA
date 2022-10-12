@@ -13,22 +13,33 @@ import org.tinylog.Logger;
 
 public class MothManager {
 
-	private static final Path MOTHS_DB_FILE = Main
-		.getInstallDir()
-		.resolve(Paths.get("db", "moths.db"));
-	private static final Path MOTHS_CONF_FILE = Main
-		.getInstallDir()
-		.resolve(Paths.get("db", "moths.json"));
-	// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
-	private static final DataBaseConfig mothsConfig = new DataBaseConfig()
-		.init(369, new Integer[] { 64, 128, 144, 176, 240, 368 });
-	private static final DataBase mothsDatabase = new DataBase(
-		MOTHS_DB_FILE,
-		MOTHS_CONF_FILE,
-		mothsConfig
-	);
+	private static MothManager mothManager;
 
-	public static void addMoth(
+	public static synchronized MothManager getInstance() {
+		if (mothManager == null) {
+			mothManager = new MothManager();
+		}
+
+	  return mothManager;
+	}
+
+	private MothManager() {
+		Path MOTHS_DB_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "moths.db"));
+		Path MOTHS_CONF_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "moths.json"));
+
+		mothsConfig = new DataBaseConfig().init(369, new Integer[] { 64, 128, 144, 176, 240, 368 });
+		mothsDatabase = new DataBase(
+				MOTHS_DB_FILE,
+				MOTHS_CONF_FILE,
+				mothsConfig
+		);
+	}
+
+	// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
+	private final DataBaseConfig mothsConfig;
+	private final DataBase mothsDatabase;
+
+	public void addMoth(
 		String name,
 		String sciName,
 		double sizeLower,
@@ -50,7 +61,7 @@ public class MothManager {
 		mothsDatabase.add(record);
 	}
 
-	public static @NotNull Moth basicSearch(@NotNull String name) {
+	public @NotNull Moth basicSearch(@NotNull String name) {
 		name = name.strip();
 		String record = mothsDatabase.get(name);
 
@@ -82,14 +93,14 @@ public class MothManager {
 		);
 	}
 
-	public static @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
+	public @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
 		@NotNull String field,
 		int compField
 	) {
 		return collectMoths(field, compField, null);
 	}
 
-	public static @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
+	public @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
 		@NotNull String field,
 		int compField,
 		CustomRatio customRatio
@@ -97,7 +108,7 @@ public class MothManager {
 		return collectMoths(field, compField, 10, customRatio);
 	}
 
-	public static @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
+	public @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
 		@NotNull String field,
 		int compField,
 		int count
@@ -105,7 +116,7 @@ public class MothManager {
 		return collectMoths(field, compField, count, null);
 	}
 
-	public static @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
+	public @NotNull ArrayList<Pair<Moth, Double>> collectMoths(
 		@NotNull String field,
 		int compField,
 		int count,
@@ -157,7 +168,7 @@ public class MothManager {
 		return moths;
 	}
 
-	public static void close() {
+	public void close() {
 		try {
 			mothsDatabase.close();
 		} catch (IOException e) {

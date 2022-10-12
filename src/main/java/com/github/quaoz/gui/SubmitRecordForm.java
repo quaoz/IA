@@ -99,7 +99,7 @@ public class SubmitRecordForm {
 			// TODO: Submit record
 			if (valid) {
 				Moth species = MothManager
-					.collectMoths(speciesField.getText().strip(), 0, 1)
+					.getInstance().collectMoths(speciesField.getText().strip(), 0, 1)
 					.get(0)
 					.getKey();
 
@@ -111,19 +111,19 @@ public class SubmitRecordForm {
 				)
 					.getTime();
 
-				RecordManager.addRecord(
+				RecordManager.getInstance().addRecord(
 					species.name(),
 					location,
 					dateFormat.format(date),
 					((Double) sizeSpinner.getValue()),
 					UserManager.getInstance().getUser()
 				);
-				Main.getGui().render(GUI.Content.PAST_CONTENT);
+				GUI.getInstance().render(GUI.Content.PAST_CONTENT);
 			}
 		});
 
 		cancelButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		speciesField
@@ -141,7 +141,7 @@ public class SubmitRecordForm {
 						completableFuture =
 							CompletableFuture
 								.supplyAsync(() ->
-									MothManager.collectMoths(speciesField.getText().strip(), 0, 1)
+									MothManager.getInstance().collectMoths(speciesField.getText().strip(), 0, 1)
 								)
 								.thenAccept(s ->
 									speciesMatchLabel.setText(
@@ -169,7 +169,7 @@ public class SubmitRecordForm {
 		});
 
 		registerButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.ADD_MOTH)
+			GUI.getInstance().render(GUI.Content.ADD_MOTH)
 		);
 	}
 

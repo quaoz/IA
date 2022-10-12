@@ -61,7 +61,7 @@ public class AddMothForm {
 		);
 
 		cancelButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		speciesField.addActionListener(e -> checkSpecies());
@@ -118,7 +118,7 @@ public class AddMothForm {
 					flightEnd = tmp;
 				}
 
-				MothManager.addMoth(
+				MothManager.getInstance().addMoth(
 					speciesField.getText().strip(),
 					sciNameField.getText().strip(),
 					sizeLower,
@@ -129,7 +129,7 @@ public class AddMothForm {
 					foodField.getText().strip()
 				);
 
-				Main.getGui().render(GUI.Content.PAST_CONTENT);
+				GUI.getInstance().render(GUI.Content.PAST_CONTENT);
 			}
 		});
 	}

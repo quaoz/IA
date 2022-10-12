@@ -28,7 +28,7 @@ public class RecordForm {
 	private JButton recordsButton;
 
 	public RecordForm() {
-		Moth moth = Main.getGui().getRecord();
+		Moth moth = GUI.getInstance().getRecord();
 
 		nameLabel.setText(moth.name());
 		sciNameLabel.setText(moth.sciName());
@@ -45,29 +45,29 @@ public class RecordForm {
 
 		recordsButton.addActionListener(e -> {
 			// TODO: get records
-			Main.getGui().setRecord(moth);
-			Main.getGui().render(GUI.Content.RECORDS);
+			GUI.getInstance().setRecord(moth);
+			GUI.getInstance().render(GUI.Content.RECORDS);
 		});
 
 		submitRecordButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.SUBMIT_RECORD)
+			GUI.getInstance().render(GUI.Content.SUBMIT_RECORD)
 		);
 
 		advancedSearchButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.ADVANCED_SEARCH)
+			GUI.getInstance().render(GUI.Content.ADVANCED_SEARCH)
 		);
 
 		profileButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.PROFILE)
+			GUI.getInstance().render(GUI.Content.PROFILE)
 		);
 
 		searchField.addActionListener(e -> {
-			Main
-				.getGui()
+			GUI
+				.getInstance()
 				.setSearchResults(
-					MothManager.collectMoths(searchField.getText().strip(), 0, 100)
+					MothManager.getInstance().collectMoths(searchField.getText().strip(), 0, 100)
 				);
-			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+			GUI.getInstance().render(GUI.Content.SEARCH_RESULTS);
 		});
 	}
 

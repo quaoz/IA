@@ -38,7 +38,7 @@ public class AdvancedSearchForm {
 
 	public AdvancedSearchForm() {
 		cancelButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		sizeLowerSpinner.setModel(new SpinnerNumberModel(0, 0, 30, 0.1));
@@ -117,7 +117,7 @@ public class AdvancedSearchForm {
 
 			if (sizeLower != null) {
 				records =
-					MothManager.collectMoths(
+					MothManager.getInstance().collectMoths(
 						String.format("%s:%s", sizeLower, sizeUpper),
 						2,
 						100,
@@ -134,10 +134,10 @@ public class AdvancedSearchForm {
 						}
 					);
 			} else if (!location.isBlank()) {
-				records = RecordManager.searchLocation(location);
+				records = RecordManager.getInstance().searchLocation(location);
 			} else if (flightEnd != null) {
 				records =
-					MothManager.collectMoths(
+					MothManager.getInstance().collectMoths(
 						String.format("%s:%s", flightStart, flightEnd),
 						3,
 						100,
@@ -154,15 +154,15 @@ public class AdvancedSearchForm {
 						}
 					);
 			} else if (!habitat.isBlank()) {
-				records = MothManager.collectMoths(habitat, 4, 100);
+				records = MothManager.getInstance().collectMoths(habitat, 4, 100);
 			} else if (!food.isBlank()) {
-				records = MothManager.collectMoths(food, 5, 100);
+				records = MothManager.getInstance().collectMoths(food, 5, 100);
 			} else if (!name.isBlank()) {
-				records = MothManager.collectMoths(name, 0, 100);
+				records = MothManager.getInstance().collectMoths(name, 0, 100);
 			}
 
-			Main.getGui().setSearchResults(records);
-			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+			GUI.getInstance().setSearchResults(records);
+			GUI.getInstance().render(GUI.Content.SEARCH_RESULTS);
 		});
 	}
 

@@ -21,11 +21,11 @@ public class SearchResultsForm {
 	private JScrollPane mothsScrollPane;
 
 	public SearchResultsForm() {
-		this.records = Main.getGui().getSearchResults();
+		this.records = GUI.getInstance().getSearchResults();
 		$$$setupUI$$$();
 
 		backButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		table.addMouseListener(
@@ -33,8 +33,8 @@ public class SearchResultsForm {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					Moth moth = records.get(table.rowAtPoint(e.getPoint()));
-					Main.getGui().setRecord(moth);
-					Main.getGui().render(GUI.Content.RECORD);
+					GUI.getInstance().setRecord(moth);
+					GUI.getInstance().render(GUI.Content.RECORD);
 				}
 			}
 		);

@@ -13,23 +13,33 @@ import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 public class RecordManager {
+	private static RecordManager recordManager;
 
-	private static final Path RECORDS_DB_FILE = Main
-		.getInstallDir()
-		.resolve(Paths.get("db", "records.db"));
-	private static final Path RECORDS_CONF_FILE = Main
-		.getInstallDir()
-		.resolve(Paths.get("db", "records.json"));
+  public static synchronized RecordManager getInstance() {
+	  if (recordManager == null) {
+		  recordManager = new RecordManager();
+	  }
+
+    return recordManager;
+  }
+
+  private RecordManager() {
+	  Path RECORDS_DB_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "records.db"));
+	  Path RECORDS_CONF_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "records.json"));
+
+	  recordsConfig = new DataBaseConfig().init(321, new Integer[] { 32, 96, 224, 240, 256, 321 });
+	  recordsDatabase = new DataBase(
+			  RECORDS_DB_FILE,
+			  RECORDS_CONF_FILE,
+			  recordsConfig
+	  );
+  }
+
 	// id 32, species 64, location 32, date 16, size 16, username 64
-	private static final DataBaseConfig recordsConfig = new DataBaseConfig()
-		.init(321, new Integer[] { 32, 96, 224, 240, 256, 321 });
-	private static final DataBase recordsDatabase = new DataBase(
-		RECORDS_DB_FILE,
-		RECORDS_CONF_FILE,
-		recordsConfig
-	);
+	private final DataBaseConfig recordsConfig;
+	private final DataBase recordsDatabase;
 
-	public static void addRecord(
+	public void addRecord(
 		String species,
 		String location,
 		String date,
@@ -50,7 +60,7 @@ public class RecordManager {
 		recordsDatabase.add(record);
 	}
 
-	public static void close() {
+	public void close() {
 		try {
 			recordsDatabase.close();
 		} catch (IOException e) {
@@ -59,7 +69,7 @@ public class RecordManager {
 		}
 	}
 
-	public static @NotNull ArrayList<Record> getSpecies(String species) {
+	public @NotNull ArrayList<Record> getSpecies(String species) {
 		species = species.strip();
 		ArrayList<Record> records = new ArrayList<>();
 
@@ -92,17 +102,17 @@ public class RecordManager {
 		return records;
 	}
 
-	public static @NotNull ArrayList<Moth> searchUser(String username) {
+	public @NotNull ArrayList<Moth> searchUser(String username) {
 		username = username.strip();
 		ArrayList<Moth> moths = new ArrayList<>();
 
 		recordsDatabase
 			.collect(username, 5)
-			.forEach(s -> moths.add(MothManager.basicSearch(s)));
+			.forEach(s -> moths.add(MothManager.getInstance().basicSearch(s)));
 		return moths;
 	}
 
-	public static @NotNull ArrayList<Pair<Moth, Double>> searchLocation(
+	public @NotNull ArrayList<Pair<Moth, Double>> searchLocation(
 		String location
 	) {
 		location = Geocoder.standardise(location);
@@ -142,7 +152,7 @@ public class RecordManager {
 		ArrayList<Pair<Moth, Double>> moths = new ArrayList<>();
 
 		for (Pair<String, Double> record : records) {
-			Moth moth = MothManager.basicSearch(
+			Moth moth = MothManager.getInstance().basicSearch(
 				record
 					.getKey()
 					.substring(recordsConfig.fields[0], recordsConfig.fields[1])
@@ -158,7 +168,7 @@ public class RecordManager {
 		return moths;
 	}
 
-	public static String getRecord(Integer id) {
+	public String getRecord(Integer id) {
 		return recordsDatabase.get(String.valueOf(id));
 	}
 }

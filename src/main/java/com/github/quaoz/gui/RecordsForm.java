@@ -20,10 +20,10 @@ public class RecordsForm {
 	private JScrollPane recordsScrollPane;
 
 	public RecordsForm() {
-		records = RecordManager.getSpecies(Main.getGui().getRecord().name());
+		records = RecordManager.getInstance().getSpecies(GUI.getInstance().getRecord().name());
 		$$$setupUI$$$();
 		backButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 	}
 

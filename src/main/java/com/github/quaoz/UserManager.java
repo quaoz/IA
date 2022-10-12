@@ -26,9 +26,11 @@ public class UserManager {
 
 	private UserManager() {
 		final Path USER_DB_FILE = Main
-			.getInstallDir()
+				.getInstance()
+				.getInstallDir()
 			.resolve(Paths.get("db", "users.db"));
 		final Path USER_CONF_FILE = Main
+				.getInstance()
 			.getInstallDir()
 			.resolve(Paths.get("db", "moths.json"));
 
@@ -51,7 +53,8 @@ public class UserManager {
 		}
 
 		File commonPasswordsFile = Main
-			.getInstallDir()
+				.getInstance()
+				.getInstallDir()
 			.resolve(Paths.get("data", "common_passwords.txt"))
 			.toFile();
 

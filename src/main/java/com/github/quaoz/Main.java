@@ -7,38 +7,38 @@ import org.tinylog.Logger;
 import org.tinylog.provider.ProviderRegistry;
 
 public class Main {
+	private static Main main;
 
-	private static final Path installDir = Path.of(
-		AppDirsFactory
-			.getInstance()
-			.getUserDataDir("Moth-db", "1.0.0", "quaoz", false)
-	);
-	private static GUI gui;
-	private static UserManager userManager;
+  public static synchronized Main getInstance() {
+    return main;
+  }
 
-	public static UserManager getUserManager() {
-		return userManager;
-	}
+  private Main() {
+	  installDir = Path.of(AppDirsFactory.getInstance().getUserDataDir("Moth-db", "1.0.0", "quaoz", false));
+  }
 
-	public static GUI getGui() {
-		return gui;
-	}
+	private final Path installDir;
 
-	public static Path getInstallDir() {
+	public Path getInstallDir() {
 		return installDir;
 	}
 
 	public static void main(String[] args) {
+		main = new Main();
+
 		UserManager.getInstance();
-		gui = new GUI();
-		Logger.info("Installation dir: " + installDir.toAbsolutePath());
+		RecordManager.getInstance();
+		MothManager.getInstance();
+		GUI.getInstance();
+
+		Logger.info("Installation dir: " + main.installDir.toAbsolutePath());
 
 		Runtime
 			.getRuntime()
 			.addShutdownHook(
 				new Thread(() -> {
-					MothManager.close();
-					RecordManager.close();
+					MothManager.getInstance().close();
+					RecordManager.getInstance().close();
 					UserManager.getInstance().close();
 
 					try {

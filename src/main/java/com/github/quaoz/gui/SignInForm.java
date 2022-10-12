@@ -25,7 +25,7 @@ public class SignInForm {
 		usernameField.addActionListener(e -> login());
 		passwordField.addActionListener(e -> login());
 		cancelButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 	}
 
@@ -39,7 +39,7 @@ public class SignInForm {
 				.validateUser(username, passwordField.getPassword())
 		) {
 			UserManager.getInstance().setUser(usernameField.getText().strip());
-			Main.getGui().render(GUI.Content.HOME_LOGGED_IN);
+			GUI.getInstance().render(GUI.Content.HOME_LOGGED_IN);
 		}
 	}
 

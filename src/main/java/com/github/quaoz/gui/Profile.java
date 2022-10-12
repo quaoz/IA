@@ -26,7 +26,7 @@ public class Profile {
 	public Profile() {
 		// TODO: allow users to remove records
 		this.records =
-			RecordManager.searchUser(UserManager.getInstance().getUser());
+			RecordManager.getInstance().searchUser(UserManager.getInstance().getUser());
 
 		switch (UserManager.getInstance().getUserAuthLevel()) {
 			case USER -> requestAuth.setText("Request Moderator Status");
@@ -37,26 +37,26 @@ public class Profile {
 		$$$setupUI$$$();
 
 		submitRecordButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.SUBMIT_RECORD)
+			GUI.getInstance().render(GUI.Content.SUBMIT_RECORD)
 		);
 		advancedSearchButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.ADVANCED_SEARCH)
+			GUI.getInstance().render(GUI.Content.ADVANCED_SEARCH)
 		);
 		homeButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.HOME_LOGGED_IN)
+			GUI.getInstance().render(GUI.Content.HOME_LOGGED_IN)
 		);
 
 		searchField.addActionListener(e -> {
-			Main
-				.getGui()
+			GUI
+				.getInstance()
 				.setSearchResults(
-					MothManager.collectMoths(searchField.getText().strip(), 0, 100)
+					MothManager.getInstance().collectMoths(searchField.getText().strip(), 0, 100)
 				);
-			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+			GUI.getInstance().render(GUI.Content.SEARCH_RESULTS);
 		});
 		signOutButton.addActionListener(e -> {
 			UserManager.getInstance().setUser("");
-			Main.getGui().render(GUI.Content.HOME_LOGGED_OUT);
+			GUI.getInstance().render(GUI.Content.HOME_LOGGED_OUT);
 		});
 	}
 

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.quaoz"
-version = "1.0-SNAPSHOT"
+version = "0.1.0"
 
 spotless {
     java {
@@ -31,6 +31,7 @@ spotless {
         prettier(mapOf("prettier" to "2.7.1")).config(mapOf("parser" to "json"))
     }
 }
+
 
 repositories {
     mavenCentral()
@@ -70,8 +71,8 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-java:2.2.4")
 
     // https://github.com/JFormDesigner/FlatLaf
-    implementation("com.formdev:flatlaf:2.4")
-    implementation("com.formdev:flatlaf-intellij-themes:2.4")
+    implementation("com.formdev:flatlaf:2.5")
+    implementation("com.formdev:flatlaf-intellij-themes:2.5")
 
     // Appdirs
     implementation("net.harawata:appdirs:1.2.1")

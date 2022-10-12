@@ -20,22 +20,22 @@ public class HomeLoggedOut {
 
 	public HomeLoggedOut() {
 		advancedSearchButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.ADVANCED_SEARCH)
+			GUI.getInstance().render(GUI.Content.ADVANCED_SEARCH)
 		);
 		signInButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.SIGN_IN)
+			GUI.getInstance().render(GUI.Content.SIGN_IN)
 		);
 		signUpButton.addActionListener(e ->
-			Main.getGui().render(GUI.Content.SIGN_UP)
+			GUI.getInstance().render(GUI.Content.SIGN_UP)
 		);
 
 		searchField.addActionListener(e -> {
-			Main
-				.getGui()
+			GUI
+				.getInstance()
 				.setSearchResults(
-					MothManager.collectMoths(searchField.getText().strip(), 0, 100)
+					MothManager.getInstance().collectMoths(searchField.getText().strip(), 0, 100)
 				);
-			Main.getGui().render(GUI.Content.SEARCH_RESULTS);
+			GUI.getInstance().render(GUI.Content.SEARCH_RESULTS);
 		});
 	}
 

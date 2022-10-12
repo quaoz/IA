@@ -11,6 +11,15 @@ import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 public class GUI {
+	private static GUI gui;
+
+	public static synchronized GUI getInstance() {
+		if (gui == null) {
+			gui = new GUI();
+		}
+
+	  return gui;
+	}
 
 	private final JFrame frame;
 	private final HomeLoggedOut homeLoggedOut;
@@ -25,7 +34,7 @@ public class GUI {
 	private Moth record;
 	private Content currentContent;
 
-	public GUI() {
+	private GUI() {
 		if (SystemInfo.isMacOS) {
 			System.setProperty("apple.awt.application.name", "IA");
 			System.setProperty("apple.awt.application.appearance", "system");

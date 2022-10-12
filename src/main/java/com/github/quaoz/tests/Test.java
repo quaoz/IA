@@ -12,7 +12,8 @@ public class Test {
 
 	public static void main(String[] args) throws IOException {
 		File authRequests = Main
-			.getInstallDir()
+				.getInstance()
+				.getInstallDir()
 			.resolve(Paths.get("data", "auth.json"))
 			.toFile();
 

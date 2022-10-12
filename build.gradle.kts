@@ -30,11 +30,6 @@ spotless {
         target("src/**/*.json")
         prettier(mapOf("prettier" to "2.7.1")).config(mapOf("parser" to "json"))
     }
-
-    format("markdown") {
-        target("*/**/*.md")
-        prettier(mapOf("prettier" to "2.7.1")).config(mapOf("parser" to "markdown"))
-    }
 }
 
 repositories {

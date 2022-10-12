@@ -1,5 +1,6 @@
-package com.github.quaoz;
+package com.github.quaoz.managers;
 
+import com.github.quaoz.Main;
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
 import com.github.quaoz.structures.BinarySearchTree;
@@ -20,17 +21,24 @@ import org.tinylog.Logger;
 // https://stackoverflow.com/questions/46663/how-can-i-send-an-email-by-java-application-using-gmail-yahoo-or-hotmail
 // usernames 64, email address 254, password 100
 // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address/574698#574698
-public class UserManager {
+public class UserManager implements Closeable {
 
 	private static UserManager userManager;
+	private final BinarySearchTree<String> commonPasswords = new BinarySearchTree<>();
+	private final DataBaseConfig userConfig;
+	private final DataBase userDatabase;
+	private UserAuthLevels userAuthLevel;
+	private String user;
 
 	private UserManager() {
+		Logger.info("Creating user manager...");
+
 		final Path USER_DB_FILE = Main
-				.getInstance()
-				.getInstallDir()
+			.getInstance()
+			.getInstallDir()
 			.resolve(Paths.get("db", "users.db"));
 		final Path USER_CONF_FILE = Main
-				.getInstance()
+			.getInstance()
 			.getInstallDir()
 			.resolve(Paths.get("db", "moths.json"));
 
@@ -53,12 +61,14 @@ public class UserManager {
 		}
 
 		File commonPasswordsFile = Main
-				.getInstance()
-				.getInstallDir()
+			.getInstance()
+			.getInstallDir()
 			.resolve(Paths.get("data", "common_passwords.txt"))
 			.toFile();
 
 		if (!commonPasswordsFile.exists()) {
+			Logger.info("Creating common password list...");
+
 			try {
 				Files.createDirectories(commonPasswordsFile.toPath().getParent());
 				Files.createFile(commonPasswordsFile.toPath());
@@ -141,21 +151,19 @@ public class UserManager {
 			Logger.error(e, "Unable to read common password file");
 			e.printStackTrace();
 		}
+
+		Logger.info("Finished creating user manager");
 	}
 
-	public static synchronized UserManager getInstance() {
+	public static synchronized void init() {
 		if (userManager == null) {
 			userManager = new UserManager();
 		}
-
-		return userManager;
 	}
 
-	private final BinarySearchTree<String> commonPasswords = new BinarySearchTree<>();
-	private final DataBaseConfig userConfig;
-	private final DataBase userDatabase;
-	private UserAuthLevels userAuthLevel;
-	private String user;
+	public static synchronized UserManager getInstance() {
+		return userManager;
+	}
 
 	public UserAuthLevels getUserAuthLevel() {
 		return userAuthLevel;

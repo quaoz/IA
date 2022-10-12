@@ -1,6 +1,9 @@
 package com.github.quaoz.gui;
 
-import com.github.quaoz.*;
+import com.github.quaoz.managers.MothManager;
+import com.github.quaoz.managers.RecordManager;
+import com.github.quaoz.managers.UserManager;
+import com.github.quaoz.structures.Moth;
 import com.github.quaoz.util.Geocoder;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -19,6 +22,7 @@ import javax.swing.event.DocumentEvent;
 
 public class SubmitRecordForm {
 
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private JPanel panel;
 	private JTextField speciesField;
 	private JTextField locationField;
@@ -46,25 +50,27 @@ public class SubmitRecordForm {
 	private JPanel locationPanel;
 	private JLabel locationValidLabel;
 
+	// spotless:off
+
 	public SubmitRecordForm() {
 		$$$setupUI$$$();
 
 		coordinateLocationPanel.setVisible(false);
 		daySpinner.setModel(
-			new SpinnerNumberModel(
-				Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-				1,
-				31,
-				1
-			)
+				new SpinnerNumberModel(
+						Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+						1,
+						31,
+						1
+				)
 		);
 		monthSpinner.setModel(
-			new SpinnerNumberModel(
-				Calendar.getInstance().get(Calendar.MONTH) + 1,
-				1,
-				12,
-				1
-			)
+				new SpinnerNumberModel(
+						Calendar.getInstance().get(Calendar.MONTH) + 1,
+						1,
+						12,
+						1
+				)
 		);
 		sizeSpinner.setModel(new SpinnerNumberModel(0, 0, 30, 0.1));
 
@@ -76,7 +82,7 @@ public class SubmitRecordForm {
 				try {
 					double latitude = Double.parseDouble(latitudeField.getText().strip());
 					double longitude = Double.parseDouble(
-						longitudeField.getText().strip()
+							longitudeField.getText().strip()
 					);
 
 					location = Geocoder.standardise(latitude, longitude);
@@ -99,64 +105,70 @@ public class SubmitRecordForm {
 			// TODO: Submit record
 			if (valid) {
 				Moth species = MothManager
-					.getInstance().collectMoths(speciesField.getText().strip(), 0, 1)
-					.get(0)
-					.getKey();
+						.getInstance()
+						.collectMoths(speciesField.getText().strip(), 0, 1)
+						.get(0)
+						.getKey();
 
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				Date date = new GregorianCalendar(
-					Calendar.getInstance().get(Calendar.YEAR),
-					((Integer) monthSpinner.getValue()),
-					((Integer) daySpinner.getValue())
+						Calendar.getInstance().get(Calendar.YEAR),
+						((Integer) monthSpinner.getValue()),
+						((Integer) daySpinner.getValue())
 				)
-					.getTime();
+						.getTime();
 
-				RecordManager.getInstance().addRecord(
-					species.name(),
-					location,
-					dateFormat.format(date),
-					((Double) sizeSpinner.getValue()),
-					UserManager.getInstance().getUser()
-				);
+				RecordManager
+						.getInstance()
+						.addRecord(
+								species.name(),
+								location,
+								dateFormat.format(date),
+								((Double) sizeSpinner.getValue()),
+								UserManager.getInstance().getUser()
+						);
 				GUI.getInstance().render(GUI.Content.PAST_CONTENT);
 			}
 		});
 
 		cancelButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		speciesField
-			.getDocument()
-			.addDocumentListener(
-				new SimpleDocumentListener() {
-					private CompletableFuture<Void> completableFuture;
+				.getDocument()
+				.addDocumentListener(
+						new SimpleDocumentListener() {
+							private CompletableFuture<Void> completableFuture;
 
-					@Override
-					public void update(DocumentEvent e) {
-						if (completableFuture != null) {
-							completableFuture.cancel(true);
+							@Override
+							public void update(DocumentEvent e) {
+								if (completableFuture != null) {
+									completableFuture.cancel(true);
+									completableFuture = null;
+								}
+
+								completableFuture =
+										CompletableFuture
+												.supplyAsync(() ->
+														MothManager
+																.getInstance()
+																.collectMoths(speciesField.getText().strip(), 0, 1)
+												)
+												.thenAccept(s ->
+														speciesMatchLabel.setText(
+																"Closest match: " +
+																		s.get(0).getKey().name() +
+																		", if this is not" +
+																		" your moth then" +
+																		" please register" +
+																		" a new moth" +
+																		" bellow."
+														)
+												);
+							}
 						}
-
-						completableFuture =
-							CompletableFuture
-								.supplyAsync(() ->
-									MothManager.getInstance().collectMoths(speciesField.getText().strip(), 0, 1)
-								)
-								.thenAccept(s ->
-									speciesMatchLabel.setText(
-										"Closest match: " +
-										s.get(0).getKey().name() +
-										", if this is not" +
-										" your moth then" +
-										" please register" +
-										" a new moth" +
-										" bellow."
-									)
-								);
-					}
-				}
-			);
+				);
 
 		coordsCheckBox.addActionListener(e -> {
 			if (coordsCheckBox.isSelected()) {
@@ -169,11 +181,9 @@ public class SubmitRecordForm {
 		});
 
 		registerButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.ADD_MOTH)
+				GUI.getInstance().render(GUI.Content.ADD_MOTH)
 		);
 	}
-
-	// spotless:off
 
 	public JPanel resolve() {
 		return panel;
@@ -281,8 +291,6 @@ public class SubmitRecordForm {
 		latitudeLabel.setLabelFor(latitudeField);
 		longitudeLabel.setLabelFor(longitudeField);
 	}
-
-	private static Method $$$cachedGetBundleMethod$$$ = null;
 
 	private String $$$getMessageFromBundle$$$(String path, String key) {
 		ResourceBundle bundle;

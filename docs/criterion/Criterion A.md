@@ -5,8 +5,8 @@
 My client is a lepidopterist, a person who studies moths and butterflies. They regularly catch and document moths across
 the country and are involved with some wildlife conservation organisations. Currently, their main method of
 documenting their finds is through photographs and notes however they feel that this is an inefficient method as it
-quickly becomes unorganised, and it is hard to find past records. On top of this when working with wildlife organisations
-they have found it hard to access historical data which can provide an insight into changes in moth populations and
+quickly becomes unorganised, and it is hard to find past records. On top of this when working with wildlife
+organisations they have found it hard to access historical data which can provide an insight into changes in moth populations and
 highlight at risk species.
 
 My proposed solution for their problem is a Java application which allows for users to store records of their finds

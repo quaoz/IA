@@ -2,7 +2,6 @@ package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.Pair;
-import com.github.quaoz.util.CustomRatio;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -75,20 +74,27 @@ public class DataBase implements Closeable {
 		DataBaseConfig config
 	) {
 		try {
+			this.location = location.toFile();
+			this.configLocation = configLocation.toFile();
+
 			Files.createDirectories(location.getParent());
 			Files.createDirectories(configLocation.getParent());
 
-			if (!location.toFile().exists()) {
+			if (!this.location.exists()) {
 				Files.createFile(location);
+				Logger.info("Created database file at: " + location);
+			} else {
+				Logger.info("Database already exists at: " + location);
 			}
 
-			if (!configLocation.toFile().exists()) {
+			if (!this.configLocation.exists()) {
 				Files.createFile(configLocation);
-				new ObjectMapper().writeValue(configLocation.toFile(), config);
+				new ObjectMapper().writeValue(this.configLocation, config);
+				Logger.info("Created config file at: " + location);
+			} else {
+				Logger.info("Config file already exists at: " + location);
 			}
 
-			this.location = location.toFile();
-			this.configLocation = configLocation.toFile();
 			this.config =
 				new ObjectMapper().readValue(this.configLocation, DataBaseConfig.class);
 			updateRecordCount();
@@ -97,6 +103,7 @@ public class DataBase implements Closeable {
 		}
 
 		this.cache = new Cache();
+		Logger.info("Finished database initialisation");
 	}
 
 	/**

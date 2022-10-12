@@ -1,4 +1,4 @@
-package com.github.quaoz;
+package com.github.quaoz.structures;
 
 import org.jetbrains.annotations.NotNull;
 

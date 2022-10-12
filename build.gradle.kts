@@ -32,7 +32,6 @@ spotless {
     }
 }
 
-
 repositories {
     mavenCentral()
     mavenLocal()
@@ -48,7 +47,7 @@ dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
 
     // JSON
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
 
     // Hashing
     implementation("de.mkammerer:argon2-jvm:2.11")

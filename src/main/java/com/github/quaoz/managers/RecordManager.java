@@ -1,9 +1,13 @@
-package com.github.quaoz;
+package com.github.quaoz.managers;
 
+import com.github.quaoz.Main;
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
+import com.github.quaoz.structures.Moth;
 import com.github.quaoz.structures.Pair;
+import com.github.quaoz.structures.Record;
 import com.github.quaoz.util.Geocoder;
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,32 +16,43 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
-public class RecordManager {
+public class RecordManager implements Closeable {
+
 	private static RecordManager recordManager;
-
-  public static synchronized RecordManager getInstance() {
-	  if (recordManager == null) {
-		  recordManager = new RecordManager();
-	  }
-
-    return recordManager;
-  }
-
-  private RecordManager() {
-	  Path RECORDS_DB_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "records.db"));
-	  Path RECORDS_CONF_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "records.json"));
-
-	  recordsConfig = new DataBaseConfig().init(321, new Integer[] { 32, 96, 224, 240, 256, 321 });
-	  recordsDatabase = new DataBase(
-			  RECORDS_DB_FILE,
-			  RECORDS_CONF_FILE,
-			  recordsConfig
-	  );
-  }
-
 	// id 32, species 64, location 32, date 16, size 16, username 64
 	private final DataBaseConfig recordsConfig;
 	private final DataBase recordsDatabase;
+
+	private RecordManager() {
+		Logger.info("Creating record manager...");
+
+		final Path RECORDS_DB_FILE = Main
+			.getInstance()
+			.getInstallDir()
+			.resolve(Paths.get("db", "records.db"));
+		final Path RECORDS_CONF_FILE = Main
+			.getInstance()
+			.getInstallDir()
+			.resolve(Paths.get("db", "records.json"));
+
+		recordsConfig =
+			new DataBaseConfig()
+				.init(321, new Integer[] { 32, 96, 224, 240, 256, 321 });
+		recordsDatabase =
+			new DataBase(RECORDS_DB_FILE, RECORDS_CONF_FILE, recordsConfig);
+
+		Logger.info("Finished creating record manager");
+	}
+
+	public static synchronized RecordManager getInstance() {
+		return recordManager;
+	}
+
+	public static synchronized void init() {
+		if (recordManager == null) {
+			recordManager = new RecordManager();
+		}
+	}
 
 	public void addRecord(
 		String species,
@@ -152,11 +167,13 @@ public class RecordManager {
 		ArrayList<Pair<Moth, Double>> moths = new ArrayList<>();
 
 		for (Pair<String, Double> record : records) {
-			Moth moth = MothManager.getInstance().basicSearch(
-				record
-					.getKey()
-					.substring(recordsConfig.fields[0], recordsConfig.fields[1])
-			);
+			Moth moth = MothManager
+				.getInstance()
+				.basicSearch(
+					record
+						.getKey()
+						.substring(recordsConfig.fields[0], recordsConfig.fields[1])
+				);
 
 			if (
 				moths.stream().noneMatch(m -> m.getKey().name().equals(moth.name()))

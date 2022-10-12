@@ -1,7 +1,6 @@
 package com.github.quaoz.gui;
 
-import com.github.quaoz.Main;
-import com.github.quaoz.Moth;
+import com.github.quaoz.structures.Moth;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
@@ -14,33 +13,34 @@ import javax.swing.*;
 
 public class SearchResultsForm {
 
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	public ArrayList<Moth> records;
 	private JPanel panel;
 	private JButton backButton;
 	private JTable table;
 	private JScrollPane mothsScrollPane;
 
+	// spotless:off
+
 	public SearchResultsForm() {
 		this.records = GUI.getInstance().getSearchResults();
 		$$$setupUI$$$();
 
 		backButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		table.addMouseListener(
-			new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					Moth moth = records.get(table.rowAtPoint(e.getPoint()));
-					GUI.getInstance().setRecord(moth);
-					GUI.getInstance().render(GUI.Content.RECORD);
+				new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						Moth moth = records.get(table.rowAtPoint(e.getPoint()));
+						GUI.getInstance().setRecord(moth);
+						GUI.getInstance().render(GUI.Content.RECORD);
+					}
 				}
-			}
 		);
 	}
-
-	// spotless:off
 
 	public JPanel resolve() {
 		return panel;
@@ -68,8 +68,6 @@ public class SearchResultsForm {
 		table.setAutoCreateRowSorter(false);
 		mothsScrollPane.setViewportView(table);
 	}
-
-	private static Method $$$cachedGetBundleMethod$$$ = null;
 
 	private String $$$getMessageFromBundle$$$(String path, String key) {
 		ResourceBundle bundle;

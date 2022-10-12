@@ -2,7 +2,7 @@ package com.github.quaoz.gui;
 
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import com.formdev.flatlaf.util.SystemInfo;
-import com.github.quaoz.Moth;
+import com.github.quaoz.structures.Moth;
 import com.github.quaoz.structures.Pair;
 import com.github.quaoz.structures.SimpleStack;
 import java.util.ArrayList;
@@ -11,16 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
 public class GUI {
+
 	private static GUI gui;
-
-	public static synchronized GUI getInstance() {
-		if (gui == null) {
-			gui = new GUI();
-		}
-
-	  return gui;
-	}
-
 	private final JFrame frame;
 	private final HomeLoggedOut homeLoggedOut;
 	private final HomeLoggedIn homeLoggedIn;
@@ -35,12 +27,13 @@ public class GUI {
 	private Content currentContent;
 
 	private GUI() {
+		Logger.info("Creating GUI...");
+
 		if (SystemInfo.isMacOS) {
 			System.setProperty("apple.awt.application.name", "IA");
 			System.setProperty("apple.awt.application.appearance", "system");
 		}
 
-		// FlatOneDarkIJTheme.setup();
 		FlatArcDarkOrangeIJTheme.setup();
 
 		// Initialise base frame
@@ -67,7 +60,17 @@ public class GUI {
 		render(Content.HOME_LOGGED_OUT);
 
 		frame.setVisible(true);
-		Logger.info("GUI created");
+		Logger.info("Finished creating GUI");
+	}
+
+	public static synchronized GUI getInstance() {
+		return gui;
+	}
+
+	public static synchronized void init() {
+		if (gui == null) {
+			gui = new GUI();
+		}
 	}
 
 	public ArrayList<Moth> getSearchResults() {
@@ -99,14 +102,14 @@ public class GUI {
 			case ADVANCED_SEARCH -> frame.setContentPane(
 				advancedSearchForm.resolve()
 			);
-			case PROFILE -> frame.setContentPane(new Profile().resolve()); // Created ad hoc
+			case PROFILE -> frame.setContentPane(new Profile().resolve());
 			case SUBMIT_RECORD -> frame.setContentPane(submitRecordForm.resolve());
 			case SEARCH_RESULTS -> frame.setContentPane(
 				new SearchResultsForm().resolve()
-			); // Created ad hoc
-			case RECORD -> frame.setContentPane(new RecordForm().resolve()); // Created ad hoc
+			);
+			case RECORD -> frame.setContentPane(new RecordForm().resolve());
 			case ADD_MOTH -> frame.setContentPane(addMothForm.resolve());
-			case RECORDS -> frame.setContentPane(new RecordsForm().resolve()); // Created ad hoc
+			case RECORDS -> frame.setContentPane(new RecordsForm().resolve());
 			case PAST_CONTENT -> {
 				render(callStack.pop());
 				callStack.pop();

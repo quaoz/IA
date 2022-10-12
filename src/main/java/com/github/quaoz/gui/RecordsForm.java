@@ -1,8 +1,7 @@
 package com.github.quaoz.gui;
 
-import com.github.quaoz.Main;
-import com.github.quaoz.Record;
-import com.github.quaoz.RecordManager;
+import com.github.quaoz.managers.RecordManager;
+import com.github.quaoz.structures.Record;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
@@ -13,6 +12,7 @@ import javax.swing.*;
 
 public class RecordsForm {
 
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private final ArrayList<Record> records;
 	private JButton backButton;
 	private JPanel panel;
@@ -20,18 +20,21 @@ public class RecordsForm {
 	private JScrollPane recordsScrollPane;
 
 	public RecordsForm() {
-		records = RecordManager.getInstance().getSpecies(GUI.getInstance().getRecord().name());
+		records =
+			RecordManager
+				.getInstance()
+				.getSpecies(GUI.getInstance().getRecord().name());
 		$$$setupUI$$$();
 		backButton.addActionListener(e ->
 			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 	}
 
+	// spotless:off
+
 	public JPanel resolve() {
 		return panel;
 	}
-
-	// spotless:off
 
 	private void createUIComponents() {
 		// TODO: place custom component creation code here
@@ -76,8 +79,6 @@ public class RecordsForm {
 		this.$$$loadButtonText$$$(backButton, this.$$$getMessageFromBundle$$$("ia", "back"));
 		panel.add(backButton, cc.xy(1, 2));
 	}
-
-	private static Method $$$cachedGetBundleMethod$$$ = null;
 
 	private String $$$getMessageFromBundle$$$(String path, String key) {
 		ResourceBundle bundle;

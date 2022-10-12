@@ -2,7 +2,7 @@ package com.github.quaoz.tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.Main;
-import com.github.quaoz.UserManager;
+import com.github.quaoz.managers.UserManager;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -12,8 +12,8 @@ public class Test {
 
 	public static void main(String[] args) throws IOException {
 		File authRequests = Main
-				.getInstance()
-				.getInstallDir()
+			.getInstance()
+			.getInstallDir()
 			.resolve(Paths.get("data", "auth.json"))
 			.toFile();
 

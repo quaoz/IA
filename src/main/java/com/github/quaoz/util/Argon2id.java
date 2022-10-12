@@ -26,6 +26,7 @@ public class Argon2id {
 	 * Returns the hashed password
 	 *
 	 * @param password The password
+	 *
 	 * @return The hashed password
 	 */
 	public static String hash(char[] password) {

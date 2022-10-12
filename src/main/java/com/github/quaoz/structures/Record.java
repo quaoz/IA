@@ -1,4 +1,4 @@
-package com.github.quaoz;
+package com.github.quaoz.structures;
 
 /**
  * @param id id 32, species 64, location 32, date 16, size 16, username 64

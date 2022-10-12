@@ -1,9 +1,12 @@
-package com.github.quaoz;
+package com.github.quaoz.managers;
 
+import com.github.quaoz.Main;
+import com.github.quaoz.database.CustomRatio;
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
+import com.github.quaoz.structures.Moth;
 import com.github.quaoz.structures.Pair;
-import com.github.quaoz.util.CustomRatio;
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,33 +14,42 @@ import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 
-public class MothManager {
+public class MothManager implements Closeable {
 
 	private static MothManager mothManager;
-
-	public static synchronized MothManager getInstance() {
-		if (mothManager == null) {
-			mothManager = new MothManager();
-		}
-
-	  return mothManager;
-	}
-
-	private MothManager() {
-		Path MOTHS_DB_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "moths.db"));
-		Path MOTHS_CONF_FILE = Main.getInstance().getInstallDir().resolve(Paths.get("db", "moths.json"));
-
-		mothsConfig = new DataBaseConfig().init(369, new Integer[] { 64, 128, 144, 176, 240, 368 });
-		mothsDatabase = new DataBase(
-				MOTHS_DB_FILE,
-				MOTHS_CONF_FILE,
-				mothsConfig
-		);
-	}
-
 	// name 64, sci name 64, size 16, flight 32, habitat 64, food 128
 	private final DataBaseConfig mothsConfig;
 	private final DataBase mothsDatabase;
+
+	private MothManager() {
+		Logger.info("Creating user manager...");
+
+		Path MOTHS_DB_FILE = Main
+			.getInstance()
+			.getInstallDir()
+			.resolve(Paths.get("db", "moths.db"));
+		Path MOTHS_CONF_FILE = Main
+			.getInstance()
+			.getInstallDir()
+			.resolve(Paths.get("db", "moths.json"));
+
+		mothsConfig =
+			new DataBaseConfig()
+				.init(369, new Integer[] { 64, 128, 144, 176, 240, 368 });
+		mothsDatabase = new DataBase(MOTHS_DB_FILE, MOTHS_CONF_FILE, mothsConfig);
+
+		Logger.info("Finished creating user manager");
+	}
+
+	public static synchronized MothManager getInstance() {
+		return mothManager;
+	}
+
+	public static synchronized void init() {
+		if (mothManager == null) {
+			mothManager = new MothManager();
+		}
+	}
 
 	public void addMoth(
 		String name,

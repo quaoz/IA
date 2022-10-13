@@ -5,6 +5,10 @@ import com.github.quaoz.managers.MothManager;
 import com.github.quaoz.managers.RecordManager;
 import com.github.quaoz.managers.UserManager;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import net.harawata.appdirs.AppDirsFactory;
 import org.tinylog.Logger;
 import org.tinylog.provider.ProviderRegistry;
@@ -31,9 +35,14 @@ public class Main {
 	public static void main(String[] args) {
 		main = new Main();
 
-		UserManager.init();
-		RecordManager.init();
-		MothManager.init();
+		// Initialise the managers async
+		List<CompletableFuture<Void>> futures = Arrays.asList(
+				CompletableFuture.runAsync(UserManager::init),
+				CompletableFuture.runAsync(RecordManager::init),
+				CompletableFuture.runAsync(MothManager::init)
+		);
+
+		futures.forEach(CompletableFuture::join);
 		GUI.init();
 
 		Logger.info(

@@ -15,7 +15,6 @@ import javax.swing.*;
 
 public class Profile {
 
-	private static Method $$$cachedGetBundleMethod$$$ = null;
 	private final ArrayList<Moth> records;
 	private JTextField searchField;
 	private JButton advancedSearchButton;
@@ -26,6 +25,7 @@ public class Profile {
 	private JTable table;
 	private JButton signOutButton;
 	private JButton requestAuth;
+	private JButton approveAuth;
 
 	public Profile() {
 		// TODO: allow users to remove records
@@ -34,13 +34,18 @@ public class Profile {
 				.getInstance()
 				.searchUser(UserManager.getInstance().getUser());
 
+		$$$setupUI$$$();
+
+		approveAuth.setVisible(false);
+
 		switch (UserManager.getInstance().getUserAuthLevel()) {
 			case USER -> requestAuth.setText("Request Moderator Status");
-			case ADMIN -> requestAuth.setText("Request Admin Status");
-			default -> requestAuth.setVisible(false);
+			case MODERATOR -> requestAuth.setText("Request Admin Status");
+			case ADMIN -> {
+				approveAuth.setVisible(true);
+				requestAuth.setVisible(false);
+			}
 		}
-
-		$$$setupUI$$$();
 
 		submitRecordButton.addActionListener(e ->
 			GUI.getInstance().render(GUI.Content.SUBMIT_RECORD)
@@ -53,19 +58,21 @@ public class Profile {
 		);
 
 		searchField.addActionListener(e -> {
-			GUI
-				.getInstance()
-				.setSearchResults(
-					MothManager
-						.getInstance()
-						.collectMoths(searchField.getText().strip(), 0, 100)
-				);
+			SearchResultsForm.setSearchResults(
+				MothManager
+					.getInstance()
+					.collectMoths(searchField.getText().strip(), 0, 100)
+			);
 			GUI.getInstance().render(GUI.Content.SEARCH_RESULTS);
 		});
 		signOutButton.addActionListener(e -> {
 			UserManager.getInstance().setUser("");
 			GUI.getInstance().render(GUI.Content.HOME_LOGGED_OUT);
 		});
+		requestAuth.addActionListener(e -> UserManager.getInstance().requestAuth());
+		approveAuth.addActionListener(e ->
+			GUI.getInstance().render(GUI.Content.APPROVE_REQUESTS)
+		);
 	}
 
 	// spotless:off
@@ -84,7 +91,7 @@ public class Profile {
 	private void $$$setupUI$$$() {
 		createUIComponents();
 		panel = new JPanel();
-		panel.setLayout(new GridLayoutManager(4, 7, new Insets(0, 0, 0, 0), -1, -1));
+		panel.setLayout(new GridLayoutManager(5, 7, new Insets(0, 0, 0, 0), -1, -1));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		searchField = new JTextField();
@@ -104,19 +111,24 @@ public class Profile {
 		final Spacer spacer1 = new Spacer();
 		panel.add(spacer1, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 		recordScrollPane = new JScrollPane();
-		panel.add(recordScrollPane, new GridConstraints(1, 2, 3, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+		panel.add(recordScrollPane, new GridConstraints(1, 2, 4, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 		recordScrollPane.setViewportView(table);
 		signOutButton = new JButton();
 		this.$$$loadButtonText$$$(signOutButton, this.$$$getMessageFromBundle$$$("ia", "sign.out"));
 		panel.add(signOutButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final Spacer spacer2 = new Spacer();
-		panel.add(spacer2, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+		panel.add(spacer2, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 		final Spacer spacer3 = new Spacer();
-		panel.add(spacer3, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+		panel.add(spacer3, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 		requestAuth = new JButton();
 		requestAuth.setText("");
 		panel.add(requestAuth, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		approveAuth = new JButton();
+		approveAuth.setText("Auth Requests");
+		panel.add(approveAuth, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 	}
+
+	private static Method $$$cachedGetBundleMethod$$$ = null;
 
 	private String $$$getMessageFromBundle$$$(String path, String key) {
 		ResourceBundle bundle;

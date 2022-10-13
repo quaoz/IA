@@ -3,7 +3,6 @@ package com.github.quaoz.gui;
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import com.formdev.flatlaf.util.SystemInfo;
 import com.github.quaoz.structures.Moth;
-import com.github.quaoz.structures.Pair;
 import com.github.quaoz.structures.SimpleStack;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -59,30 +58,32 @@ public class GUI {
 		callStack = new SimpleStack<>();
 		render(Content.HOME_LOGGED_OUT);
 
-		frame.setVisible(true);
 		Logger.info("Finished creating GUI");
 	}
 
+	/**
+	 * Gets the gui instance
+	 *
+	 * @return The gui instance
+	 */
 	public static synchronized GUI getInstance() {
 		return gui;
 	}
 
+	/**
+	 * Initialises the gui instance
+	 */
 	public static synchronized void init() {
 		if (gui == null) {
 			gui = new GUI();
 		}
 	}
 
-	public ArrayList<Moth> getSearchResults() {
-		return searchResults;
-	}
-
-	public void setSearchResults(
-		@NotNull ArrayList<Pair<Moth, Double>> searchResults
-	) {
-		ArrayList<Moth> moth = new ArrayList<>();
-		searchResults.forEach(p -> moth.add(p.getKey()));
-		this.searchResults = moth;
+	/**
+	 * Makes the gui visible
+	 */
+	public void show() {
+		frame.setVisible(true);
 	}
 
 	public Moth getRecord() {
@@ -110,6 +111,9 @@ public class GUI {
 			case RECORD -> frame.setContentPane(new RecordForm().resolve());
 			case ADD_MOTH -> frame.setContentPane(addMothForm.resolve());
 			case RECORDS -> frame.setContentPane(new RecordsForm().resolve());
+			case APPROVE_REQUESTS -> frame.setContentPane(
+				new ApproveRequests().resolve()
+			);
 			case PAST_CONTENT -> {
 				render(callStack.pop());
 				callStack.pop();
@@ -136,6 +140,7 @@ public class GUI {
 		RECORD,
 		ADD_MOTH,
 		RECORDS,
+		APPROVE_REQUESTS,
 		PAST_CONTENT,
 	}
 }

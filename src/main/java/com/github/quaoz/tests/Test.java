@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 public class Test {
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) throws IOException {
 		File authRequests = Main
 			.getInstance()

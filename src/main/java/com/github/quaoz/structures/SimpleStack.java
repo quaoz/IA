@@ -71,7 +71,7 @@ public class SimpleStack<T> {
 	 */
 	private static class Node<T> {
 
-		public T value;
+		public final T value;
 		public Node<T> previous;
 
 		public Node(T value) {

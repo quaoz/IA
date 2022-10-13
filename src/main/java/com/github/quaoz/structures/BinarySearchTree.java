@@ -501,7 +501,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		/**
 		 * The value of the node
 		 */
-		T value;
+		final T value;
 
 		/**
 		 * The left child of the node

@@ -1,5 +1,6 @@
 package com.github.quaoz.managers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.Main;
 import com.github.quaoz.database.DataBase;
 import com.github.quaoz.database.DataBaseConfig;
@@ -13,6 +14,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
@@ -30,6 +32,7 @@ public class UserManager implements Closeable {
 	private UserAuthLevels userAuthLevel;
 	private String user;
 
+	@SuppressWarnings("unchecked")
 	private UserManager() {
 		Logger.info("Creating user manager...");
 
@@ -40,11 +43,37 @@ public class UserManager implements Closeable {
 		final Path USER_CONF_FILE = Main
 			.getInstance()
 			.getInstallDir()
-			.resolve(Paths.get("db", "moths.json"));
+			.resolve(Paths.get("db", "users.json"));
 
 		userConfig =
 			new DataBaseConfig().init(423, new Integer[] { 64, 318, 418, 422 });
 		userDatabase = new DataBase(USER_DB_FILE, USER_CONF_FILE, userConfig);
+
+		authRequestsFile =
+			Main
+				.getInstance()
+				.getInstallDir()
+				.resolve(Paths.get("data", "auth.json"))
+				.toFile();
+		authRequests = new HashMap<>();
+
+		try {
+			if (!authRequestsFile.exists()) {
+				Files.createDirectories(authRequestsFile.toPath().getParent());
+				Files.createFile(authRequestsFile.toPath());
+				new ObjectMapper()
+					.writeValue(authRequestsFile, new HashMap<String, Integer>());
+			}
+			new ObjectMapper()
+				.readValue(authRequestsFile, HashMap.class)
+				.forEach((k, v) -> authRequests.put((String) k, (Integer) v));
+		} catch (IOException e) {
+			Logger.error(
+				e,
+				"Unable to read user auth requests file at: " + authRequestsFile
+			);
+			throw new RuntimeException(e);
+		}
 
 		userAuthLevel = UserAuthLevels.NONE;
 		user = "";
@@ -155,6 +184,17 @@ public class UserManager implements Closeable {
 		Logger.info("Finished creating user manager");
 	}
 
+	private final File authRequestsFile;
+	private final HashMap<String, Integer> authRequests;
+
+	public void requestAuth() {
+		authRequests.put(user, UserAuthLevels.get(userAuthLevel));
+	}
+
+	public HashMap<String, Integer> getAuthRequests() {
+		return authRequests;
+	}
+
 	public static synchronized void init() {
 		if (userManager == null) {
 			userManager = new UserManager();
@@ -169,8 +209,20 @@ public class UserManager implements Closeable {
 		return userAuthLevel;
 	}
 
-	public void setUserAuthLevel(UserAuthLevels userAuthLevel) {
-		this.userAuthLevel = userAuthLevel;
+	public void upgradeUserAuthLevel(String user) {
+		// FIXME
+		String newUser = String.format(
+			"%-418s%-4s\n",
+			userDatabase.get(user).substring(0, userConfig.fields[2]),
+			authRequests.get(user) + 1
+		);
+		authRequests.remove(user);
+		userDatabase.remove(user);
+		userDatabase.add(newUser);
+	}
+
+	public void declineUserAuthRequest(String user) {
+		authRequests.remove(user);
 	}
 
 	public String getUser() {
@@ -188,7 +240,7 @@ public class UserManager implements Closeable {
 			username,
 			email,
 			Argon2id.hash(password),
-			0
+			1
 		);
 		userDatabase.add(record);
 	}
@@ -214,16 +266,15 @@ public class UserManager implements Closeable {
 	public UserAuthLevels getAuthLevel(String username) {
 		String user = userDatabase.get(username);
 
-		return switch (
-			Integer.parseInt(
-				user.substring(userConfig.fields[2], userConfig.fields[3]).strip()
-			)
-		) {
-			case 0 -> UserAuthLevels.USER;
-			case 1 -> UserAuthLevels.MODERATOR;
-			case 2 -> UserAuthLevels.ADMIN;
-			default -> UserAuthLevels.NONE;
-		};
+		int level = 0;
+		if (user != null) {
+			level =
+				Integer.parseInt(
+					user.substring(userConfig.fields[2], userConfig.fields[3]).strip()
+				);
+		}
+
+		return UserAuthLevels.get(level);
 	}
 
 	public boolean userExists(String username) {
@@ -237,8 +288,9 @@ public class UserManager implements Closeable {
 	public void close() {
 		try {
 			userDatabase.close();
+			new ObjectMapper().writeValue(authRequestsFile, authRequests);
 		} catch (IOException e) {
-			Logger.error(e, "Unable to close database");
+			Logger.error(e, "Unable to close manager");
 			throw new RuntimeException(e);
 		}
 	}

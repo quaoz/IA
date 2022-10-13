@@ -90,9 +90,9 @@ public class DataBase implements Closeable {
 			if (!this.configLocation.exists()) {
 				Files.createFile(configLocation);
 				new ObjectMapper().writeValue(this.configLocation, config);
-				Logger.info("Created config file at: " + location);
+				Logger.info("Created config file at: " + this.configLocation);
 			} else {
-				Logger.info("Config file already exists at: " + location);
+				Logger.info("Config file already exists at: " + this.configLocation);
 			}
 
 			this.config =
@@ -514,7 +514,7 @@ public class DataBase implements Closeable {
 		}
 
 		public void add(@NotNull String record) {
-			String recordComp = record.substring(0, config.recordLength).strip();
+			String recordComp = record.strip(); // .substring(0, config.recordLength)
 
 			if (topListSize < TOP_CACHE_SIZE) {
 				topList[topListSize] = new Item(1, record);
@@ -638,7 +638,7 @@ public class DataBase implements Closeable {
 
 		private class Item {
 
-			public String value;
+			public final String value;
 			private int hits;
 
 			public Item(int hits, String value) {

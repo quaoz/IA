@@ -44,6 +44,10 @@ public class RecordManager implements Closeable {
 		Logger.info("Finished creating record manager");
 	}
 
+	public void remove(String id) {
+		recordsDatabase.remove(id);
+	}
+
 	public static synchronized RecordManager getInstance() {
 		return recordManager;
 	}

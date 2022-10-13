@@ -51,6 +51,8 @@ public class MothManager implements Closeable {
 		}
 	}
 
+	public void remove(String name) {}
+
 	public void addMoth(
 		String name,
 		String sciName,

@@ -1,5 +1,7 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.managers.MothManager;
+import com.github.quaoz.managers.UserManager;
 import com.github.quaoz.structures.Moth;
 import com.github.quaoz.structures.Pair;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -11,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import org.jetbrains.annotations.NotNull;
 
 public class SearchResultsForm {
@@ -40,9 +43,16 @@ public class SearchResultsForm {
 			new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					Moth moth = records.get(table.rowAtPoint(e.getPoint()));
-					GUI.getInstance().setRecord(moth);
-					GUI.getInstance().render(GUI.Content.RECORD);
+					int row = table.rowAtPoint(e.getPoint());
+					Moth moth = records.get(row);
+
+					if (table.columnAtPoint(e.getPoint()) == 6) {
+						MothManager.getInstance().remove(moth.name());
+						((DefaultTableModel) table.getModel()).removeRow(row);
+					} else {
+						GUI.getInstance().setRecord(moth);
+						GUI.getInstance().render(GUI.Content.RECORD);
+					}
 				}
 			}
 		);
@@ -129,15 +139,29 @@ public class SearchResultsForm {
 
 	//spotless:on
 	private void createUIComponents() {
-		String[] columnNames = {
-			"Species",
-			"Scientific Name",
-			"Size",
-			"Flight",
-			"Habitat",
-			"Food Sources",
-		};
-		String[][] data = new String[records.size()][6];
+		String[] columnNames = UserManager.UserAuthLevels.get(
+				UserManager.getInstance().getUserAuthLevel()
+			) >=
+			2
+			? new String[] {
+				"Species",
+				"Scientific Name",
+				"Size",
+				"Flight",
+				"Habitat",
+				"Food Sources",
+				"Remove",
+			}
+			: new String[] {
+				"Species",
+				"Scientific Name",
+				"Size",
+				"Flight",
+				"Habitat",
+				"Food Sources",
+			};
+
+		String[][] data = new String[records.size()][columnNames.length];
 
 		int count = 0;
 		for (Moth moth : records) {
@@ -150,7 +174,7 @@ public class SearchResultsForm {
 			count++;
 		}
 
-		table = new JTable(data, columnNames);
+		table = new JTable(new DefaultTableModel(data, columnNames));
 
 		// Hacky way to prevent editing
 		table.setDefaultEditor(Object.class, null);

@@ -1,14 +1,18 @@
 package com.github.quaoz.gui;
 
 import com.github.quaoz.managers.RecordManager;
+import com.github.quaoz.managers.UserManager;
 import com.github.quaoz.structures.Record;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class RecordsForm {
 
@@ -23,9 +27,27 @@ public class RecordsForm {
 			RecordManager
 				.getInstance()
 				.getSpecies(GUI.getInstance().getRecord().name());
+
 		$$$setupUI$$$();
+
 		backButton.addActionListener(e ->
 			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+		);
+
+		table.addMouseListener(
+			new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					int row = table.rowAtPoint(e.getPoint());
+
+					if (table.columnAtPoint(e.getPoint()) == 6) {
+						RecordManager
+							.getInstance()
+							.remove(String.valueOf(records.get(row).id()));
+						((DefaultTableModel) table.getModel()).removeRow(row);
+					}
+				}
+			}
 		);
 	}
 
@@ -34,15 +56,21 @@ public class RecordsForm {
 	}
 
 	private void createUIComponents() {
-		// TODO: place custom component creation code here
-		String[] columnNames = {
-			"ID",
-			"Species",
-			"Location",
-			"Date",
-			"Size",
-			"User",
-		};
+		String[] columnNames = UserManager.UserAuthLevels.get(
+				UserManager.getInstance().getUserAuthLevel()
+			) >=
+			2
+			? new String[] {
+				"ID",
+				"Species",
+				"Location",
+				"Date",
+				"Size",
+				"User",
+				"Remove",
+			}
+			: new String[] { "ID", "Species", "Location", "Date", "Size", "User" };
+
 		String[][] data = new String[records.size()][6];
 
 		int count = 0;
@@ -56,7 +84,7 @@ public class RecordsForm {
 			count++;
 		}
 
-		table = new JTable(data, columnNames);
+		table = new JTable(new DefaultTableModel(data, columnNames));
 
 		// Hacky way to prevent editing
 		table.setDefaultEditor(Object.class, null);

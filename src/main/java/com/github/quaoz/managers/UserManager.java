@@ -210,7 +210,6 @@ public class UserManager implements Closeable {
 	}
 
 	public void upgradeUserAuthLevel(String user) {
-		// FIXME
 		String newUser = String.format(
 			"%-418s%-4s\n",
 			userDatabase.get(user).substring(0, userConfig.fields[2]),

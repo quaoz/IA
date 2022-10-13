@@ -1,6 +1,6 @@
 name: spotless
 
-on: [ push, pull_request ]
+on: [ workflow_dispatch ]
 
 jobs:
     build:
@@ -14,11 +14,13 @@ jobs:
                 with:
                     distribution: 'temurin'
                     java-version: '17'
-                    cache: 'gradle'
+                    cache: 'gradle' 
             -   name: Make gradlew executable
                 run: chmod +x ./gradlew
+            -   name: Spotless Apply
+                run: ./gradlew spotlessApply
             -   name: Build with Gradle
-                run: ./gradlew build --no-daemon
+                run: ./gradlew build
             -   name: Upload build artifacts
                 uses: actions/upload-artifact@v3
                 with:

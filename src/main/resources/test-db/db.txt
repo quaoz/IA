@@ -1,3 +1,0 @@
-databases will store config info in the name.json file
-
-record

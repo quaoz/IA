@@ -127,7 +127,17 @@ public class RecordManager implements Closeable {
 
 		recordsDatabase
 			.collect(username, 5)
-			.forEach(s -> moths.add(MothManager.getInstance().basicSearch(s)));
+			.forEach(s ->
+				moths.add(
+					MothManager
+						.getInstance()
+						.basicSearch(
+							s
+								.substring(recordsConfig.fields[0], recordsConfig.fields[1])
+								.strip()
+						)
+				)
+			);
 		return moths;
 	}
 

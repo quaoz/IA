@@ -46,6 +46,22 @@ public class ApproveRequests {
 	}
 
 	public JPanel resolve() {
+		String[] columnNames = { "User", "Level", "Approve", "Decline" };
+		HashMap<String, Integer> map = UserManager.getInstance().getAuthRequests();
+
+		data = new String[map.size()][4];
+
+		final int[] count = { 0 };
+		map.forEach((k, v) -> {
+			data[count[0]][0] = k;
+			data[count[0]][1] = UserManager.UserAuthLevels.get(v + 1).toString();
+			data[count[0]][2] = "Approve";
+			data[count[0]][3] = "Decline";
+			count[0]++;
+		});
+
+		requestTable.setModel(new DefaultTableModel(data, columnNames));
+
 		return panel;
 	}
 
@@ -142,21 +158,7 @@ public class ApproveRequests {
 	// spotless:on
 
 	private void createUIComponents() {
-		String[] columnNames = { "User", "Level", "Approve", "Decline" };
-		HashMap<String, Integer> map = UserManager.getInstance().getAuthRequests();
-
-		data = new String[map.size()][4];
-
-		final int[] count = { 0 };
-		map.forEach((k, v) -> {
-			data[count[0]][0] = k;
-			data[count[0]][1] = UserManager.UserAuthLevels.get(v + 1).toString();
-			data[count[0]][2] = "Approve";
-			data[count[0]][3] = "Decline";
-			count[0]++;
-		});
-
-		requestTable = new JTable(new DefaultTableModel(data, columnNames));
+		requestTable = new JTable(new DefaultTableModel());
 
 		// Hacky way to prevent editing
 		requestTable.setDefaultEditor(Object.class, null);

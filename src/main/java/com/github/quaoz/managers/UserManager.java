@@ -209,6 +209,17 @@ public class UserManager implements Closeable {
 		return userAuthLevel;
 	}
 
+	public boolean isMod() {
+		return (
+			userAuthLevel == UserAuthLevels.MODERATOR ||
+			userAuthLevel == UserAuthLevels.ADMIN
+		);
+	}
+
+	public boolean isAdmin() {
+		return userAuthLevel == UserAuthLevels.ADMIN;
+	}
+
 	public void upgradeUserAuthLevel(String user) {
 		String newUser = String.format(
 			"%-418s%-4s\n",

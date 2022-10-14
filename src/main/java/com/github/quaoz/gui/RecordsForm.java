@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -56,22 +57,16 @@ public class RecordsForm {
 	}
 
 	private void createUIComponents() {
-		String[] columnNames = UserManager.UserAuthLevels.get(
-				UserManager.getInstance().getUserAuthLevel()
-			) >=
-			2
-			? new String[] {
-				"ID",
-				"Species",
-				"Location",
-				"Date",
-				"Size",
-				"User",
-				"Remove",
-			}
-			: new String[] { "ID", "Species", "Location", "Date", "Size", "User" };
+		ArrayList<String> columnNames = new ArrayList<>(
+			Arrays.asList("ID", "Species", "Location", "Date", "Size", "User")
+		);
+		boolean auth = UserManager.getInstance().isMod();
 
-		String[][] data = new String[records.size()][6];
+		if (auth) {
+			columnNames.add("Remove");
+		}
+
+		String[][] data = new String[records.size()][columnNames.size()];
 
 		int count = 0;
 		for (Record record : records) {
@@ -81,10 +76,15 @@ public class RecordsForm {
 			data[count][3] = record.date();
 			data[count][4] = String.valueOf(record.size());
 			data[count][5] = record.user();
+
+			if (auth) {
+				data[count][7] = "Remove";
+			}
+
 			count++;
 		}
 
-		table = new JTable(new DefaultTableModel(data, columnNames));
+		table = new JTable(new DefaultTableModel(data, columnNames.toArray()));
 
 		// Hacky way to prevent editing
 		table.setDefaultEditor(Object.class, null);

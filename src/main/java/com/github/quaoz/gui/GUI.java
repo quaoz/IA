@@ -4,7 +4,6 @@ import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
 import com.formdev.flatlaf.util.SystemInfo;
 import com.github.quaoz.structures.Moth;
 import com.github.quaoz.structures.SimpleStack;
-import java.util.ArrayList;
 import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
@@ -20,8 +19,8 @@ public class GUI {
 	private final AdvancedSearchForm advancedSearchForm;
 	private final SubmitRecordForm submitRecordForm;
 	private final AddMothForm addMothForm;
+	private final Profile profileForm;
 	private final SimpleStack<Content> callStack;
-	private ArrayList<Moth> searchResults;
 	private Moth record;
 	private Content currentContent;
 
@@ -53,6 +52,7 @@ public class GUI {
 		advancedSearchForm = new AdvancedSearchForm();
 		submitRecordForm = new SubmitRecordForm();
 		addMothForm = new AddMothForm();
+		profileForm = new Profile();
 
 		currentContent = Content.HOME_LOGGED_OUT;
 		callStack = new SimpleStack<>();
@@ -103,7 +103,7 @@ public class GUI {
 			case ADVANCED_SEARCH -> frame.setContentPane(
 				advancedSearchForm.resolve()
 			);
-			case PROFILE -> frame.setContentPane(new Profile().resolve());
+			case PROFILE -> frame.setContentPane(profileForm.resolve());
 			case SUBMIT_RECORD -> frame.setContentPane(submitRecordForm.resolve());
 			case SEARCH_RESULTS -> frame.setContentPane(
 				new SearchResultsForm().resolve()

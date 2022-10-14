@@ -10,12 +10,15 @@ import com.intellij.uiDesigner.core.Spacer;
 import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class Profile {
 
-	private final ArrayList<Moth> records;
+	private ArrayList<Moth> records;
 	private JTextField searchField;
 	private JButton advancedSearchButton;
 	private JButton submitRecordButton;
@@ -29,14 +32,14 @@ public class Profile {
 
 	public Profile() {
 		// TODO: allow users to remove records
-		this.records =
-			RecordManager
-				.getInstance()
-				.searchUser(UserManager.getInstance().getUser());
+		//this.records =
+		//	RecordManager
+		//		.getInstance()
+		//		.searchUser(UserManager.getInstance().getUser());
 
 		$$$setupUI$$$();
 
-		approveAuth.setVisible(false);
+		/*approveAuth.setVisible(false);
 
 		switch (UserManager.getInstance().getUserAuthLevel()) {
 			case USER -> requestAuth.setText("Request Moderator Status");
@@ -46,6 +49,8 @@ public class Profile {
 				requestAuth.setVisible(false);
 			}
 		}
+
+		 */
 
 		submitRecordButton.addActionListener(e ->
 			GUI.getInstance().render(GUI.Content.SUBMIT_RECORD)
@@ -78,6 +83,40 @@ public class Profile {
 	// spotless:off
 
 	public JPanel resolve() {
+		this.records =
+				RecordManager
+						.getInstance()
+						.searchUser(UserManager.getInstance().getUser());
+
+		List<String> columnNames = Arrays.asList("Species", "Scientific Name", "Size", "Flight", "Habitat", "Food Sources", "Remove");
+
+		String[][] data = new String[records.size()][columnNames.size()];
+
+		int count = 0;
+		for (Moth moth : records) {
+			data[count][0] = moth.name();
+			data[count][1] = moth.sciName();
+			data[count][2] = moth.sizeLower() + " - " + moth.sizeUpper();
+			data[count][3] = moth.flightStart() + " - " + moth.flightEnd();
+			data[count][4] = moth.habitat();
+			data[count][5] = moth.food();
+			data[count][6] = "Remove";
+			count++;
+		}
+
+		table.setModel(new DefaultTableModel(data, columnNames.toArray()));
+
+		approveAuth.setVisible(false);
+
+		switch (UserManager.getInstance().getUserAuthLevel()) {
+			case USER -> requestAuth.setText("Request Moderator Status");
+			case MODERATOR -> requestAuth.setText("Request Admin Status");
+			case ADMIN -> {
+				approveAuth.setVisible(true);
+				requestAuth.setVisible(false);
+			}
+		}
+
 		return panel;
 	}
 
@@ -181,29 +220,9 @@ public class Profile {
 
 	//spotless:on
 	private void createUIComponents() {
-		String[] columnNames = {
-			"Species",
-			"Scientific Name",
-			"Size",
-			"Flight",
-			"Habitat",
-			"Food Sources",
-		};
+		//List<String> columnNames = Arrays.asList("Species", "Scientific Name", "Size", "Flight", "Habitat", "Food Sources", "Remove");
 
-		String[][] data = new String[records.size()][6];
-
-		int count = 0;
-		for (Moth moth : records) {
-			data[count][0] = moth.name();
-			data[count][1] = moth.sciName();
-			data[count][2] = moth.sizeLower() + " - " + moth.sizeUpper();
-			data[count][3] = moth.flightStart() + " - " + moth.flightEnd();
-			data[count][4] = moth.habitat();
-			data[count][5] = moth.food();
-			count++;
-		}
-
-		table = new JTable(data, columnNames);
+		table = new JTable(new DefaultTableModel());
 
 		// Hacky way to prevent editing
 		table.setDefaultEditor(Object.class, null);

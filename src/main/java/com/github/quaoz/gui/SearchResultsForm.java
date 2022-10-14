@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -47,8 +48,17 @@ public class SearchResultsForm {
 					Moth moth = records.get(row);
 
 					if (table.columnAtPoint(e.getPoint()) == 6) {
-						MothManager.getInstance().remove(moth.name());
-						((DefaultTableModel) table.getModel()).removeRow(row);
+						if (
+							new ConfirmRemoveDialog(
+								"Are you sure you want to remove this record?",
+								"Yes",
+								"No"
+							)
+								.isOk()
+						) {
+							MothManager.getInstance().remove(moth.name());
+							((DefaultTableModel) table.getModel()).removeRow(row);
+						}
 					} else {
 						GUI.getInstance().setRecord(moth);
 						GUI.getInstance().render(GUI.Content.RECORD);
@@ -139,29 +149,23 @@ public class SearchResultsForm {
 
 	//spotless:on
 	private void createUIComponents() {
-		String[] columnNames = UserManager.UserAuthLevels.get(
-				UserManager.getInstance().getUserAuthLevel()
-			) >=
-			2
-			? new String[] {
+		ArrayList<String> columnNames = new ArrayList<>(
+			Arrays.asList(
 				"Species",
 				"Scientific Name",
 				"Size",
 				"Flight",
 				"Habitat",
-				"Food Sources",
-				"Remove",
-			}
-			: new String[] {
-				"Species",
-				"Scientific Name",
-				"Size",
-				"Flight",
-				"Habitat",
-				"Food Sources",
-			};
+				"Food Sources"
+			)
+		);
+		boolean auth = UserManager.getInstance().isAdmin();
 
-		String[][] data = new String[records.size()][columnNames.length];
+		if (auth) {
+			columnNames.add("Remove");
+		}
+
+		String[][] data = new String[records.size()][columnNames.size()];
 
 		int count = 0;
 		for (Moth moth : records) {
@@ -171,10 +175,14 @@ public class SearchResultsForm {
 			data[count][3] = moth.flightStart() + " - " + moth.flightEnd();
 			data[count][4] = moth.habitat();
 			data[count][5] = moth.food();
+
+			if (auth) {
+				data[count][6] = "Remove";
+			}
 			count++;
 		}
 
-		table = new JTable(new DefaultTableModel(data, columnNames));
+		table = new JTable(new DefaultTableModel(data, columnNames.toArray()));
 
 		// Hacky way to prevent editing
 		table.setDefaultEditor(Object.class, null);

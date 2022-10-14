@@ -51,7 +51,9 @@ public class MothManager implements Closeable {
 		}
 	}
 
-	public void remove(String name) {}
+	public void remove(String name) {
+		mothsDatabase.remove(name);
+	}
 
 	public void addMoth(
 		String name,

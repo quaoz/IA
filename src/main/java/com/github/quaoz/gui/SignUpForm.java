@@ -15,9 +15,11 @@ import javax.swing.*;
 
 public class SignUpForm {
 
-	private final Pattern alphanumericChecker = Pattern.compile("[^a-zA-Z0-9-]");
+	private static final Pattern alphanumericChecker = Pattern.compile(
+		"[^a-zA-Z0-9-]"
+	);
 	// https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
-	private final Pattern emailPattern = Pattern.compile(
+	private static final Pattern emailPattern = Pattern.compile(
 		"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
 	);
 	private JPanel panel;
@@ -41,24 +43,7 @@ public class SignUpForm {
 	private JLabel passwordMessage;
 
 	public SignUpForm() {
-		registeredButton.addActionListener(e -> {
-			if (
-				checkUsername() &&
-				checkEmail() &&
-				checkPassword() &&
-				checkPasswordRepeat()
-			) {
-				UserManager
-					.getInstance()
-					.addUser(
-						usernameField.getText().strip(),
-						emailField.getText().strip(),
-						passwordField.getPassword()
-					);
-				UserManager.getInstance().setUser(usernameField.getText().strip());
-				GUI.getInstance().render(GUI.Content.HOME_LOGGED_IN);
-			}
-		});
+		registeredButton.addActionListener(e -> check());
 
 		cancelButton.addActionListener(e ->
 			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
@@ -141,10 +126,29 @@ public class SignUpForm {
 			}
 		);
 
-		usernameField.addActionListener(e -> checkUsername());
-		emailField.addActionListener(e -> checkEmail());
-		passwordField.addActionListener(e -> checkPassword());
-		repeatPasswordField.addActionListener(e -> checkPasswordRepeat());
+		usernameField.addActionListener(e -> check());
+		emailField.addActionListener(e -> check());
+		passwordField.addActionListener(e -> check());
+		repeatPasswordField.addActionListener(e -> check());
+	}
+
+	private void check() {
+		if (
+			checkUsername() &&
+			checkEmail() &&
+			checkPassword() &&
+			checkPasswordRepeat()
+		) {
+			UserManager
+				.getInstance()
+				.addUser(
+					usernameField.getText().strip(),
+					emailField.getText().strip(),
+					passwordField.getPassword()
+				);
+			UserManager.getInstance().setUser(usernameField.getText().strip());
+			GUI.getInstance().render(GUI.Content.HOME_LOGGED_IN);
+		}
 	}
 
 	private boolean checkUsername() {
@@ -161,6 +165,9 @@ public class SignUpForm {
 				usernameValidLabel.setText("✗");
 				usernameMessage.setText("Username cannot be over 64 characters");
 				return false;
+			} else if (username.length() == 1) {
+				usernameValidLabel.setText("✗");
+				usernameMessage.setText("Username must be over 1 character");
 			} else if (UserManager.getInstance().userExists(username)) {
 				usernameValidLabel.setText("✗");
 				usernameMessage.setText("Username taken");
@@ -179,7 +186,7 @@ public class SignUpForm {
 		String email = emailField.getText().strip();
 
 		if (email.length() != 0) {
-			if (!emailPattern.matcher(email).find()) {
+			if (!emailPattern.matcher(email).find() || email.length() < 5) {
 				emailValidLabel.setText("✗");
 				emailMessage.setText("Invalid email address");
 				return false;

@@ -154,16 +154,19 @@ public class SubmitRecordForm {
 																.getInstance()
 																.collectMoths(speciesField.getText().strip(), 0, 1)
 												)
-												.thenAccept(s ->
-														speciesMatchLabel.setText(
-																"Closest match: " +
-																		s.get(0).getKey().name() +
-																		", if this is not" +
-																		" your moth then" +
-																		" please register" +
-																		" a new moth" +
-																		" bellow."
-														)
+												.thenAccept(s -> speciesMatchLabel.setText(
+														UserManager.getInstance().isMod() ? "Closest match: " +
+																s.get(0).getKey().name() +
+																", if this is not" +
+																" your moth then" +
+																" please register" +
+																" a new moth" +
+																" bellow." : "Closest match: " +
+																s.get(0).getKey().name() +
+																", if this is not" +
+																" your moth then" +
+																" please ask a moderate to register it"
+												)
 												);
 							}
 						}
@@ -185,6 +188,8 @@ public class SubmitRecordForm {
 	}
 
 	public JPanel resolve() {
+		registerButton.setVisible(UserManager.getInstance().isMod());
+
 		return panel;
 	}
 

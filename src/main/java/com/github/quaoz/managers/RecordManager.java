@@ -44,8 +44,8 @@ public class RecordManager implements Closeable {
 		Logger.info("Finished creating record manager");
 	}
 
-	public void remove(String id) {
-		recordsDatabase.remove(id);
+	public void remove(Integer id) {
+		recordsDatabase.remove(String.valueOf(id));
 	}
 
 	public static synchronized RecordManager getInstance() {
@@ -121,21 +121,24 @@ public class RecordManager implements Closeable {
 		return records;
 	}
 
-	public @NotNull ArrayList<Moth> searchUser(String username) {
+	public @NotNull ArrayList<Pair<Integer, Moth>> searchUser(String username) {
 		username = username.strip();
-		ArrayList<Moth> moths = new ArrayList<>();
+		ArrayList<Pair<Integer, Moth>> moths = new ArrayList<>();
 
 		recordsDatabase
 			.collect(username, 5)
 			.forEach(s ->
 				moths.add(
-					MothManager
-						.getInstance()
-						.basicSearch(
-							s
-								.substring(recordsConfig.fields[0], recordsConfig.fields[1])
-								.strip()
-						)
+					new Pair<>(
+						Integer.parseInt(s.substring(0, recordsConfig.fields[0]).strip()),
+						MothManager
+							.getInstance()
+							.basicSearch(
+								s
+									.substring(recordsConfig.fields[0], recordsConfig.fields[1])
+									.strip()
+							)
+					)
 				)
 			);
 		return moths;

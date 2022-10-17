@@ -25,6 +25,9 @@ public class ApproveRequests {
 			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
+		// Hacky way to prevent editing
+		requestTable.setDefaultEditor(Object.class, null);
+
 		requestTable.addMouseListener(
 			new MouseAdapter() {
 				@Override
@@ -73,7 +76,6 @@ public class ApproveRequests {
 	 * @noinspection ALL
 	 */
 	private void $$$setupUI$$$() {
-		createUIComponents();
 		panel = new JPanel();
 		panel.setLayout(
 			new FormLayout(
@@ -93,6 +95,7 @@ public class ApproveRequests {
 			requestScrollPane,
 			cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL)
 		);
+		requestTable = new JTable();
 		requestScrollPane.setViewportView(requestTable);
 	}
 
@@ -154,13 +157,5 @@ public class ApproveRequests {
 	public JComponent $$$getRootComponent$$$() {
 		return panel;
 	}
-
 	// spotless:on
-
-	private void createUIComponents() {
-		requestTable = new JTable(new DefaultTableModel());
-
-		// Hacky way to prevent editing
-		requestTable.setDefaultEditor(Object.class, null);
-	}
 }

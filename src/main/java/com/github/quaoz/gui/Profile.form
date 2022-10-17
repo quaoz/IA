@@ -59,7 +59,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="dac68" class="javax.swing.JTable" binding="table" custom-create="true">
+          <component id="dac68" class="javax.swing.JTable" binding="table">
             <constraints/>
             <properties/>
           </component>

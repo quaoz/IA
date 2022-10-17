@@ -17,19 +17,16 @@ import javax.swing.table.DefaultTableModel;
 
 public class RecordsForm {
 
-	private final ArrayList<Record> records;
+	private ArrayList<Record> records;
 	private JButton backButton;
 	private JPanel panel;
 	private JTable table;
 	private JScrollPane recordsScrollPane;
 
 	public RecordsForm() {
-		records =
-			RecordManager
-				.getInstance()
-				.getSpecies(GUI.getInstance().getRecord().name());
-
 		$$$setupUI$$$();
+		// Hacky way to prevent editing
+		table.setDefaultEditor(Object.class, null);
 
 		backButton.addActionListener(e ->
 			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
@@ -42,10 +39,17 @@ public class RecordsForm {
 					int row = table.rowAtPoint(e.getPoint());
 
 					if (table.columnAtPoint(e.getPoint()) == 6) {
-						RecordManager
-							.getInstance()
-							.remove(String.valueOf(records.get(row).id()));
-						((DefaultTableModel) table.getModel()).removeRow(row);
+						if (
+							new ConfirmRemoveDialog(
+								"Are you sure you want to remove this record?",
+								"Yes",
+								"No"
+							)
+								.isOk()
+						) {
+							RecordManager.getInstance().remove(records.get(row).id());
+							((DefaultTableModel) table.getModel()).removeRow(row);
+						}
 					}
 				}
 			}
@@ -53,10 +57,11 @@ public class RecordsForm {
 	}
 
 	public JPanel resolve() {
-		return panel;
-	}
+		records =
+			RecordManager
+				.getInstance()
+				.getSpecies(GUI.getInstance().getRecord().name());
 
-	private void createUIComponents() {
 		ArrayList<String> columnNames = new ArrayList<>(
 			Arrays.asList("ID", "Species", "Location", "Date", "Size", "User")
 		);
@@ -84,10 +89,9 @@ public class RecordsForm {
 			count++;
 		}
 
-		table = new JTable(new DefaultTableModel(data, columnNames.toArray()));
+		table.setModel(new DefaultTableModel(data, columnNames.toArray()));
 
-		// Hacky way to prevent editing
-		table.setDefaultEditor(Object.class, null);
+		return panel;
 	}
 
 	// spotless:off
@@ -100,7 +104,6 @@ public class RecordsForm {
 	 * @noinspection ALL
 	 */
 	private void $$$setupUI$$$() {
-		createUIComponents();
 		panel = new JPanel();
 		panel.setLayout(new FormLayout("fill:d:grow", "center:367px:grow,center:max(d;4px):noGrow"));
 		panel.setMinimumSize(new Dimension(768, 768));
@@ -108,6 +111,7 @@ public class RecordsForm {
 		recordsScrollPane = new JScrollPane();
 		CellConstraints cc = new CellConstraints();
 		panel.add(recordsScrollPane, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		table = new JTable();
 		recordsScrollPane.setViewportView(table);
 		backButton = new JButton();
 		this.$$$loadButtonText$$$(backButton, this.$$$getMessageFromBundle$$$("ia", "back"));

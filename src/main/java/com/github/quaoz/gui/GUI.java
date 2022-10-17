@@ -20,6 +20,7 @@ public class GUI {
 	private final SubmitRecordForm submitRecordForm;
 	private final AddMothForm addMothForm;
 	private final Profile profileForm;
+	private final ApproveRequests approveRequestsForm;
 	private final SimpleStack<Content> callStack;
 	private Moth record;
 	private Content currentContent;
@@ -53,6 +54,7 @@ public class GUI {
 		submitRecordForm = new SubmitRecordForm();
 		addMothForm = new AddMothForm();
 		profileForm = new Profile();
+		approveRequestsForm = new ApproveRequests();
 
 		currentContent = Content.HOME_LOGGED_OUT;
 		callStack = new SimpleStack<>();
@@ -112,7 +114,7 @@ public class GUI {
 			case ADD_MOTH -> frame.setContentPane(addMothForm.resolve());
 			case RECORDS -> frame.setContentPane(new RecordsForm().resolve());
 			case APPROVE_REQUESTS -> frame.setContentPane(
-				new ApproveRequests().resolve()
+				approveRequestsForm.resolve()
 			);
 			case PAST_CONTENT -> {
 				render(callStack.pop());

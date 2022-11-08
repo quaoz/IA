@@ -25,6 +25,9 @@ public class ApproveRequests {
 			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
+		// Hacky way to prevent editing
+		requestTable.setDefaultEditor(Object.class, null);
+
 		requestTable.addMouseListener(
 			new MouseAdapter() {
 				@Override
@@ -46,6 +49,22 @@ public class ApproveRequests {
 	}
 
 	public JPanel resolve() {
+		String[] columnNames = { "User", "Level", "Approve", "Decline" };
+		HashMap<String, Integer> map = UserManager.getInstance().getAuthRequests();
+
+		data = new String[map.size()][4];
+
+		final int[] count = { 0 };
+		map.forEach((k, v) -> {
+			data[count[0]][0] = k;
+			data[count[0]][1] = UserManager.UserAuthLevels.get(v + 1).toString();
+			data[count[0]][2] = "Approve";
+			data[count[0]][3] = "Decline";
+			count[0]++;
+		});
+
+		requestTable.setModel(new DefaultTableModel(data, columnNames));
+
 		return panel;
 	}
 
@@ -57,7 +76,6 @@ public class ApproveRequests {
 	 * @noinspection ALL
 	 */
 	private void $$$setupUI$$$() {
-		createUIComponents();
 		panel = new JPanel();
 		panel.setLayout(
 			new FormLayout(
@@ -77,6 +95,7 @@ public class ApproveRequests {
 			requestScrollPane,
 			cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL)
 		);
+		requestTable = new JTable();
 		requestScrollPane.setViewportView(requestTable);
 	}
 
@@ -138,27 +157,5 @@ public class ApproveRequests {
 	public JComponent $$$getRootComponent$$$() {
 		return panel;
 	}
-
 	// spotless:on
-
-	private void createUIComponents() {
-		String[] columnNames = { "User", "Level", "Approve", "Decline" };
-		HashMap<String, Integer> map = UserManager.getInstance().getAuthRequests();
-
-		data = new String[map.size()][4];
-
-		final int[] count = { 0 };
-		map.forEach((k, v) -> {
-			data[count[0]][0] = k;
-			data[count[0]][1] = UserManager.UserAuthLevels.get(v + 1).toString();
-			data[count[0]][2] = "Approve";
-			data[count[0]][3] = "Decline";
-			count[0]++;
-		});
-
-		requestTable = new JTable(new DefaultTableModel(data, columnNames));
-
-		// Hacky way to prevent editing
-		requestTable.setDefaultEditor(Object.class, null);
-	}
 }

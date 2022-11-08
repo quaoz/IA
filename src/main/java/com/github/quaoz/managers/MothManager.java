@@ -41,18 +41,45 @@ public class MothManager implements Closeable {
 		Logger.info("Finished creating user manager");
 	}
 
+	/**
+	 * Gets the {@link MothManager} instance
+	 *
+	 * @return The {@link MothManager} instance
+	 */
 	public static synchronized MothManager getInstance() {
 		return mothManager;
 	}
 
+	/**
+	 * Initialises the {@link MothManager} instance if it hasn't already been initialised
+	 */
 	public static synchronized void init() {
 		if (mothManager == null) {
 			mothManager = new MothManager();
 		}
 	}
 
-	public void remove(String name) {}
+	/**
+	 * Removes the given moth from the database
+	 *
+	 * @param name The name of the moth to remove
+	 */
+	public void remove(String name) {
+		mothsDatabase.remove(name);
+	}
 
+	/**
+	 * Adds a new moth to the database
+	 *
+	 * @param name 			The moths name
+	 * @param sciName		The moths scientific name
+	 * @param sizeLower		The moths lower bound for size
+	 * @param sizeUpper		The moths upper bound for size
+	 * @param flightStart	The month the moth starts flying
+	 * @param flightEnd		The month the moth stops flying
+	 * @param habitat		The moths habitat
+	 * @param food			The moths food source
+	 */
 	public void addMoth(
 		String name,
 		String sciName,
@@ -75,6 +102,13 @@ public class MothManager implements Closeable {
 		mothsDatabase.add(record);
 	}
 
+	/**
+	 * Searches for a moth by name
+	 *
+	 * @param name The moths name
+	 *
+	 * @return The moth
+	 */
 	public @NotNull Moth basicSearch(@NotNull String name) {
 		name = name.strip();
 		String record = mothsDatabase.get(name);

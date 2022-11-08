@@ -1,6 +1,5 @@
 package com.github.quaoz.gui;
 
-import com.github.quaoz.managers.MothManager;
 import com.github.quaoz.managers.RecordManager;
 import com.github.quaoz.managers.UserManager;
 import com.github.quaoz.structures.Moth;
@@ -22,16 +21,13 @@ import javax.swing.table.DefaultTableModel;
 public class Profile {
 
 	private ArrayList<Pair<Integer, Moth>> records;
-	private JTextField searchField;
-	private JButton advancedSearchButton;
-	private JButton submitRecordButton;
-	private JButton homeButton;
 	private JPanel panel;
 	private JScrollPane recordScrollPane;
 	private JTable table;
 	private JButton signOutButton;
 	private JButton requestAuth;
 	private JButton approveAuth;
+	private ProfileBar profileBar;
 
 	public Profile() {
 		// TODO: allow users to remove records
@@ -75,27 +71,9 @@ public class Profile {
 			}
 		);
 
-		submitRecordButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.SUBMIT_RECORD)
-		);
-		advancedSearchButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.ADVANCED_SEARCH)
-		);
-		homeButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.HOME_LOGGED_IN)
-		);
-
-		searchField.addActionListener(e -> {
-			SearchResultsForm.setSearchResults(
-				MothManager
-					.getInstance()
-					.collectMoths(searchField.getText().strip(), 0, 100)
-			);
-			GUI.getInstance().render(GUI.Content.SEARCH_RESULTS);
-		});
 		signOutButton.addActionListener(e -> {
 			UserManager.getInstance().setUser("");
-			GUI.getInstance().render(GUI.Content.HOME_LOGGED_OUT);
+			GUI.getInstance().render(GUI.Content.HOME);
 		});
 		requestAuth.addActionListener(e -> UserManager.getInstance().requestAuth());
 		approveAuth.addActionListener(e ->
@@ -160,43 +138,33 @@ public class Profile {
 	 * @noinspection ALL
 	 */
 	private void $$$setupUI$$$() {
+		createUIComponents();
 		panel = new JPanel();
-		panel.setLayout(new GridLayoutManager(5, 7, new Insets(0, 0, 0, 0), -1, -1));
+		panel.setLayout(new GridLayoutManager(6, 4, new Insets(0, 0, 0, 0), -1, -1));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
-		searchField = new JTextField();
-		searchField.setMinimumSize(new Dimension(200, 30));
-		searchField.setPreferredSize(new Dimension(200, 30));
-		searchField.setText("Search");
-		panel.add(searchField, new GridConstraints(0, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-		advancedSearchButton = new JButton();
-		this.$$$loadButtonText$$$(advancedSearchButton, this.$$$getMessageFromBundle$$$("ia", "advanced.search"));
-		panel.add(advancedSearchButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-		submitRecordButton = new JButton();
-		this.$$$loadButtonText$$$(submitRecordButton, this.$$$getMessageFromBundle$$$("ia", "submit.record"));
-		panel.add(submitRecordButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-		homeButton = new JButton();
-		this.$$$loadButtonText$$$(homeButton, this.$$$getMessageFromBundle$$$("ia", "home"));
-		panel.add(homeButton, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-		final Spacer spacer1 = new Spacer();
-		panel.add(spacer1, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 		recordScrollPane = new JScrollPane();
-		panel.add(recordScrollPane, new GridConstraints(1, 2, 4, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+		panel.add(recordScrollPane, new GridConstraints(2, 2, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 		table = new JTable();
 		recordScrollPane.setViewportView(table);
 		signOutButton = new JButton();
 		this.$$$loadButtonText$$$(signOutButton, this.$$$getMessageFromBundle$$$("ia", "sign.out"));
-		panel.add(signOutButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		panel.add(signOutButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(141, 30), null, 0, false));
+		final Spacer spacer1 = new Spacer();
+		panel.add(spacer1, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(141, 14), null, 0, false));
 		final Spacer spacer2 = new Spacer();
-		panel.add(spacer2, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-		final Spacer spacer3 = new Spacer();
-		panel.add(spacer3, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+		panel.add(spacer2, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 		requestAuth = new JButton();
 		requestAuth.setText("");
-		panel.add(requestAuth, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		panel.add(requestAuth, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(141, 30), null, 0, false));
 		approveAuth = new JButton();
 		approveAuth.setText("Auth Requests");
-		panel.add(approveAuth, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		panel.add(approveAuth, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(141, 30), null, 0, false));
+		final Spacer spacer3 = new Spacer();
+		panel.add(spacer3, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+		final Spacer spacer4 = new Spacer();
+		panel.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+		panel.add(profileBar, new GridConstraints(1, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 	}
 
 	private static Method $$$cachedGetBundleMethod$$$ = null;
@@ -248,6 +216,11 @@ public class Profile {
 	 */
 	public JComponent $$$getRootComponent$$$() {
 		return panel;
+	}
+
+	private void createUIComponents() {
+		// TODO: place custom component creation code here
+		profileBar = new ProfileBar();
 	}
 
 	//spotless:on

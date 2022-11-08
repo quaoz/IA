@@ -240,8 +240,8 @@ public class UserManager implements Closeable {
 	}
 
 	public void setUser(String user) {
-		this.user = user;
-		userAuthLevel = getAuthLevel(user);
+		this.user = user.strip();
+		userAuthLevel = getAuthLevel(this.user);
 	}
 
 	public void addUser(String username, String email, char[] password) {

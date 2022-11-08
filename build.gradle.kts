@@ -49,6 +49,9 @@ dependencies {
     // JSON
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
 
+    // CSV
+    implementation("com.opencsv:opencsv:5.7.1")
+
     // Hashing
     implementation("de.mkammerer:argon2-jvm:2.11")
 
@@ -69,9 +72,9 @@ dependencies {
     // Dotenv
     implementation("io.github.cdimascio:dotenv-java:2.2.4")
 
-    // https://github.com/JFormDesigner/FlatLaf
-    implementation("com.formdev:flatlaf:2.5")
-    implementation("com.formdev:flatlaf-intellij-themes:2.5")
+    // FlatLaf
+    implementation("com.formdev:flatlaf:2.6")
+    implementation("com.formdev:flatlaf-intellij-themes:2.6")
 
     // Appdirs
     implementation("net.harawata:appdirs:1.2.1")

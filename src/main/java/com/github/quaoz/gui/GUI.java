@@ -12,8 +12,7 @@ public class GUI {
 
 	private static GUI gui;
 	private final JFrame frame;
-	private final HomeLoggedOut homeLoggedOut;
-	private final HomeLoggedIn homeLoggedIn;
+	private final Home home;
 	private final SignInForm signInForm;
 	private final SignUpForm signUpForm;
 	private final AdvancedSearchForm advancedSearchForm;
@@ -21,6 +20,9 @@ public class GUI {
 	private final AddMothForm addMothForm;
 	private final Profile profileForm;
 	private final ApproveRequests approveRequestsForm;
+	private final SearchResultsForm searchResultsForm;
+	private final RecordForm recordForm;
+	private final RecordsForm recordsForm;
 	private final SimpleStack<Content> callStack;
 	private Moth record;
 	private Content currentContent;
@@ -46,8 +48,6 @@ public class GUI {
 		}
 
 		// Create the GUI panels
-		homeLoggedOut = new HomeLoggedOut();
-		homeLoggedIn = new HomeLoggedIn();
 		signInForm = new SignInForm();
 		signUpForm = new SignUpForm();
 		advancedSearchForm = new AdvancedSearchForm();
@@ -55,10 +55,14 @@ public class GUI {
 		addMothForm = new AddMothForm();
 		profileForm = new Profile();
 		approveRequestsForm = new ApproveRequests();
+		searchResultsForm = new SearchResultsForm();
+		recordForm = new RecordForm();
+		recordsForm = new RecordsForm();
+		home = new Home();
 
-		currentContent = Content.HOME_LOGGED_OUT;
+		currentContent = Content.HOME;
 		callStack = new SimpleStack<>();
-		render(Content.HOME_LOGGED_OUT);
+		render(Content.HOME);
 
 		Logger.info("Finished creating GUI");
 	}
@@ -98,8 +102,7 @@ public class GUI {
 
 	public void render(@NotNull Content content) {
 		switch (content) {
-			case HOME_LOGGED_OUT -> frame.setContentPane(homeLoggedOut.resolve());
-			case HOME_LOGGED_IN -> frame.setContentPane(homeLoggedIn.resolve());
+			case HOME -> frame.setContentPane(home.resolve());
 			case SIGN_IN -> frame.setContentPane(signInForm.resolve());
 			case SIGN_UP -> frame.setContentPane(signUpForm.resolve());
 			case ADVANCED_SEARCH -> frame.setContentPane(
@@ -107,12 +110,10 @@ public class GUI {
 			);
 			case PROFILE -> frame.setContentPane(profileForm.resolve());
 			case SUBMIT_RECORD -> frame.setContentPane(submitRecordForm.resolve());
-			case SEARCH_RESULTS -> frame.setContentPane(
-				new SearchResultsForm().resolve()
-			);
-			case RECORD -> frame.setContentPane(new RecordForm().resolve());
+			case SEARCH_RESULTS -> frame.setContentPane(searchResultsForm.resolve());
+			case RECORD -> frame.setContentPane(recordForm.resolve());
 			case ADD_MOTH -> frame.setContentPane(addMothForm.resolve());
-			case RECORDS -> frame.setContentPane(new RecordsForm().resolve());
+			case RECORDS -> frame.setContentPane(recordsForm.resolve());
 			case APPROVE_REQUESTS -> frame.setContentPane(
 				approveRequestsForm.resolve()
 			);
@@ -131,8 +132,7 @@ public class GUI {
 	}
 
 	enum Content {
-		HOME_LOGGED_OUT,
-		HOME_LOGGED_IN,
+		HOME,
 		SIGN_IN,
 		SIGN_UP,
 		ADVANCED_SEARCH,

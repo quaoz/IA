@@ -5,15 +5,23 @@ import com.github.quaoz.managers.UserManager;
 import com.github.quaoz.structures.Record;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriterBuilder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import org.tinylog.Logger;
 
 public class RecordsForm {
 
@@ -22,6 +30,8 @@ public class RecordsForm {
 	private JPanel panel;
 	private JTable table;
 	private JScrollPane recordsScrollPane;
+	private JButton saveButton;
+	private JLabel saveLable;
 
 	public RecordsForm() {
 		$$$setupUI$$$();
@@ -31,6 +41,37 @@ public class RecordsForm {
 		backButton.addActionListener(e ->
 			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
+
+		saveButton.addActionListener(e -> {
+			File saveFile = Paths
+				.get(System.getProperty("user.home"), "Downloads")
+				.resolve("export-" + Instant.now() + ".csv")
+				.toFile();
+
+			try (
+				CSVWriter writer = (CSVWriter) new CSVWriterBuilder(
+					new FileWriter(saveFile)
+				)
+					.build()
+			) {
+				records.forEach(record ->
+					writer.writeNext(
+						new String[] {
+							String.valueOf(record.id()),
+							record.species(),
+							record.location(),
+							record.date(),
+							String.valueOf(record.size()),
+							record.user(),
+						}
+					)
+				);
+				saveLable.setText("Saved data to: " + saveFile);
+			} catch (IOException err) {
+				Logger.error(err, "Unable to write CSV file at " + saveFile.getPath());
+				throw new RuntimeException(err);
+			}
+		});
 
 		table.addMouseListener(
 			new MouseAdapter() {
@@ -57,6 +98,8 @@ public class RecordsForm {
 	}
 
 	public JPanel resolve() {
+		saveLable.setText("");
+
 		records =
 			RecordManager
 				.getInstance()
@@ -83,7 +126,7 @@ public class RecordsForm {
 			data[count][5] = record.user();
 
 			if (auth) {
-				data[count][7] = "Remove";
+				data[count][6] = "Remove";
 			}
 
 			count++;
@@ -105,17 +148,23 @@ public class RecordsForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow", "center:367px:grow,center:max(d;4px):noGrow"));
+		panel.setLayout(new FormLayout("fill:675px:grow,fill:max(d;4px):noGrow", "center:367px:grow,center:32px:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		recordsScrollPane = new JScrollPane();
 		CellConstraints cc = new CellConstraints();
-		panel.add(recordsScrollPane, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panel.add(recordsScrollPane, cc.xyw(1, 1, 2, CellConstraints.FILL, CellConstraints.FILL));
 		table = new JTable();
 		recordsScrollPane.setViewportView(table);
 		backButton = new JButton();
 		this.$$$loadButtonText$$$(backButton, this.$$$getMessageFromBundle$$$("ia", "back"));
 		panel.add(backButton, cc.xy(1, 2));
+		saveButton = new JButton();
+		saveButton.setText("Save As CSV");
+		panel.add(saveButton, cc.xy(1, 3));
+		saveLable = new JLabel();
+		saveLable.setText("");
+		panel.add(saveLable, cc.xy(1, 5));
 	}
 
 	private static Method $$$cachedGetBundleMethod$$$ = null;

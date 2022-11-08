@@ -147,7 +147,7 @@ public class SignUpForm {
 					passwordField.getPassword()
 				);
 			UserManager.getInstance().setUser(usernameField.getText().strip());
-			GUI.getInstance().render(GUI.Content.HOME_LOGGED_IN);
+			GUI.getInstance().render(GUI.Content.HOME);
 		}
 	}
 

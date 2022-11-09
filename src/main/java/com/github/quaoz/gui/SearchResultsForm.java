@@ -27,7 +27,7 @@ public class SearchResultsForm {
 	private JScrollPane mothsScrollPane;
 
 	public static void setSearchResults(
-			@NotNull ArrayList<Pair<Moth, Double>> searchResults
+		@NotNull ArrayList<Pair<Moth, Double>> searchResults
 	) {
 		ArrayList<Moth> moth = new ArrayList<>();
 		searchResults.forEach(p -> moth.add(p.getKey()));
@@ -40,47 +40,47 @@ public class SearchResultsForm {
 		table.setDefaultEditor(Object.class, null);
 
 		backButton.addActionListener(e ->
-				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		table.addMouseListener(
-				new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						int row = table.rowAtPoint(e.getPoint());
-						Moth moth = records.get(row);
+			new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					int row = table.rowAtPoint(e.getPoint());
+					Moth moth = records.get(row);
 
-						if (table.columnAtPoint(e.getPoint()) == 6) {
-							if (
-									new ConfirmRemoveDialog(
-											"Are you sure you want to remove this record?",
-											"Yes",
-											"No"
-									)
-											.isOk()
-							) {
-								MothManager.getInstance().remove(moth.name());
-								((DefaultTableModel) table.getModel()).removeRow(row);
-							}
-						} else {
-							GUI.getInstance().setRecord(moth);
-							GUI.getInstance().render(GUI.Content.RECORD);
+					if (table.columnAtPoint(e.getPoint()) == 6) {
+						if (
+							new ConfirmRemoveDialog(
+								"Are you sure you want to remove this record?",
+								"Yes",
+								"No"
+							)
+								.isOk()
+						) {
+							MothManager.getInstance().remove(moth.name());
+							((DefaultTableModel) table.getModel()).removeRow(row);
 						}
+					} else {
+						GUI.getInstance().setRecord(moth);
+						GUI.getInstance().render(GUI.Content.RECORD);
 					}
 				}
+			}
 		);
 	}
 
 	public JPanel resolve() {
 		ArrayList<String> columnNames = new ArrayList<>(
-				Arrays.asList(
-						"Species",
-						"Scientific Name",
-						"Size",
-						"Flight",
-						"Habitat",
-						"Food Sources"
-				)
+			Arrays.asList(
+				"Species",
+				"Scientific Name",
+				"Size",
+				"Flight",
+				"Habitat",
+				"Food Sources"
+			)
 		);
 		boolean auth = UserManager.getInstance().isAdmin();
 

@@ -40,32 +40,32 @@ public class RecordsForm {
 		table.setDefaultEditor(Object.class, null);
 
 		backButton.addActionListener(e ->
-				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		saveButton.addActionListener(e -> {
 			File saveFile = Paths
-					.get(System.getProperty("user.home"), "Downloads")
-					.resolve("export-" + Instant.now() + ".csv")
-					.toFile();
+				.get(System.getProperty("user.home"), "Downloads")
+				.resolve("export-" + Instant.now() + ".csv")
+				.toFile();
 
 			try (
-					CSVWriter writer = (CSVWriter) new CSVWriterBuilder(
-							new FileWriter(saveFile)
-					)
-							.build()
+				CSVWriter writer = (CSVWriter) new CSVWriterBuilder(
+					new FileWriter(saveFile)
+				)
+					.build()
 			) {
 				records.forEach(record ->
-						writer.writeNext(
-								new String[]{
-										String.valueOf(record.id()),
-										record.species(),
-										record.location(),
-										record.date(),
-										String.valueOf(record.size()),
-										record.user(),
-								}
-						)
+					writer.writeNext(
+						new String[] {
+							String.valueOf(record.id()),
+							record.species(),
+							record.location(),
+							record.date(),
+							String.valueOf(record.size()),
+							record.user(),
+						}
+					)
 				);
 				saveLable.setText("Saved data to: " + saveFile);
 			} catch (IOException err) {
@@ -75,26 +75,26 @@ public class RecordsForm {
 		});
 
 		table.addMouseListener(
-				new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						int row = table.rowAtPoint(e.getPoint());
+			new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					int row = table.rowAtPoint(e.getPoint());
 
-						if (table.columnAtPoint(e.getPoint()) == 6) {
-							if (
-									new ConfirmRemoveDialog(
-											"Are you sure you want to remove this record?",
-											"Yes",
-											"No"
-									)
-											.isOk()
-							) {
-								RecordManager.getInstance().remove(records.get(row).id());
-								((DefaultTableModel) table.getModel()).removeRow(row);
-							}
+					if (table.columnAtPoint(e.getPoint()) == 6) {
+						if (
+							new ConfirmRemoveDialog(
+								"Are you sure you want to remove this record?",
+								"Yes",
+								"No"
+							)
+								.isOk()
+						) {
+							RecordManager.getInstance().remove(records.get(row).id());
+							((DefaultTableModel) table.getModel()).removeRow(row);
 						}
 					}
 				}
+			}
 		);
 	}
 
@@ -102,12 +102,12 @@ public class RecordsForm {
 		saveLable.setText("");
 
 		records =
-				RecordManager
-						.getInstance()
-						.getSpecies(GUI.getInstance().getRecord().name());
+			RecordManager
+				.getInstance()
+				.getSpecies(GUI.getInstance().getRecord().name());
 
 		ArrayList<String> columnNames = new ArrayList<>(
-				Arrays.asList("ID", "Species", "Location", "Date", "Size", "User")
+			Arrays.asList("ID", "Species", "Location", "Date", "Size", "User")
 		);
 		boolean auth = UserManager.getInstance().isMod();
 

@@ -24,7 +24,7 @@ public class SignInForm {
 		usernameField.addActionListener(e -> login());
 		passwordField.addActionListener(e -> login());
 		cancelButton.addActionListener(e ->
-				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 	}
 

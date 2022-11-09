@@ -22,39 +22,39 @@ public class ApproveRequests {
 	public ApproveRequests() {
 		$$$setupUI$$$();
 		backButton.addActionListener(e ->
-				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		// Hacky way to prevent editing
 		requestTable.setDefaultEditor(Object.class, null);
 
 		requestTable.addMouseListener(
-				new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						int row = requestTable.rowAtPoint(e.getPoint());
-						int column = requestTable.columnAtPoint(e.getPoint());
+			new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					int row = requestTable.rowAtPoint(e.getPoint());
+					int column = requestTable.columnAtPoint(e.getPoint());
 
-						String user = data[row][0];
-						if (column == 2) {
-							UserManager.getInstance().upgradeUserAuthLevel(user);
-							((DefaultTableModel) requestTable.getModel()).removeRow(row);
-						} else if (column == 3) {
-							UserManager.getInstance().declineUserAuthRequest(user);
-							((DefaultTableModel) requestTable.getModel()).removeRow(row);
-						}
+					String user = data[row][0];
+					if (column == 2) {
+						UserManager.getInstance().upgradeUserAuthLevel(user);
+						((DefaultTableModel) requestTable.getModel()).removeRow(row);
+					} else if (column == 3) {
+						UserManager.getInstance().declineUserAuthRequest(user);
+						((DefaultTableModel) requestTable.getModel()).removeRow(row);
 					}
 				}
+			}
 		);
 	}
 
 	public JPanel resolve() {
-		String[] columnNames = {"User", "Level", "Approve", "Decline"};
+		String[] columnNames = { "User", "Level", "Approve", "Decline" };
 		HashMap<String, Integer> map = UserManager.getInstance().getAuthRequests();
 
 		data = new String[map.size()][4];
 
-		final int[] count = {0};
+		final int[] count = { 0 };
 		map.forEach((k, v) -> {
 			data[count[0]][0] = k;
 			data[count[0]][1] = UserManager.UserAuthLevels.get(v + 1).toString();
@@ -77,13 +77,24 @@ public class ApproveRequests {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel.setLayout(
+			new FormLayout(
+				"fill:d:grow",
+				"center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"
+			)
+		);
 		backButton = new JButton();
-		this.$$$loadButtonText$$$(backButton, this.$$$getMessageFromBundle$$$("ia", "back"));
+		this.$$$loadButtonText$$$(
+				backButton,
+				this.$$$getMessageFromBundle$$$("ia", "back")
+			);
 		CellConstraints cc = new CellConstraints();
 		panel.add(backButton, cc.xy(1, 3));
 		requestScrollPane = new JScrollPane();
-		panel.add(requestScrollPane, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panel.add(
+			requestScrollPane,
+			cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL)
+		);
 		requestTable = new JTable();
 		requestScrollPane.setViewportView(requestTable);
 	}
@@ -95,10 +106,18 @@ public class ApproveRequests {
 		try {
 			Class<?> thisClass = this.getClass();
 			if ($$$cachedGetBundleMethod$$$ == null) {
-				Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
-				$$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
+				Class<?> dynamicBundleClass = thisClass
+					.getClassLoader()
+					.loadClass("com.intellij.DynamicBundle");
+				$$$cachedGetBundleMethod$$$ =
+					dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
 			}
-			bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
+			bundle =
+				(ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(
+					null,
+					path,
+					thisClass
+				);
 		} catch (Exception e) {
 			bundle = ResourceBundle.getBundle(path);
 		}
@@ -138,6 +157,5 @@ public class ApproveRequests {
 	public JComponent $$$getRootComponent$$$() {
 		return panel;
 	}
-
 	// spotless:on
 }

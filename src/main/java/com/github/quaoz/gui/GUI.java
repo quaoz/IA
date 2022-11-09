@@ -105,18 +105,14 @@ public class GUI {
 			case HOME -> frame.setContentPane(home.resolve());
 			case SIGN_IN -> frame.setContentPane(signInForm.resolve());
 			case SIGN_UP -> frame.setContentPane(signUpForm.resolve());
-			case ADVANCED_SEARCH -> frame.setContentPane(
-				advancedSearchForm.resolve()
-			);
+			case ADVANCED_SEARCH -> frame.setContentPane(advancedSearchForm.resolve());
 			case PROFILE -> frame.setContentPane(profileForm.resolve());
 			case SUBMIT_RECORD -> frame.setContentPane(submitRecordForm.resolve());
 			case SEARCH_RESULTS -> frame.setContentPane(searchResultsForm.resolve());
 			case RECORD -> frame.setContentPane(recordForm.resolve());
 			case ADD_MOTH -> frame.setContentPane(addMothForm.resolve());
 			case RECORDS -> frame.setContentPane(recordsForm.resolve());
-			case APPROVE_REQUESTS -> frame.setContentPane(
-				approveRequestsForm.resolve()
-			);
+			case APPROVE_REQUESTS -> frame.setContentPane(approveRequestsForm.resolve());
 			case PAST_CONTENT -> {
 				render(callStack.pop());
 				callStack.pop();

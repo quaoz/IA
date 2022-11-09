@@ -155,18 +155,18 @@ public class SubmitRecordForm {
 																.collectMoths(speciesField.getText().strip(), 0, 1)
 												)
 												.thenAccept(s -> speciesMatchLabel.setText(
-														UserManager.getInstance().isMod() ? "Closest match: " +
-																s.get(0).getKey().name() +
-																", if this is not" +
-																" your moth then" +
-																" please register" +
-																" a new moth" +
-																" bellow." : "Closest match: " +
-																s.get(0).getKey().name() +
-																", if this is not" +
-																" your moth then" +
-																" please ask a moderate to register it"
-												)
+																UserManager.getInstance().isMod() ? "Closest match: " +
+																		s.get(0).getKey().name() +
+																		", if this is not" +
+																		" your moth then" +
+																		" please register" +
+																		" a new moth" +
+																		" bellow." : "Closest match: " +
+																		s.get(0).getKey().name() +
+																		", if this is not" +
+																		" your moth then" +
+																		" please ask a moderate to register it"
+														)
 												);
 							}
 						}
@@ -202,49 +202,49 @@ public class SubmitRecordForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:5dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:grow"));
+		panel.setLayout(new FormLayout("fill:d:grow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:5dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:grow"));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		speciesField = new JTextField();
 		CellConstraints cc = new CellConstraints();
-		panel.add(speciesField, cc.xy(5, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(speciesField, cc.xy(4, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer1 = new Spacer();
-		panel.add(spacer1, cc.xy(5, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
+		panel.add(spacer1, cc.xy(4, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final Spacer spacer2 = new Spacer();
-		panel.add(spacer2, cc.xy(5, 25, CellConstraints.DEFAULT, CellConstraints.FILL));
+		panel.add(spacer2, cc.xy(4, 25, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final Spacer spacer3 = new Spacer();
-		panel.add(spacer3, cc.xy(7, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer3, cc.xywh(5, 1, 1, 25, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer4 = new Spacer();
-		panel.add(spacer4, cc.xy(1, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer4, cc.xywh(1, 1, 1, 25, CellConstraints.FILL, CellConstraints.DEFAULT));
 		speciesLabel = new JLabel();
 		this.$$$loadLabelText$$$(speciesLabel, this.$$$getMessageFromBundle$$$("ia", "species"));
-		panel.add(speciesLabel, cc.xy(3, 5));
+		panel.add(speciesLabel, cc.xy(2, 5));
 		locationLabel = new JLabel();
 		this.$$$loadLabelText$$$(locationLabel, this.$$$getMessageFromBundle$$$("ia", "location"));
-		panel.add(locationLabel, cc.xy(3, 9));
+		panel.add(locationLabel, cc.xy(2, 9));
 		sizeLabel = new JLabel();
 		this.$$$loadLabelText$$$(sizeLabel, this.$$$getMessageFromBundle$$$("ia", "size.cm"));
-		panel.add(sizeLabel, cc.xy(3, 17));
+		panel.add(sizeLabel, cc.xy(2, 17));
 		titleLabel = new JLabel();
 		this.$$$loadLabelText$$$(titleLabel, this.$$$getMessageFromBundle$$$("ia", "add.record"));
-		panel.add(titleLabel, cc.xy(5, 3));
+		panel.add(titleLabel, cc.xy(4, 3));
 		submitButton = new JButton();
 		this.$$$loadButtonText$$$(submitButton, this.$$$getMessageFromBundle$$$("ia", "submit"));
-		panel.add(submitButton, cc.xy(5, 19));
+		panel.add(submitButton, cc.xy(4, 19));
 		cancelButton = new JButton();
 		this.$$$loadButtonText$$$(cancelButton, this.$$$getMessageFromBundle$$$("ia", "cancel"));
-		panel.add(cancelButton, cc.xy(5, 23));
+		panel.add(cancelButton, cc.xy(4, 23));
 		sizeSpinner = new JSpinner();
-		panel.add(sizeSpinner, cc.xy(5, 17, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(sizeSpinner, cc.xy(4, 17, CellConstraints.FILL, CellConstraints.DEFAULT));
 		speciesMatchLabel = new JLabel();
 		speciesMatchLabel.setText("");
-		panel.add(speciesMatchLabel, cc.xy(5, 7));
+		panel.add(speciesMatchLabel, cc.xy(4, 7));
 		registerButton = new JButton();
 		this.$$$loadButtonText$$$(registerButton, this.$$$getMessageFromBundle$$$("ia", "register.moth"));
-		panel.add(registerButton, cc.xy(5, 21));
+		panel.add(registerButton, cc.xy(4, 21));
 		datePanel = new JPanel();
 		datePanel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
-		panel.add(datePanel, cc.xy(5, 15));
+		panel.add(datePanel, cc.xy(4, 15));
 		daySpinner = new JSpinner();
 		daySpinner.setToolTipText(this.$$$getMessageFromBundle$$$("ia", "day"));
 		daySpinner.putClientProperty("html.disable", Boolean.FALSE);
@@ -258,15 +258,15 @@ public class SubmitRecordForm {
 		datePanel.add(monthLabel, cc.xy(3, 1));
 		dayLabel = new JLabel();
 		this.$$$loadLabelText$$$(dayLabel, this.$$$getMessageFromBundle$$$("ia", "day-colon"));
-		panel.add(dayLabel, cc.xy(3, 15));
+		panel.add(dayLabel, cc.xy(2, 15));
 		coordsCheckBox = new JCheckBox();
 		coordsCheckBox.setEnabled(true);
 		coordsCheckBox.setSelected(false);
 		this.$$$loadButtonText$$$(coordsCheckBox, this.$$$getMessageFromBundle$$$("ia", "use.coordinates"));
-		panel.add(coordsCheckBox, cc.xy(5, 13));
+		panel.add(coordsCheckBox, cc.xy(4, 13));
 		locationPanel = new JPanel();
 		locationPanel.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
-		panel.add(locationPanel, cc.xy(5, 9));
+		panel.add(locationPanel, cc.xy(4, 9));
 		standardLocationPanel = new JPanel();
 		standardLocationPanel.setLayout(new FormLayout("fill:d:grow", "center:d:noGrow"));
 		locationPanel.add(standardLocationPanel, cc.xy(1, 3));
@@ -289,7 +289,7 @@ public class SubmitRecordForm {
 		coordinateLocationPanel.add(longitudeLabel, cc.xy(5, 1));
 		locationValidLabel = new JLabel();
 		locationValidLabel.setText("");
-		panel.add(locationValidLabel, cc.xy(5, 11));
+		panel.add(locationValidLabel, cc.xy(4, 11));
 		sizeLabel.setLabelFor(sizeSpinner);
 		titleLabel.setLabelFor(speciesField);
 		latitudeLabel.setLabelFor(latitudeField);

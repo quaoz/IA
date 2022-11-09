@@ -3,6 +3,7 @@ package com.github.quaoz.gui;
 import com.github.quaoz.managers.RecordManager;
 import com.github.quaoz.managers.UserManager;
 import com.github.quaoz.structures.Record;
+import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.opencsv.CSVWriter;
@@ -39,32 +40,32 @@ public class RecordsForm {
 		table.setDefaultEditor(Object.class, null);
 
 		backButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		saveButton.addActionListener(e -> {
 			File saveFile = Paths
-				.get(System.getProperty("user.home"), "Downloads")
-				.resolve("export-" + Instant.now() + ".csv")
-				.toFile();
+					.get(System.getProperty("user.home"), "Downloads")
+					.resolve("export-" + Instant.now() + ".csv")
+					.toFile();
 
 			try (
-				CSVWriter writer = (CSVWriter) new CSVWriterBuilder(
-					new FileWriter(saveFile)
-				)
-					.build()
+					CSVWriter writer = (CSVWriter) new CSVWriterBuilder(
+							new FileWriter(saveFile)
+					)
+							.build()
 			) {
 				records.forEach(record ->
-					writer.writeNext(
-						new String[] {
-							String.valueOf(record.id()),
-							record.species(),
-							record.location(),
-							record.date(),
-							String.valueOf(record.size()),
-							record.user(),
-						}
-					)
+						writer.writeNext(
+								new String[]{
+										String.valueOf(record.id()),
+										record.species(),
+										record.location(),
+										record.date(),
+										String.valueOf(record.size()),
+										record.user(),
+								}
+						)
 				);
 				saveLable.setText("Saved data to: " + saveFile);
 			} catch (IOException err) {
@@ -74,26 +75,26 @@ public class RecordsForm {
 		});
 
 		table.addMouseListener(
-			new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					int row = table.rowAtPoint(e.getPoint());
+				new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						int row = table.rowAtPoint(e.getPoint());
 
-					if (table.columnAtPoint(e.getPoint()) == 6) {
-						if (
-							new ConfirmRemoveDialog(
-								"Are you sure you want to remove this record?",
-								"Yes",
-								"No"
-							)
-								.isOk()
-						) {
-							RecordManager.getInstance().remove(records.get(row).id());
-							((DefaultTableModel) table.getModel()).removeRow(row);
+						if (table.columnAtPoint(e.getPoint()) == 6) {
+							if (
+									new ConfirmRemoveDialog(
+											"Are you sure you want to remove this record?",
+											"Yes",
+											"No"
+									)
+											.isOk()
+							) {
+								RecordManager.getInstance().remove(records.get(row).id());
+								((DefaultTableModel) table.getModel()).removeRow(row);
+							}
 						}
 					}
 				}
-			}
 		);
 	}
 
@@ -101,12 +102,12 @@ public class RecordsForm {
 		saveLable.setText("");
 
 		records =
-			RecordManager
-				.getInstance()
-				.getSpecies(GUI.getInstance().getRecord().name());
+				RecordManager
+						.getInstance()
+						.getSpecies(GUI.getInstance().getRecord().name());
 
 		ArrayList<String> columnNames = new ArrayList<>(
-			Arrays.asList("ID", "Species", "Location", "Date", "Size", "User")
+				Arrays.asList("ID", "Species", "Location", "Date", "Size", "User")
 		);
 		boolean auth = UserManager.getInstance().isMod();
 
@@ -148,7 +149,7 @@ public class RecordsForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:675px:grow,fill:max(d;4px):noGrow", "center:367px:grow,center:32px:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel.setLayout(new FormLayout("fill:675px:grow,fill:max(d;4px):noGrow", "center:367px:grow,center:32px:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,center:9px:noGrow"));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		recordsScrollPane = new JScrollPane();
@@ -165,6 +166,8 @@ public class RecordsForm {
 		saveLable = new JLabel();
 		saveLable.setText("");
 		panel.add(saveLable, cc.xy(1, 5));
+		final Spacer spacer1 = new Spacer();
+		panel.add(spacer1, cc.xy(1, 6, CellConstraints.FILL, CellConstraints.DEFAULT));
 	}
 
 	private static Method $$$cachedGetBundleMethod$$$ = null;

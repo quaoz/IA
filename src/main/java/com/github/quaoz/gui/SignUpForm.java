@@ -16,11 +16,11 @@ import javax.swing.*;
 public class SignUpForm {
 
 	private static final Pattern alphanumericChecker = Pattern.compile(
-		"[^a-zA-Z0-9-]"
+			"[^a-zA-Z0-9-]"
 	);
 	// https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
 	private static final Pattern emailPattern = Pattern.compile(
-		"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+			"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
 	);
 	private JPanel panel;
 	private JTextField usernameField;
@@ -46,84 +46,84 @@ public class SignUpForm {
 		registeredButton.addActionListener(e -> check());
 
 		cancelButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		usernameField.addFocusListener(
-			new FocusAdapter() {
-				@Override
-				public void focusGained(FocusEvent e) {
-					super.focusGained(e);
+				new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						super.focusGained(e);
 
-					if (!e.isTemporary()) {
-						usernameValidLabel.setText(null);
-						usernameMessage.setText(null);
+						if (!e.isTemporary()) {
+							usernameValidLabel.setText(null);
+							usernameMessage.setText(null);
+						}
+					}
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						super.focusLost(e);
+						checkUsername();
 					}
 				}
-
-				@Override
-				public void focusLost(FocusEvent e) {
-					super.focusLost(e);
-					checkUsername();
-				}
-			}
 		);
 		emailField.addFocusListener(
-			new FocusAdapter() {
-				@Override
-				public void focusGained(FocusEvent e) {
-					super.focusGained(e);
+				new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						super.focusGained(e);
 
-					if (!e.isTemporary()) {
-						emailValidLabel.setText(null);
-						emailMessage.setText(null);
+						if (!e.isTemporary()) {
+							emailValidLabel.setText(null);
+							emailMessage.setText(null);
+						}
+					}
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						super.focusLost(e);
+						checkEmail();
 					}
 				}
-
-				@Override
-				public void focusLost(FocusEvent e) {
-					super.focusLost(e);
-					checkEmail();
-				}
-			}
 		);
 		passwordField.addFocusListener(
-			new FocusAdapter() {
-				@Override
-				public void focusGained(FocusEvent e) {
-					super.focusGained(e);
+				new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						super.focusGained(e);
 
-					if (!e.isTemporary()) {
-						passwordValidLabel.setText(null);
-						passwordMessage.setText(null);
+						if (!e.isTemporary()) {
+							passwordValidLabel.setText(null);
+							passwordMessage.setText(null);
+						}
+					}
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						super.focusLost(e);
+						checkPassword();
 					}
 				}
-
-				@Override
-				public void focusLost(FocusEvent e) {
-					super.focusLost(e);
-					checkPassword();
-				}
-			}
 		);
 		repeatPasswordField.addFocusListener(
-			new FocusAdapter() {
-				@Override
-				public void focusGained(FocusEvent e) {
-					super.focusGained(e);
+				new FocusAdapter() {
+					@Override
+					public void focusGained(FocusEvent e) {
+						super.focusGained(e);
 
-					if (!e.isTemporary()) {
-						repeatValidLabel.setText(null);
-						repeatMessage.setText(null);
+						if (!e.isTemporary()) {
+							repeatValidLabel.setText(null);
+							repeatMessage.setText(null);
+						}
+					}
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						super.focusLost(e);
+						checkPasswordRepeat();
 					}
 				}
-
-				@Override
-				public void focusLost(FocusEvent e) {
-					super.focusLost(e);
-					checkPasswordRepeat();
-				}
-			}
 		);
 
 		usernameField.addActionListener(e -> check());
@@ -134,18 +134,18 @@ public class SignUpForm {
 
 	private void check() {
 		if (
-			checkUsername() &&
-			checkEmail() &&
-			checkPassword() &&
-			checkPasswordRepeat()
+				checkUsername() &&
+						checkEmail() &&
+						checkPassword() &&
+						checkPasswordRepeat()
 		) {
 			UserManager
-				.getInstance()
-				.addUser(
-					usernameField.getText().strip(),
-					emailField.getText().strip(),
-					passwordField.getPassword()
-				);
+					.getInstance()
+					.addUser(
+							usernameField.getText().strip(),
+							emailField.getText().strip(),
+							passwordField.getPassword()
+					);
 			UserManager.getInstance().setUser(usernameField.getText().strip());
 			GUI.getInstance().render(GUI.Content.HOME);
 		}
@@ -158,7 +158,7 @@ public class SignUpForm {
 			if (alphanumericChecker.matcher(username).find()) {
 				usernameValidLabel.setText("✗");
 				usernameMessage.setText(
-					"Username can only contain alphanumeric characters and dash"
+						"Username can only contain alphanumeric characters and dash"
 				);
 				return false;
 			} else if (username.length() > 64) {
@@ -273,16 +273,16 @@ public class SignUpForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:d:grow"));
+		panel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:d:grow"));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		usernameField = new JTextField();
 		CellConstraints cc = new CellConstraints();
 		panel.add(usernameField, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer1 = new Spacer();
-		panel.add(spacer1, cc.xy(7, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer1, cc.xywh(6, 1, 1, 31, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer2 = new Spacer();
-		panel.add(spacer2, cc.xy(1, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer2, cc.xywh(1, 1, 1, 31, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer3 = new Spacer();
 		panel.add(spacer3, cc.xy(3, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final Spacer spacer4 = new Spacer();

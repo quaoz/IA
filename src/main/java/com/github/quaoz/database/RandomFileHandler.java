@@ -7,7 +7,11 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
 import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 /**
  * A file access class that uses {@link RandomAccessFile} to read and write data
@@ -31,7 +35,7 @@ public class RandomFileHandler {
 
 			return randomAccessFile.readByte();
 		} catch (IOException e) {
-			System.err.printf("Failed to read byte at %d in %s", pos, file);
+			Logger.error(e,"Failed to read byte at " + pos + " in " + file.getPath());
 			throw new RuntimeException(e);
 		}
 	}
@@ -56,12 +60,7 @@ public class RandomFileHandler {
 
 			return bytes;
 		} catch (IOException e) {
-			System.err.printf(
-				"Failed to read %d bytes at %d in %s",
-				numBytes,
-				pos,
-				file.getAbsolutePath()
-			);
+			Logger.error(e, "Failed to read " + numBytes + " bytes at " + pos + " in " + file.getPath());
 			throw new RuntimeException(e);
 		}
 	}
@@ -83,7 +82,7 @@ public class RandomFileHandler {
 
 			return randomAccessFile.readLine();
 		} catch (IOException e) {
-			System.err.printf("Failed to read line at %d in %s", pos, file);
+			Logger.error(e, "Failed to read line at " + pos + " in " + file.getPath());
 			throw new RuntimeException(e);
 		}
 	}
@@ -106,7 +105,7 @@ public class RandomFileHandler {
 
 			randomAccessFile.writeByte(b);
 		} catch (IOException e) {
-			System.err.printf("Failed to write byte %s at %d in %s", b, pos, file);
+			Logger.error(e, "Failed to write byte " + b + " bytes at " + pos + " in " + file.getPath());
 			throw new RuntimeException(e);
 		}
 	}
@@ -129,12 +128,8 @@ public class RandomFileHandler {
 
 			randomAccessFile.write(bytes);
 		} catch (IOException e) {
-			System.err.printf(
-				"Failed to write bytes %s at %d in %s",
-				Arrays.toString(bytes),
-				pos,
-				file.getAbsolutePath()
-			);
+			Logger.error(e, "Failed to write bytes " + Arrays.toString(bytes)
+					+ " bytes at " + pos + " in " + file.getPath());
 			throw new RuntimeException(e);
 		}
 	}
@@ -157,7 +152,7 @@ public class RandomFileHandler {
 
 			randomAccessFile.writeUTF(line);
 		} catch (IOException e) {
-			System.err.printf("Failed to write line %s at %d in %s", line, pos, file);
+			Logger.error("Failed to write line " + line + " at " + pos + " in " + file.getPath());
 			throw new RuntimeException(e);
 		}
 	}
@@ -191,7 +186,7 @@ public class RandomFileHandler {
 			// Trim the file
 			randomAccessFile.setLength(length);
 		} catch (IOException e) {
-			System.err.printf("Failed to delete line at %d in %s", index, file);
+			Logger.error(e, "Failed to delete line at " + index + " in " + file);
 			throw new RuntimeException(e);
 		}
 	}
@@ -238,7 +233,7 @@ public class RandomFileHandler {
 			// Seek to the last line in the file
 			randomAccessFile.seek(index);
 
-			while (index > pos) { // =?
+			while (index > pos) {
 				// Copy the current line one place forwards
 				randomAccessFile.read(line, 0, lineLength);
 				randomAccessFile.seek(index + lineLength);
@@ -253,12 +248,7 @@ public class RandomFileHandler {
 			randomAccessFile.seek(index + lineLength);
 			randomAccessFile.write(bytes);
 		} catch (IOException e) {
-			System.err.printf(
-				"Failed to insert bytes %s at %d in %s",
-				Arrays.toString(bytes),
-				pos,
-				file
-			);
+			Logger.error(e, "Failed to insert bytes " + Arrays.toString(bytes) + " at " + pos + " in " + file);
 			throw new RuntimeException(e);
 		}
 	}
@@ -287,7 +277,7 @@ public class RandomFileHandler {
 				try {
 					return randomAccessFile.length() > pos;
 				} catch (IOException e) {
-					System.err.println("Failed to check if there is a next line");
+					Logger.error(e, "Failed to check if there is a next line");
 					throw new RuntimeException(e);
 				}
 			}

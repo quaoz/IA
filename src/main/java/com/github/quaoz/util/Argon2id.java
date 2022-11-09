@@ -3,6 +3,9 @@ package com.github.quaoz.util;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 
+// https://www.twelve21.io/how-to-use-argon2-for-password-hashing-in-java/
+// https://www.twelve21.io/how-to-choose-the-right-parameters-for-argon2/
+// https://cryptobook.nakov.com/mac-and-key-derivation/password-encryption#secure-kdf-based-password-hashing-recommended
 public class Argon2id {
 
 	private static final int ITERATIONS = 4;
@@ -17,10 +20,6 @@ public class Argon2id {
 		SALT_LENGTH,
 		HASH_LENGTH
 	);
-
-	// https://www.twelve21.io/how-to-use-argon2-for-password-hashing-in-java/
-	// https://www.twelve21.io/how-to-choose-the-right-parameters-for-argon2/
-	// https://cryptobook.nakov.com/mac-and-key-derivation/password-encryption#secure-kdf-based-password-hashing-recommended
 
 	/**
 	 * Returns the hashed password

@@ -24,7 +24,7 @@ public class SignInForm {
 		usernameField.addActionListener(e -> login());
 		passwordField.addActionListener(e -> login());
 		cancelButton.addActionListener(e ->
-			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 	}
 
@@ -75,9 +75,9 @@ public class SignInForm {
 		final Spacer spacer2 = new Spacer();
 		panel.add(spacer2, cc.xy(3, 15, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final Spacer spacer3 = new Spacer();
-		panel.add(spacer3, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer3, cc.xywh(5, 1, 1, 15, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer4 = new Spacer();
-		panel.add(spacer4, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer4, cc.xywh(1, 1, 1, 15, CellConstraints.FILL, CellConstraints.DEFAULT));
 		usernameLabel = new JLabel();
 		this.$$$loadLabelText$$$(usernameLabel, this.$$$getMessageFromBundle$$$("ia", "username"));
 		panel.add(usernameLabel, cc.xy(3, 3));

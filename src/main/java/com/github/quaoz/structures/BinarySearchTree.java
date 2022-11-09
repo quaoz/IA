@@ -5,6 +5,11 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Binary Tree implementation
+ *
+ * @param <T> The trees type
+ */
 public class BinarySearchTree<T extends Comparable<T>> {
 
 	private BinaryNode<T> root;
@@ -39,7 +44,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		BinaryNode<T> left = root.left;
 		BinaryNode<T> right = root.right;
 
-		// If the root has no children, set the root to its right child
+		// If the root has no left children, set the root to its right child
 		if (left == null) {
 			root = right;
 		} else {
@@ -50,8 +55,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 			}
 
 			// Set the rightmost node's right child to the root's right child (append the right
-			// subtree to
-			// the left subtree)
+			// subtree to the left subtree)
 			rightMost.right = right;
 			root = left;
 		}
@@ -155,7 +159,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 * @return The minimum value in the tree
 	 */
 	@Contract(pure = true)
-	private @NotNull BinaryNode<T> min(BinaryNode<T> node) {
+	private @NotNull BinaryNode<T> min(@NotNull BinaryNode<T> node) {
 		if (node.left == null) {
 			return node;
 		}

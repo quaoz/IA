@@ -23,10 +23,10 @@ touch code.txt;
 
   # Print file tree, uses fd and as-tree instead of tree as it has slightly cleaner syntax and ensures that the same
   # files are included in the tree as are included in the file
-  fd -E "docs" -E "*.jar" -E "*.form" -E "gradlew" -E "*.sh" -E "*.txt" -E "LICENSE" --type file | as-tree --color never;
+  fd -E "docs" -E "*.jar" -E "*.form" -E "gradlew*" -E "*.sh" -E "*.txt" -E "LICENSE" --type file | as-tree --color never;
   echo;
 
   # Finds files, echos the name and path in a box and outputs the files contents
-  fd -E "docs" -E "*.jar" -E "*.form" -E "gradlew" -E "*.sh" -E "*.txt" -E "LICENSE" --type file --exec bash -c \
+  fd -E "docs" -E "*.jar" -E "*.form" -E "gradlew*" -E "*.sh" -E "*.txt" -E "LICENSE" --type file --exec bash -c \
   "echo -e 'File: {/}\nPath: {}' | boxes -a hcvcjc -d stone && cat {} && echo";
 } >> code.txt

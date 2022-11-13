@@ -1,8 +1,9 @@
 package com.github.quaoz.structures;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
-public class Pair<K, V> {
+public class Pair<K, V extends Comparable<V>>
+	implements Comparable<Pair<K, V>> {
 
 	private K key;
 	private V value;
@@ -30,24 +31,11 @@ public class Pair<K, V> {
 
 	@Override
 	public String toString() {
-		return "Pair{" + "key=" + key + ", value=" + value + '}';
+		return "Pair{ " + "key = " + key + ", value = " + value + " }";
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || this.getClass() != o.getClass()) return false;
-
-		Pair<?, ?> pair = (Pair<?, ?>) o;
-
-		if (!Objects.equals(key, pair.key)) return false;
-		return Objects.equals(value, pair.value);
-	}
-
-	@Override
-	public int hashCode() {
-		int result = key != null ? key.hashCode() : 0;
-		result = 31 * result + (value != null ? value.hashCode() : 0);
-		return result;
+	public int compareTo(@NotNull Pair<K, V> o) {
+		return this.getValue().compareTo(o.getValue());
 	}
 }

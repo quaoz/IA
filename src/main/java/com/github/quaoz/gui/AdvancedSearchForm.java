@@ -4,6 +4,7 @@ import com.github.quaoz.managers.MothManager;
 import com.github.quaoz.managers.RecordManager;
 import com.github.quaoz.structures.Moth;
 import com.github.quaoz.structures.Pair;
+import com.github.quaoz.util.DualPivotIntroSort;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 import javax.swing.*;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 public class AdvancedSearchForm {
 
@@ -42,8 +44,8 @@ public class AdvancedSearchForm {
 				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
-		sizeLowerSpinner.setModel(new SpinnerNumberModel(0, 0, 30, 0.1));
-		sizeUpperSpinner.setModel(new SpinnerNumberModel(1, 0, 30, 0.1));
+		sizeLowerSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 30.0, 0.1));
+		sizeUpperSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 30.0, 0.1));
 		flightStartSpinner.setModel(
 				new SpinnerNumberModel(
 						Calendar.getInstance().get(Calendar.MONTH) + 1,
@@ -68,6 +70,8 @@ public class AdvancedSearchForm {
 			String food = foodField.getText().strip();
 			String location = locationField.getText().strip();
 
+			// Extract size data
+			boolean hasSize = true;
 			Double sizeLower = null;
 			Double sizeUpper = null;
 
@@ -81,11 +85,15 @@ public class AdvancedSearchForm {
 			} catch (ClassCastException ignored) {
 			}
 
-			if (sizeLower == null) {
-				sizeLower = sizeUpper;
-			} else if (sizeUpper == null) {
-				sizeUpper = sizeLower;
-			} else {
+			if (sizeLower == null || sizeLower == 0.0) {
+				if (sizeUpper != null && sizeUpper != 0.0) {
+					sizeLower = sizeUpper; // has big no small
+				} else {
+					hasSize = false; // no big no small
+				}
+			} else if (sizeUpper == null || sizeUpper == 0.0) {
+				sizeUpper = sizeLower; // no big has small
+			} else { // has big has small
 				if (sizeLower > sizeUpper) {
 					Double tmp = sizeLower;
 					sizeLower = sizeUpper;
@@ -93,6 +101,7 @@ public class AdvancedSearchForm {
 				}
 			}
 
+			// Extract flight data
 			Integer flightStart = null;
 			Integer flightEnd = null;
 
@@ -120,7 +129,10 @@ public class AdvancedSearchForm {
 
 			ArrayList<Pair<Moth, Double>> records = new ArrayList<>();
 
-			if (sizeLower != null) {
+			// Collects the base set of records depending on what data is avaliable
+			if (!location.isBlank()) {
+				records = RecordManager.getInstance().searchLocation(location);
+			} else if (hasSize) {
 				records =
 						MothManager
 								.getInstance()
@@ -134,14 +146,14 @@ public class AdvancedSearchForm {
 											Double sizeLower2 = Double.parseDouble(s2.split(":")[0]);
 											Double sizeUpper2 = Double.parseDouble(s2.split(":")[1]);
 
-											Double difference1 = Math.abs(sizeLower1 - sizeLower2);
-											Double difference2 = Math.abs(sizeUpper1 - sizeUpper2);
+											// Higher difference means sizes are less similar, max difference is 30
+											double difference1 = Math.abs(sizeLower1 - sizeLower2);
+											double difference2 = Math.abs(sizeUpper1 - sizeUpper2);
 
-											return -(difference1 + difference2);
+											// Converts difference to a value from 0 to 100, 100 being most similar
+											return (5f / 3f) * (60 - difference1 - difference2);
 										}
 								);
-			} else if (!location.isBlank()) {
-				records = RecordManager.getInstance().searchLocation(location);
 			} else if (flightEnd != null) {
 				records =
 						MothManager
@@ -156,10 +168,12 @@ public class AdvancedSearchForm {
 											Integer flightStart2 = Integer.parseInt(s2.split(":")[0]);
 											Integer flightEnd2 = Integer.parseInt(s2.split(":")[1]);
 
-											Integer difference1 = Math.abs(flightStart1 - flightStart2);
-											Integer difference2 = Math.abs(flightEnd1 - flightEnd2);
+											// Higher difference means sizes are less similar, max difference is 12
+											int difference1 = Math.abs(flightStart1 - flightStart2);
+											int difference2 = Math.abs(flightEnd1 - flightEnd2);
 
-											return -(difference1 + difference2);
+											// Converts difference to a value from 0 to 100, 100 being most similar
+											return (25f / 6f) * (24 - difference1 - difference2);
 										}
 								);
 			} else if (!habitat.isBlank()) {
@@ -169,6 +183,41 @@ public class AdvancedSearchForm {
 			} else if (!name.isBlank()) {
 				records = MothManager.getInstance().collectMoths(name, 0, 100);
 			}
+
+			// Filter by size
+			if (!location.isBlank() && hasSize) {
+				for (Pair<Moth, Double> record : records) {
+					double difference1 = Math.abs(record.getKey().sizeLower() - sizeLower);
+					double difference2 = Math.abs(record.getKey().sizeUpper() - sizeUpper);
+					record.setValue(record.getValue() + (5f / 3f) * (60 - difference1 - difference2));
+				}
+			}
+
+			// Filter by flight time
+			if ((flightEnd != null) && (!location.isBlank() || hasSize)) {
+				for (Pair<Moth, Double> record : records) {
+					int difference1 = Math.abs(record.getKey().flightStart() - flightStart);
+					int difference2 = Math.abs(record.getKey().flightEnd() - flightEnd);
+					record.setValue(record.getValue() + (25f / 6f) * (24 - difference1 - difference2));
+				}
+			}
+
+			// Filter by habitat
+			if ((!habitat.isBlank()) && (flightEnd != null || !location.isBlank() || hasSize)) {
+				records.forEach(record -> record.setValue(record.getValue() + FuzzySearch.weightedRatio(record.getKey().habitat(), habitat)));
+			}
+
+			// Filter by food
+			if ((!food.isBlank()) && (!habitat.isBlank() || flightEnd != null || !location.isBlank() || hasSize)) {
+				records.forEach(record -> record.setValue(record.getValue() + FuzzySearch.weightedRatio(record.getKey().food(), food)));
+			}
+
+			// Filter by name
+			if ((!name.isBlank()) && (!food.isBlank() || !habitat.isBlank() || flightEnd != null || !location.isBlank() || hasSize)) {
+				records.forEach(record -> record.setValue(record.getValue() + FuzzySearch.weightedRatio(record.getKey().name(), name)));
+			}
+
+			records = new ArrayList<>(DualPivotIntroSort.sort(records));
 
 			SearchResultsForm.setSearchResults(records);
 			GUI.getInstance().render(GUI.Content.SEARCH_RESULTS);

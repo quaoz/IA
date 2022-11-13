@@ -72,38 +72,6 @@ public class Comparisons {
 	}
 
 	/**
-	 * Method to see if the base is equal to the value
-	 *
-	 * @param base  Base value to be compared to
-	 * @param value Value to compare
-	 * @param <T>   The value type
-	 *
-	 * @return boolean Whether the base is smalled than the value
-	 */
-	public static <T extends Comparable<T>> boolean equal(
-		@NotNull T base,
-		T value
-	) {
-		return base.compareTo(value) == 0;
-	}
-
-	/**
-	 * Method to see if the base is not equal to the value
-	 *
-	 * @param base  Base value to be compared to
-	 * @param value Value to compare
-	 * @param <T>   The value type
-	 *
-	 * @return boolean Whether the base is smalled than the value
-	 */
-	public static <T extends Comparable<T>> boolean notEqual(
-		@NotNull T base,
-		T value
-	) {
-		return base.compareTo(value) != 0;
-	}
-
-	/**
 	 * Returns the bigger value
 	 *
 	 * @param a   The first argument to compare

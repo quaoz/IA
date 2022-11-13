@@ -1,5 +1,6 @@
 package com.github.quaoz.structures;
 
+import com.github.quaoz.util.Comparisons;
 import java.util.ArrayList;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +87,8 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	 */
 	private void add(@NotNull BinaryNode<T> node, @NotNull T value) {
 		// If the value is greater than the current node's value, go right
-		if (value.compareTo(node.value) > 0) {
+
+		if (Comparisons.bigger(value, node.value)) {
 			if (node.right == null) {
 				node.right = new BinaryNode<>(value);
 			} else {
@@ -125,26 +127,29 @@ public class BinarySearchTree<T extends Comparable<T>> {
 		// Return null if the tree is empty
 		if (node == null) {
 			return null;
-		} else if (value.compareTo(root.value) == 0) {
-			// If the value is the root, remove the root
-			return removeRoot();
-		} else if (value.compareTo(node.value) > 0) {
-			// If the value is greater than the current node's value, go right
-			node.right = remove(node.right, value);
-		} else if (value.compareTo(node.value) < 0) {
-			// Otherwise, go left
-			node.left = remove(node.left, value);
 		} else {
-			// If the value is the current node's value, remove it
-			if (node.left == null) {
-				return node.right;
-			} else if (node.right == null) {
-				return node.left;
+			int comparison = value.compareTo(node.value);
+			if (value.compareTo(root.value) == 0) {
+				// If the value is the root, remove the root
+				return removeRoot();
+			} else if (comparison > 0) {
+				// If the value is greater than the current node's value, go right
+				node.right = remove(node.right, value);
+			} else if (comparison < 0) {
+				// Otherwise, go left
+				node.left = remove(node.left, value);
 			} else {
-				// If the node has two children, replace it with its left child's rightmost child
-				BinaryNode<T> temp = node;
-				node = min(node.right);
-				node.right = remove(node.right, temp.value);
+				// If the value is the current node's value, remove it
+				if (node.left == null) {
+					return node.right;
+				} else if (node.right == null) {
+					return node.left;
+				} else {
+					// If the node has two children, replace it with its left child's rightmost child
+					BinaryNode<T> temp = node;
+					node = min(node.right);
+					node.right = remove(node.right, temp.value);
+				}
 			}
 		}
 
@@ -325,15 +330,18 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	private boolean contains(BinaryNode<T> node, T value) {
 		if (node == null) {
 			return false;
-		} else if (node.value.compareTo(value) > 0) {
-			// Go left if the value is less than the current node
-			return contains(node.left, value);
-		} else if (node.value.compareTo(value) < 0) {
-			// Go right if the value is greater than the current node
-			return contains(node.right, value);
 		} else {
-			// Return true if the value is equal to the current node
-			return true;
+			int comparison = node.value.compareTo(value);
+			if (comparison > 0) {
+				// Go left if the value is less than the current node
+				return contains(node.left, value);
+			} else if (comparison < 0) {
+				// Go right if the value is greater than the current node
+				return contains(node.right, value);
+			} else {
+				// Return true if the value is equal to the current node
+				return true;
+			}
 		}
 	}
 
@@ -359,15 +367,18 @@ public class BinarySearchTree<T extends Comparable<T>> {
 	private T get(BinaryNode<T> node, T value) {
 		if (node == null) {
 			return null;
-		} else if (node.value.compareTo(value) > 0) {
-			// Go left if the value is less than the current node
-			return get(node.left, value);
-		} else if (node.value.compareTo(value) < 0) {
-			// Go right if the value is greater than the current node
-			return get(node.right, value);
 		} else {
-			// Return the value if it is equal to the current node
-			return node.value;
+			int comparison = node.value.compareTo(value);
+			if (comparison > 0) {
+				// Go left if the value is less than the current node
+				return get(node.left, value);
+			} else if (comparison < 0) {
+				// Go right if the value is greater than the current node
+				return get(node.right, value);
+			} else {
+				// Return the value if it is equal to the current node
+				return node.value;
+			}
 		}
 	}
 

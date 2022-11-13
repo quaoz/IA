@@ -156,8 +156,10 @@ public class RecordManager implements Closeable {
 				List<String> split1 = new ArrayList<>(List.of(s1.split(", ")));
 				List<String> split2 = new ArrayList<>(List.of(s2.split(", ")));
 
-				double ratio = 0.0;
+				// If none match ratio = 0, if all match ratio = 20
+				double ratio = 5.0;
 
+				// Remove null fields
 				for (int i = 0; i < split1.size(); i++) {
 					if (
 						split1.get(i).strip().equals("null") ||
@@ -177,7 +179,8 @@ public class RecordManager implements Closeable {
 					}
 				}
 
-				return ratio;
+				// Converts ratio to a number from 0 to 100
+				return ratio * 5;
 			}
 		);
 

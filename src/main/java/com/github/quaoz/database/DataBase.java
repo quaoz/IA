@@ -2,6 +2,7 @@ package com.github.quaoz.database;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.quaoz.structures.Pair;
+import com.github.quaoz.util.Comparisons;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -126,11 +127,13 @@ public class DataBase implements Closeable {
 			String base = new String(
 				RandomFileHandler.readBytes(location, 0, config.recordLength)
 			);
-			int comparison = record
-				.substring(0, config.fields[0])
-				.compareTo(base.substring(0, config.fields[0]));
 
-			if (comparison > 0) {
+			if (
+				Comparisons.bigger(
+					record.substring(0, config.fields[0]),
+					base.substring(0, config.fields[0])
+				)
+			) {
 				RandomFileHandler.writeBytes(
 					location,
 					config.recordLength,

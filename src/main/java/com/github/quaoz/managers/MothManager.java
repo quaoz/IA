@@ -172,8 +172,11 @@ public class MothManager implements Closeable {
 	) {
 		field = field.strip();
 
-		ArrayList<Pair<String, Double>> rawMoths = new ArrayList<>();
-		mothsDatabase
+		ArrayList<Pair<String, Double>> rawMoths = new ArrayList<>(
+			mothsDatabase.collect(field, compField, count, customRatio)
+		);
+
+		/*mothsDatabase
 			.collect(field, compField)
 			.forEach(s -> rawMoths.add(new Pair<>(s, 100.0)));
 
@@ -181,7 +184,7 @@ public class MothManager implements Closeable {
 			rawMoths.addAll(
 				mothsDatabase.collect(field, compField, count, customRatio)
 			);
-		}
+		}*/
 
 		ArrayList<Pair<Moth, Double>> moths = new ArrayList<>();
 

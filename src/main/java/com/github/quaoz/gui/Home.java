@@ -1,6 +1,9 @@
 package com.github.quaoz.gui;
 
 import com.github.quaoz.managers.UserManager;
+import com.intellij.uiDesigner.core.Spacer;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
 import javax.swing.*;
 
@@ -34,13 +37,25 @@ public class Home {
 	 * @noinspection ALL
 	 */
 	private void $$$setupUI$$$() {
-		createUIComponents();
 		panel = new JPanel();
-		panel.setLayout(new BorderLayout(0, 0));
+		panel.setLayout(
+			new FormLayout(
+				"center:d:grow",
+				"center:max(d;4px):noGrow,top:3dlu:noGrow,center:p:noGrow,center:p:noGrow"
+			)
+		);
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
-		panel.add(loggedOutBar, BorderLayout.NORTH);
-		panel.add(loggedInBar, BorderLayout.CENTER);
+		loggedInBar = new LoggedInBar();
+		CellConstraints cc = new CellConstraints();
+		panel.add(loggedInBar, cc.xy(1, 4));
+		loggedOutBar = new LoggedOutBar();
+		panel.add(loggedOutBar, cc.xy(1, 3));
+		final Spacer spacer1 = new Spacer();
+		panel.add(
+			spacer1,
+			cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT)
+		);
 	}
 
 	/**

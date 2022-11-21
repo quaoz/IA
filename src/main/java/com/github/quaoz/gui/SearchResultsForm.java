@@ -4,6 +4,7 @@ import com.github.quaoz.managers.MothManager;
 import com.github.quaoz.managers.UserManager;
 import com.github.quaoz.structures.Moth;
 import com.github.quaoz.structures.Pair;
+import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
@@ -120,7 +121,7 @@ public class SearchResultsForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		backButton = new JButton();
@@ -132,6 +133,8 @@ public class SearchResultsForm {
 		table = new JTable();
 		table.setAutoCreateRowSorter(false);
 		mothsScrollPane.setViewportView(table);
+		final Spacer spacer1 = new Spacer();
+		panel.add(spacer1, cc.xy(1, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 	}
 
 	private static Method $$$cachedGetBundleMethod$$$ = null;

@@ -47,7 +47,7 @@ dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
 
     // JSON
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
 
     // CSV
     implementation("com.opencsv:opencsv:5.7.1")

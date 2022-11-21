@@ -57,7 +57,7 @@ dependencies {
 
     // GUI
     implementation("com.jgoodies:jgoodies-forms:1.9.0")
-    implementation("com.jetbrains.intellij.java:java-gui-forms-rt:221.5921.27")
+    implementation("com.jetbrains.intellij.java:java-gui-forms-rt:222.4459.20")
 
     // Logging
     implementation("org.tinylog:tinylog-api:2.5.0")

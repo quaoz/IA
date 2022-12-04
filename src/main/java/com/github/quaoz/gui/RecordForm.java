@@ -78,6 +78,8 @@ public class RecordForm {
 				originalImage.getScaledInstance(600, newHeight, Image.SCALE_SMOOTH)
 			);
 			image.setIcon(scaledIcon);
+		} else {
+			image.setIcon(null);
 		}
 
 		return panel;

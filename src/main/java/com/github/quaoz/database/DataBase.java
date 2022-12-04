@@ -251,7 +251,7 @@ public class DataBase implements Closeable {
 			return null;
 		}
 
-		String cached = cache.get(identifier);
+		String cached = null; //cache.get(identifier);
 		return config.recordCount > 0
 			? cached == null ? get(identifier, 0, config.recordCount) : cached
 			: null;

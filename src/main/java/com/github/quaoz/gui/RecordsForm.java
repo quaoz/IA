@@ -32,7 +32,7 @@ public class RecordsForm {
 	private JTable table;
 	private JScrollPane recordsScrollPane;
 	private JButton saveButton;
-	private JLabel saveLable;
+	private JLabel saveLabel;
 
 	public RecordsForm() {
 		$$$setupUI$$$();
@@ -44,8 +44,12 @@ public class RecordsForm {
 		);
 
 		saveButton.addActionListener(e -> {
+			JFileChooser fileChooser = new JFileChooser(
+				Paths.get(System.getProperty("user.home"), "Downloads").toFile()
+			);
+			fileChooser.showOpenDialog(panel);
 			File saveFile = Paths
-				.get(System.getProperty("user.home"), "Downloads")
+				.get(fileChooser.getCurrentDirectory().toURI())
 				.resolve("export-" + Instant.now() + ".csv")
 				.toFile();
 
@@ -67,7 +71,7 @@ public class RecordsForm {
 						}
 					)
 				);
-				saveLable.setText("Saved data to: " + saveFile);
+				saveLabel.setText("Saved data to: " + saveFile);
 			} catch (IOException err) {
 				Logger.error(err, "Unable to write CSV file at " + saveFile.getPath());
 				throw new RuntimeException(err);
@@ -99,7 +103,7 @@ public class RecordsForm {
 	}
 
 	public JPanel resolve() {
-		saveLable.setText("");
+		saveLabel.setText("");
 
 		records =
 			RecordManager
@@ -163,9 +167,9 @@ public class RecordsForm {
 		saveButton = new JButton();
 		saveButton.setText("Save As CSV");
 		panel.add(saveButton, cc.xy(1, 3));
-		saveLable = new JLabel();
-		saveLable.setText("");
-		panel.add(saveLable, cc.xy(1, 5));
+		saveLabel = new JLabel();
+		saveLabel.setText("");
+		panel.add(saveLabel, cc.xy(1, 5));
 		final Spacer spacer1 = new Spacer();
 		panel.add(spacer1, cc.xy(1, 6, CellConstraints.FILL, CellConstraints.DEFAULT));
 	}

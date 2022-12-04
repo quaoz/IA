@@ -33,17 +33,6 @@ public class Profile {
 		// TODO: allow users to remove records
 		$$$setupUI$$$();
 
-		approveAuth.setVisible(false);
-
-		switch (UserManager.getInstance().getUserAuthLevel()) {
-			case USER -> requestAuth.setText("Request Moderator Status");
-			case MODERATOR -> requestAuth.setText("Request Admin Status");
-			case ADMIN -> {
-				approveAuth.setVisible(true);
-				requestAuth.setVisible(false);
-			}
-		}
-
 		// Hacky way to prevent editing
 		table.setDefaultEditor(Object.class, null);
 		table.addMouseListener(
@@ -115,6 +104,7 @@ public class Profile {
 		table.setModel(new DefaultTableModel(data, columnNames.toArray()));
 
 		approveAuth.setVisible(false);
+		requestAuth.setVisible(true);
 
 		switch (UserManager.getInstance().getUserAuthLevel()) {
 			case USER -> requestAuth.setText("Request Moderator Status");
@@ -219,7 +209,6 @@ public class Profile {
 	}
 
 	private void createUIComponents() {
-		// TODO: place custom component creation code here
 		profileBar = new ProfileBar();
 	}
 

@@ -74,8 +74,6 @@ public class RecordManager implements Closeable {
 			size,
 			user
 		);
-		System.out.println(record);
-		System.out.println(record.length());
 		recordsDatabase.add(record);
 	}
 

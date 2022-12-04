@@ -63,6 +63,7 @@ public class AdvancedSearchForm {
 				)
 		);
 
+		// forgot whats wrong with this, probably fixed when i made it better
 		// FIXME
 		searchButton.addActionListener(e -> {
 			String name = nameField.getText().strip();
@@ -269,7 +270,7 @@ public class AdvancedSearchForm {
 		this.$$$loadLabelText$$$(locationLabel, this.$$$getMessageFromBundle$$$("ia", "location"));
 		panel.add(locationLabel, cc.xy(3, 7));
 		sizeLabel = new JLabel();
-		this.$$$loadLabelText$$$(sizeLabel, this.$$$getMessageFromBundle$$$("ia", "size"));
+		sizeLabel.setText("Wingspan (cm)");
 		panel.add(sizeLabel, cc.xy(3, 9));
 		flightTimeLabel = new JLabel();
 		this.$$$loadLabelText$$$(flightTimeLabel, this.$$$getMessageFromBundle$$$("ia", "flies.from"));

@@ -47,7 +47,7 @@ dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
 
     // JSON
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
 
     // CSV
     implementation("com.opencsv:opencsv:5.7.1")
@@ -70,7 +70,7 @@ dependencies {
     implementation("com.byteowls:jopencage:1.4.0")
 
     // Dotenv
-    implementation("io.github.cdimascio:dotenv-java:2.2.4")
+    implementation("io.github.cdimascio:dotenv-java:2.3.1")
 
     // FlatLaf
     implementation("com.formdev:flatlaf:2.6")

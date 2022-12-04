@@ -1,14 +1,18 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.Main;
 import com.github.quaoz.managers.UserManager;
 import com.github.quaoz.structures.Moth;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
+import java.io.File;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 import java.text.DateFormatSymbols;
 import java.util.ResourceBundle;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.*;
 
 public class RecordForm {
@@ -24,11 +28,11 @@ public class RecordForm {
 	private JButton recordsButton;
 	private LoggedInBar loggedInBar;
 	private LoggedOutBar loggedOutBar;
+	private JLabel image;
 
 	public RecordForm() {
 		$$$setupUI$$$();
 		recordsButton.addActionListener(e -> {
-			// TODO: get records
 			GUI.getInstance().setRecord(moth);
 			GUI.getInstance().render(GUI.Content.RECORDS);
 		});
@@ -55,6 +59,27 @@ public class RecordForm {
 		habitatLabel.setText("Habitat: " + moth.habitat());
 		foodSourceLabel.setText("Food sources: " + moth.food());
 
+		File[] mothImages = Main
+			.getInstance()
+			.getInstallDir()
+			.resolve(Paths.get("images", moth.name()))
+			.toFile()
+			.listFiles();
+
+		if (mothImages != null) {
+			int index = ThreadLocalRandom.current().nextInt(mothImages.length);
+			ImageIcon originalIcon = new ImageIcon(mothImages[index].getPath());
+			Image originalImage = originalIcon.getImage();
+
+			int newHeight = (int) (
+				originalImage.getHeight(null) * (600.0 / originalImage.getWidth(null))
+			);
+			ImageIcon scaledIcon = new ImageIcon(
+				originalImage.getScaledInstance(600, newHeight, Image.SCALE_SMOOTH)
+			);
+			image.setIcon(scaledIcon);
+		}
+
 		return panel;
 	}
 
@@ -69,37 +94,37 @@ public class RecordForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow,fill:p:grow,fill:d:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:p:noGrow,center:p:noGrow,center:23px:noGrow,center:15px:noGrow,center:18px:noGrow,top:10dlu:noGrow,center:16px:noGrow,center:17px:noGrow,center:17px:noGrow,top:3dlu:noGrow,center:23px:noGrow,center:max(d;4px):noGrow"));
+		panel.setLayout(new FormLayout("fill:d:grow,fill:p:grow,fill:d:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:p:noGrow,center:p:noGrow,center:25px:noGrow,center:p:noGrow,center:26px:noGrow,center:15px:noGrow,center:18px:noGrow,top:10dlu:noGrow,center:16px:noGrow,center:17px:noGrow,center:17px:noGrow,top:3dlu:noGrow,center:23px:noGrow,center:max(d;4px):noGrow"));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		sciNameLabel = new JLabel();
 		sciNameLabel.setText("");
 		CellConstraints cc = new CellConstraints();
-		panel.add(sciNameLabel, cc.xy(2, 7));
+		panel.add(sciNameLabel, cc.xy(2, 9));
 		recordsButton = new JButton();
 		this.$$$loadButtonText$$$(recordsButton, this.$$$getMessageFromBundle$$$("ia", "view.records"));
-		panel.add(recordsButton, cc.xy(2, 14));
+		panel.add(recordsButton, cc.xy(2, 16));
 		final Spacer spacer1 = new Spacer();
-		panel.add(spacer1, cc.xywh(3, 6, 1, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer1, cc.xywh(3, 8, 1, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer2 = new Spacer();
-		panel.add(spacer2, cc.xywh(1, 6, 1, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer2, cc.xywh(1, 8, 1, 9, CellConstraints.FILL, CellConstraints.DEFAULT));
 		sizeLabel = new JLabel();
 		sizeLabel.setText("");
-		panel.add(sizeLabel, cc.xy(2, 8));
+		panel.add(sizeLabel, cc.xy(2, 10));
 		habitatLabel = new JLabel();
 		habitatLabel.setText("");
-		panel.add(habitatLabel, cc.xy(2, 11));
+		panel.add(habitatLabel, cc.xy(2, 13));
 		flightTimeLabel = new JLabel();
 		flightTimeLabel.setText("");
-		panel.add(flightTimeLabel, cc.xy(2, 10));
+		panel.add(flightTimeLabel, cc.xy(2, 12));
 		foodSourceLabel = new JLabel();
 		foodSourceLabel.setText("");
-		panel.add(foodSourceLabel, cc.xy(2, 9));
+		panel.add(foodSourceLabel, cc.xy(2, 11));
 		nameLabel = new JLabel();
 		nameLabel.setText("");
-		panel.add(nameLabel, cc.xy(2, 6));
+		panel.add(nameLabel, cc.xy(2, 8));
 		final Spacer spacer3 = new Spacer();
-		panel.add(spacer3, cc.xy(2, 13, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer3, cc.xy(2, 15, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer4 = new Spacer();
 		panel.add(spacer4, cc.xy(2, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 		loggedInBar = new LoggedInBar();
@@ -108,6 +133,11 @@ public class RecordForm {
 		panel.add(loggedOutBar, cc.xyw(1, 4, 3));
 		final Spacer spacer5 = new Spacer();
 		panel.add(spacer5, cc.xy(2, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		image = new JLabel();
+		image.setText("");
+		panel.add(image, cc.xy(2, 6, CellConstraints.CENTER, CellConstraints.DEFAULT));
+		final Spacer spacer6 = new Spacer();
+		panel.add(spacer6, cc.xy(2, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
 	}
 
 	private static Method $$$cachedGetBundleMethod$$$ = null;
@@ -162,7 +192,6 @@ public class RecordForm {
 	}
 
 	private void createUIComponents() {
-		// TODO: place custom component creation code here
 		loggedInBar = new LoggedInBar();
 		loggedOutBar = new LoggedOutBar();
 	}

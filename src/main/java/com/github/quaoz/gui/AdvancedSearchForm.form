@@ -118,7 +118,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text resource-bundle="ia" key="size"/>
+          <text value="Wingspan (cm)"/>
         </properties>
       </component>
       <component id="232d8" class="javax.swing.JLabel" binding="flightTimeLabel">

@@ -40,22 +40,23 @@ public class Home {
 		panel = new JPanel();
 		panel.setLayout(
 			new FormLayout(
-				"center:d:grow",
-				"center:max(d;4px):noGrow,top:3dlu:noGrow,center:p:noGrow,center:p:noGrow"
+				"center:p:grow",
+				"center:14px:noGrow,center:p:noGrow,center:p:noGrow"
 			)
 		);
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		loggedInBar = new LoggedInBar();
 		CellConstraints cc = new CellConstraints();
-		panel.add(loggedInBar, cc.xy(1, 4));
-		loggedOutBar = new LoggedOutBar();
-		panel.add(loggedOutBar, cc.xy(1, 3));
+		panel.add(loggedInBar, cc.xy(1, 3));
 		final Spacer spacer1 = new Spacer();
 		panel.add(
 			spacer1,
 			cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT)
 		);
+		loggedOutBar = new LoggedOutBar();
+		loggedOutBar.setPreferredSize(new Dimension(671, 30));
+		panel.add(loggedOutBar, cc.xy(1, 2));
 	}
 
 	/**
@@ -66,7 +67,6 @@ public class Home {
 	}
 
 	private void createUIComponents() {
-		// TODO: place custom component creation code here
 		loggedInBar = new LoggedInBar();
 		loggedOutBar = new LoggedOutBar();
 	}

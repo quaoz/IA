@@ -483,6 +483,7 @@ public class DataBase implements Closeable {
 			return null;
 		}
 
+		// probably works now
 		// FIXME does not work
 		public void remove(String field) {
 			field = field.strip();

@@ -117,6 +117,15 @@ public class AddMothForm {
 					flightEnd = tmp;
 				}
 
+				if (
+					MothManager
+						.getInstance()
+						.basicSearch(speciesField.getText().strip()) !=
+					null
+				) {
+					MothManager.getInstance().remove(speciesField.getText().strip());
+				}
+
 				MothManager
 					.getInstance()
 					.addMoth(
@@ -221,7 +230,7 @@ public class AddMothForm {
 		this.$$$loadLabelText$$$(sizeToLabel, this.$$$getMessageFromBundle$$$("ia", "to"));
 		sizePanel.add(sizeToLabel, cc.xy(3, 3));
 		sizeLabel = new JLabel();
-		this.$$$loadLabelText$$$(sizeLabel, this.$$$getMessageFromBundle$$$("ia", "size"));
+		sizeLabel.setText("Wingspan (cm)");
 		panel.add(sizeLabel, cc.xy(3, 15));
 		flightTimeLabel = new JLabel();
 		flightTimeLabel.setText("Flies from");

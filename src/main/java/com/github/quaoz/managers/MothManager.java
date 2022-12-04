@@ -109,9 +109,13 @@ public class MothManager implements Closeable {
 	 *
 	 * @return The moth
 	 */
-	public @NotNull Moth basicSearch(@NotNull String name) {
+	public Moth basicSearch(@NotNull String name) {
 		name = name.strip();
 		String record = mothsDatabase.get(name);
+
+		if (record == null) {
+			return null;
+		}
 
 		String sciName = record
 			.substring(mothsConfig.fields[0], mothsConfig.fields[1])

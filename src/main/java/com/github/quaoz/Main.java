@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import javax.swing.*;
 import net.harawata.appdirs.AppDirsFactory;
 import org.tinylog.Logger;
 import org.tinylog.provider.ProviderRegistry;

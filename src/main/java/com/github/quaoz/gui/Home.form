@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.github.quaoz.gui.Home">
   <grid id="27dc6" binding="panel" layout-manager="FormLayout">
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:14px:noGrow"/>
     <rowspec value="center:p:noGrow"/>
     <rowspec value="center:p:noGrow"/>
-    <colspec value="center:d:grow"/>
+    <colspec value="center:p:grow"/>
     <constraints>
       <xy x="20" y="20" width="768" height="768"/>
     </constraints>
@@ -16,13 +15,6 @@
     <border type="none"/>
     <children>
       <component id="5293d" class="com.github.quaoz.gui.LoggedInBar" binding="loggedInBar">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="19163" class="com.github.quaoz.gui.LoggedOutBar" binding="loggedOutBar">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
@@ -35,6 +27,15 @@
           <forms defaultalign-horz="false"/>
         </constraints>
       </hspacer>
+      <component id="19163" class="com.github.quaoz.gui.LoggedOutBar" binding="loggedOutBar">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <preferredSize width="671" height="30"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

@@ -1,5 +1,6 @@
 package com.github.quaoz.gui;
 
+import com.github.quaoz.Main;
 import com.github.quaoz.managers.MothManager;
 import com.github.quaoz.managers.RecordManager;
 import com.github.quaoz.managers.UserManager;
@@ -9,16 +10,26 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import org.jetbrains.annotations.NotNull;
+import org.tinylog.Logger;
 
 public class SubmitRecordForm {
 
@@ -48,28 +59,96 @@ public class SubmitRecordForm {
 	private JPanel coordinateLocationPanel;
 	private JPanel locationPanel;
 	private JLabel locationValidLabel;
+	private JLabel imageLabel;
+	private Set<File> images;
 
-	// spotless:off
-
+	@SuppressWarnings("unchecked")
 	public SubmitRecordForm() {
 		$$$setupUI$$$();
 
+		images = new HashSet<>();
+
+		// https://stackoverflow.com/questions/13597233/how-to-drag-and-drop-files-from-a-directory-in-java
+		panel.setDropTarget(
+			new DropTarget(panel, DnDConstants.ACTION_COPY_OR_MOVE, null)
+		);
+		try {
+			panel
+				.getDropTarget()
+				.addDropTargetListener(
+					new DropTargetListener() {
+						private void processDrag(@NotNull DropTargetDragEvent dtde) {
+							if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+								dtde.acceptDrag(DnDConstants.ACTION_COPY);
+							} else {
+								dtde.rejectDrag();
+							}
+						}
+
+						@Override
+						public void dragEnter(DropTargetDragEvent dtde) {
+							processDrag(dtde);
+						}
+
+						@Override
+						public void dragOver(DropTargetDragEvent dtde) {
+							processDrag(dtde);
+						}
+
+						@Override
+						public void dropActionChanged(DropTargetDragEvent dtde) {}
+
+						@Override
+						public void dragExit(DropTargetEvent dte) {}
+
+						@Override
+						public void drop(DropTargetDropEvent dtde) {
+							Transferable transferable = dtde.getTransferable();
+
+							if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+								dtde.acceptDrop(dtde.getDropAction());
+
+								try {
+									List<File> transferData = (List<File>) transferable.getTransferData(
+										DataFlavor.javaFileListFlavor
+									);
+
+									for (File file : transferData) {
+										if (ImageIO.read(file) != null) {
+											images.add(file);
+										}
+									}
+
+									dtde.dropComplete(true);
+								} catch (Exception ex) {
+									ex.printStackTrace();
+								}
+							} else {
+								dtde.rejectDrop();
+							}
+						}
+					}
+				);
+		} catch (TooManyListenersException e) {
+			throw new RuntimeException(e);
+		}
+
 		coordinateLocationPanel.setVisible(false);
 		daySpinner.setModel(
-				new SpinnerNumberModel(
-						Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
-						1,
-						31,
-						1
-				)
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+				1,
+				31,
+				1
+			)
 		);
 		monthSpinner.setModel(
-				new SpinnerNumberModel(
-						Calendar.getInstance().get(Calendar.MONTH) + 1,
-						1,
-						12,
-						1
-				)
+			new SpinnerNumberModel(
+				Calendar.getInstance().get(Calendar.MONTH) + 1,
+				1,
+				12,
+				1
+			)
 		);
 		sizeSpinner.setModel(new SpinnerNumberModel(0, 0, 30, 0.1));
 
@@ -81,7 +160,7 @@ public class SubmitRecordForm {
 				try {
 					double latitude = Double.parseDouble(latitudeField.getText().strip());
 					double longitude = Double.parseDouble(
-							longitudeField.getText().strip()
+						longitudeField.getText().strip()
 					);
 
 					location = Geocoder.standardise(latitude, longitude);
@@ -101,76 +180,101 @@ public class SubmitRecordForm {
 				valid = false;
 			}
 
-			// TODO: Submit record
 			if (valid) {
 				Moth species = MothManager
-						.getInstance()
-						.collectMoths(speciesField.getText().strip(), 0, 1)
-						.get(0)
-						.getKey();
+					.getInstance()
+					.collectMoths(speciesField.getText().strip(), 0, 1)
+					.get(0)
+					.getKey();
 
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				Date date = new GregorianCalendar(
-						Calendar.getInstance().get(Calendar.YEAR),
-						((Integer) monthSpinner.getValue()),
-						((Integer) daySpinner.getValue())
+					Calendar.getInstance().get(Calendar.YEAR),
+					((Integer) monthSpinner.getValue()),
+					((Integer) daySpinner.getValue())
 				)
-						.getTime();
+					.getTime();
 
 				RecordManager
+					.getInstance()
+					.addRecord(
+						species.name(),
+						location,
+						dateFormat.format(date),
+						((Double) sizeSpinner.getValue()),
+						UserManager.getInstance().getUser()
+					);
+
+				for (File image : images) {
+					Path target = Main
 						.getInstance()
-						.addRecord(
+						.getInstallDir()
+						.resolve(
+							Paths.get(
+								"images",
 								species.name(),
-								location,
-								dateFormat.format(date),
-								((Double) sizeSpinner.getValue()),
-								UserManager.getInstance().getUser()
+								ThreadLocalRandom.current().nextLong(Long.MAX_VALUE) +
+								"-" +
+								image.getName()
+							)
 						);
+
+					try {
+						Files.createDirectories(target.getParent());
+						Files.copy(image.toPath(), target);
+					} catch (IOException ex) {
+						Logger.error(ex, "Unable to copy image to: " + target);
+					}
+				}
+
 				GUI.getInstance().render(GUI.Content.PAST_CONTENT);
 			}
 		});
 
 		cancelButton.addActionListener(e ->
-				GUI.getInstance().render(GUI.Content.PAST_CONTENT)
+			GUI.getInstance().render(GUI.Content.PAST_CONTENT)
 		);
 
 		speciesField
-				.getDocument()
-				.addDocumentListener(
-						new SimpleDocumentListener() {
-							private CompletableFuture<Void> completableFuture;
+			.getDocument()
+			.addDocumentListener(
+				new SimpleDocumentListener() {
+					private CompletableFuture<Void> completableFuture;
 
-							@Override
-							public void update(DocumentEvent e) {
-								if (completableFuture != null) {
-									completableFuture.cancel(true);
-									completableFuture = null;
-								}
-
-								completableFuture =
-										CompletableFuture
-												.supplyAsync(() ->
-														MothManager
-																.getInstance()
-																.collectMoths(speciesField.getText().strip(), 0, 1)
-												)
-												.thenAccept(s -> speciesMatchLabel.setText(
-																UserManager.getInstance().isMod() ? "Closest match: " +
-																		s.get(0).getKey().name() +
-																		", if this is not" +
-																		" your moth then" +
-																		" please register" +
-																		" a new moth" +
-																		" bellow." : "Closest match: " +
-																		s.get(0).getKey().name() +
-																		", if this is not" +
-																		" your moth then" +
-																		" please ask a moderate to register it"
-														)
-												);
-							}
+					@Override
+					public void update(DocumentEvent e) {
+						if (completableFuture != null) {
+							completableFuture.cancel(true);
+							completableFuture = null;
 						}
-				);
+
+						completableFuture =
+							CompletableFuture
+								.supplyAsync(() ->
+									MothManager
+										.getInstance()
+										.collectMoths(speciesField.getText().strip(), 0, 1)
+								)
+								.thenAccept(s ->
+									speciesMatchLabel.setText(
+										UserManager.getInstance().isMod()
+											? "Closest match: " +
+											s.get(0).getKey().name() +
+											", if this is not" +
+											" your moth then" +
+											" please register" +
+											" a new moth" +
+											" bellow."
+											: "Closest match: " +
+											s.get(0).getKey().name() +
+											", if this is not" +
+											" your moth then" +
+											" please ask a moderate to register it"
+									)
+								);
+					}
+				}
+			);
 
 		coordsCheckBox.addActionListener(e -> {
 			if (coordsCheckBox.isSelected()) {
@@ -183,15 +287,18 @@ public class SubmitRecordForm {
 		});
 
 		registerButton.addActionListener(e ->
-				GUI.getInstance().render(GUI.Content.ADD_MOTH)
+			GUI.getInstance().render(GUI.Content.ADD_MOTH)
 		);
 	}
 
 	public JPanel resolve() {
 		registerButton.setVisible(UserManager.getInstance().isMod());
+		images.clear();
 
 		return panel;
 	}
+
+	// spotless:off
 
 	/**
 	 * Method generated by IntelliJ IDEA GUI Designer
@@ -202,7 +309,7 @@ public class SubmitRecordForm {
 	 */
 	private void $$$setupUI$$$() {
 		panel = new JPanel();
-		panel.setLayout(new FormLayout("fill:d:grow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:5dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:grow"));
+		panel.setLayout(new FormLayout("fill:d:grow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,fill:d:grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:5dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:grow"));
 		panel.setMinimumSize(new Dimension(768, 768));
 		panel.setPreferredSize(new Dimension(768, 768));
 		speciesField = new JTextField();
@@ -211,11 +318,11 @@ public class SubmitRecordForm {
 		final Spacer spacer1 = new Spacer();
 		panel.add(spacer1, cc.xy(4, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final Spacer spacer2 = new Spacer();
-		panel.add(spacer2, cc.xy(4, 25, CellConstraints.DEFAULT, CellConstraints.FILL));
+		panel.add(spacer2, cc.xy(4, 27, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final Spacer spacer3 = new Spacer();
-		panel.add(spacer3, cc.xywh(5, 1, 1, 25, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer3, cc.xywh(5, 1, 1, 27, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final Spacer spacer4 = new Spacer();
-		panel.add(spacer4, cc.xywh(1, 1, 1, 25, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel.add(spacer4, cc.xywh(1, 1, 1, 27, CellConstraints.FILL, CellConstraints.DEFAULT));
 		speciesLabel = new JLabel();
 		this.$$$loadLabelText$$$(speciesLabel, this.$$$getMessageFromBundle$$$("ia", "species"));
 		panel.add(speciesLabel, cc.xy(2, 5));
@@ -223,17 +330,17 @@ public class SubmitRecordForm {
 		this.$$$loadLabelText$$$(locationLabel, this.$$$getMessageFromBundle$$$("ia", "location"));
 		panel.add(locationLabel, cc.xy(2, 9));
 		sizeLabel = new JLabel();
-		this.$$$loadLabelText$$$(sizeLabel, this.$$$getMessageFromBundle$$$("ia", "size.cm"));
+		sizeLabel.setText("Wingspan (cm)");
 		panel.add(sizeLabel, cc.xy(2, 17));
 		titleLabel = new JLabel();
 		this.$$$loadLabelText$$$(titleLabel, this.$$$getMessageFromBundle$$$("ia", "add.record"));
 		panel.add(titleLabel, cc.xy(4, 3));
 		submitButton = new JButton();
 		this.$$$loadButtonText$$$(submitButton, this.$$$getMessageFromBundle$$$("ia", "submit"));
-		panel.add(submitButton, cc.xy(4, 19));
+		panel.add(submitButton, cc.xy(4, 21));
 		cancelButton = new JButton();
 		this.$$$loadButtonText$$$(cancelButton, this.$$$getMessageFromBundle$$$("ia", "cancel"));
-		panel.add(cancelButton, cc.xy(4, 23));
+		panel.add(cancelButton, cc.xy(4, 25));
 		sizeSpinner = new JSpinner();
 		panel.add(sizeSpinner, cc.xy(4, 17, CellConstraints.FILL, CellConstraints.DEFAULT));
 		speciesMatchLabel = new JLabel();
@@ -241,7 +348,7 @@ public class SubmitRecordForm {
 		panel.add(speciesMatchLabel, cc.xy(4, 7));
 		registerButton = new JButton();
 		this.$$$loadButtonText$$$(registerButton, this.$$$getMessageFromBundle$$$("ia", "register.moth"));
-		panel.add(registerButton, cc.xy(4, 21));
+		panel.add(registerButton, cc.xy(4, 23));
 		datePanel = new JPanel();
 		datePanel.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
 		panel.add(datePanel, cc.xy(4, 15));
@@ -290,6 +397,9 @@ public class SubmitRecordForm {
 		locationValidLabel = new JLabel();
 		locationValidLabel.setText("");
 		panel.add(locationValidLabel, cc.xy(4, 11));
+		imageLabel = new JLabel();
+		imageLabel.setText("Drag and drop to add images");
+		panel.add(imageLabel, cc.xy(4, 19));
 		sizeLabel.setLabelFor(sizeSpinner);
 		titleLabel.setLabelFor(speciesField);
 		latitudeLabel.setLabelFor(latitudeField);

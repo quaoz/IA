@@ -74,7 +74,7 @@ dependencies {
 
     // FlatLaf
     implementation("com.formdev:flatlaf:3.0")
-    implementation("com.formdev:flatlaf-intellij-themes:2.6")
+    implementation("com.formdev:flatlaf-intellij-themes:3.0")
 
     // Appdirs
     implementation("net.harawata:appdirs:1.2.1")

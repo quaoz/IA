@@ -73,7 +73,7 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-java:2.3.1")
 
     // FlatLaf
-    implementation("com.formdev:flatlaf:2.6")
+    implementation("com.formdev:flatlaf:3.0")
     implementation("com.formdev:flatlaf-intellij-themes:2.6")
 
     // Appdirs

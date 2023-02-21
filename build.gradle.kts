@@ -70,7 +70,7 @@ dependencies {
     implementation("com.byteowls:jopencage:1.4.0")
 
     // Dotenv
-    implementation("io.github.cdimascio:dotenv-java:2.3.1")
+    implementation("io.github.cdimascio:dotenv-java:2.3.2")
 
     // FlatLaf
     implementation("com.formdev:flatlaf:3.0")

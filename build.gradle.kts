@@ -60,7 +60,7 @@ dependencies {
     implementation("com.jetbrains.intellij.java:java-gui-forms-rt:223.8214.59")
 
     // Logging
-    implementation("org.tinylog:tinylog-api:2.5.0")
+    implementation("org.tinylog:tinylog-api:2.6.0")
     implementation("org.tinylog:tinylog-impl:2.6.0")
 
     // Fuzzy matching

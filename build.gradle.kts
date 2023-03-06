@@ -44,7 +44,7 @@ repositories {
 
 dependencies {
     // Annotations
-    implementation("org.jetbrains:annotations:24.0.0")
+    implementation("org.jetbrains:annotations:24.0.1")
 
     // JSON
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")

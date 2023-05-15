@@ -61,7 +61,7 @@ dependencies {
 
     // Logging
     implementation("org.tinylog:tinylog-api:2.5.0")
-    implementation("org.tinylog:tinylog-impl:2.6.0")
+    implementation("org.tinylog:tinylog-impl:2.6.2")
 
     // Fuzzy matching
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
